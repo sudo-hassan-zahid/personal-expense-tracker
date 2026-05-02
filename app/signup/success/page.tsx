@@ -21,7 +21,8 @@ export default function SignupSuccessPage() {
 
         <div className="bg-(--color-surface-card-dark)/80 backdrop-blur-xl py-8 px-4 border border-(--color-hairline-on-dark) sm:rounded-2xl sm:px-10 shadow-2xl">
           <p className="text-body-md text-(--color-on-dark) mb-6">
-            We've sent a confirmation link to your email address. Please click the link to activate your account.
+            We've sent a confirmation link to your email address. Please click the link to activate
+            your account.
           </p>
 
           <div className="space-y-4">

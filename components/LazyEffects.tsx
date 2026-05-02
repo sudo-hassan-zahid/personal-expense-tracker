@@ -9,12 +9,13 @@ import dynamic from "next/dynamic";
  */
 
 const ParticleBackgroundLazy = dynamic(
-  () => import("@/components/ui/ParticleBackground").then(m => ({ default: m.ParticleBackground })),
+  () =>
+    import("@/components/ui/ParticleBackground").then((m) => ({ default: m.ParticleBackground })),
   { ssr: false }
 );
 
 const CursorTrailLazy = dynamic(
-  () => import("@/components/ui/CursorTrail").then(m => ({ default: m.CursorTrail })),
+  () => import("@/components/ui/CursorTrail").then((m) => ({ default: m.CursorTrail })),
   { ssr: false }
 );
 

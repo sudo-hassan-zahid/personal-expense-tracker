@@ -14,7 +14,9 @@ import { TransactionFilter } from "@/components/TransactionFilter";
 
 import { cookies } from "next/headers";
 
-export default async function DashboardPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
+export default async function DashboardPage(props: {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   // searchParams is dynamic — must be outside of 'use cache'
   const searchParams = await props.searchParams;
   const filterType = searchParams?.type as string | undefined;
@@ -25,7 +27,8 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
 
   // Cached data fetching — all 5 queries run in parallel, result is cached
   // Pass cookies explicitly to avoid dynamic access error
-  const { expenses, incomes, expenseCategories, incomeCategories, profile } = await getDashboardData(allCookies);
+  const { expenses, incomes, expenseCategories, incomeCategories, profile } =
+    await getDashboardData(allCookies);
 
   const currency = profile?.currency || "USD";
   const paginationEnabled = profile?.pagination_enabled ?? true;
@@ -34,11 +37,11 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
   const isStatusTrackingEnabled = profile?.enable_status_tracking ?? false;
 
   const totalExpenses = expenses
-    .filter((e: any) => !isStatusTrackingEnabled || e.status === 'done')
+    .filter((e: any) => !isStatusTrackingEnabled || e.status === "done")
     .reduce((acc: number, curr: any) => acc + Number(curr.amount), 0);
 
   const totalIncome = incomes
-    .filter((i: any) => !isStatusTrackingEnabled || i.status === 'done')
+    .filter((i: any) => !isStatusTrackingEnabled || i.status === "done")
     .reduce((acc: number, curr: any) => acc + Number(curr.amount), 0);
 
   const netBalance = totalIncome - totalExpenses;
@@ -90,12 +93,14 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
       {/* 8/4 or 12 Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Col - 8 or 12 - Transactions Table */}
-        <div className={`${isWideView ? 'lg:col-span-12' : 'lg:col-span-8'} bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-6 animate-slide-up stagger-5 transition-all duration-500`}>
+        <div
+          className={`${isWideView ? "lg:col-span-12" : "lg:col-span-8"} bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-6 animate-slide-up stagger-5 transition-all duration-500`}
+        >
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div className="flex items-center gap-4">
               <h2 className="text-title-lg text-(--color-on-dark)">Recent Transactions</h2>
               <Link
-                href={`/dashboard?${new URLSearchParams({ ...Object.fromEntries(Object.entries(searchParams || {})), view: isWideView ? 'standard' : 'wide' }).toString()}`}
+                href={`/dashboard?${new URLSearchParams({ ...Object.fromEntries(Object.entries(searchParams || {})), view: isWideView ? "standard" : "wide" }).toString()}`}
                 className="p-2 hover:bg-(--color-canvas-dark) rounded-lg transition-colors text-(--color-muted) hover:text-(--color-on-dark) border border-transparent hover:border-(--color-hairline-on-dark)"
                 title={isWideView ? "Standard View" : "Expand Table"}
               >
@@ -128,14 +133,27 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
         </div>
 
         {/* Right Col - 4 - Actions (Stacked below in wide view) */}
-        <div className={`${isWideView ? 'lg:col-span-12 grid grid-cols-1 md:grid-cols-2' : 'lg:col-span-4 flex flex-col'} gap-6 animate-slide-up stagger-5 transition-all duration-500`}>
+        <div
+          className={`${isWideView ? "lg:col-span-12 grid grid-cols-1 md:grid-cols-2" : "lg:col-span-4 flex flex-col"} gap-6 animate-slide-up stagger-5 transition-all duration-500`}
+        >
           {/* Add Expense Card */}
           <div className="bg-(--color-surface-card-dark) rounded-xl p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
             <h2 className="text-title-md mb-4">Quick Add Expense</h2>
-            <ActionForm action={addExpense} successMessage="Expense added successfully" className="flex flex-col gap-4">
+            <ActionForm
+              action={addExpense}
+              successMessage="Expense added successfully"
+              className="flex flex-col gap-4"
+            >
               <div>
                 <label className="block text-body-sm mb-1 text-(--color-muted)">Amount</label>
-                <input required type="number" step="0.01" name="amount" className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-number-md focus:border-(--color-primary) focus:outline-none" placeholder="0.00" />
+                <input
+                  required
+                  type="number"
+                  step="0.01"
+                  name="amount"
+                  className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-number-md focus:border-(--color-primary) focus:outline-none"
+                  placeholder="0.00"
+                />
               </div>
               <CategorySelect
                 categories={expenseCategories}
@@ -143,16 +161,20 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                 name="category"
                 label="Category"
               />
-              <DatePicker
-                name="date"
-                defaultValue={getTodayPKT()}
-                label="Date"
-              />
+              <DatePicker name="date" defaultValue={getTodayPKT()} label="Date" />
               <div>
                 <label className="block text-body-sm mb-1 text-(--color-muted)">Note</label>
-                <input type="text" name="note" className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" placeholder="Optional note" />
+                <input
+                  type="text"
+                  name="note"
+                  className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none"
+                  placeholder="Optional note"
+                />
               </div>
-              <button type="submit" className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-md py-3 mt-2 hover:bg-(--color-primary-active) transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-(--color-primary)/20">
+              <button
+                type="submit"
+                className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-md py-3 mt-2 hover:bg-(--color-primary-active) transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-(--color-primary)/20"
+              >
                 Add Expense
               </button>
             </ActionForm>
@@ -161,10 +183,21 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
           {/* Add Income Card */}
           <div className="bg-(--color-surface-card-dark) rounded-xl p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
             <h2 className="text-title-md mb-4">Quick Add Income</h2>
-            <ActionForm action={addIncome} successMessage="Income added successfully" className="flex flex-col gap-4">
+            <ActionForm
+              action={addIncome}
+              successMessage="Income added successfully"
+              className="flex flex-col gap-4"
+            >
               <div>
                 <label className="block text-body-sm mb-1 text-(--color-muted)">Amount</label>
-                <input required type="number" step="0.01" name="amount" className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-number-md focus:border-(--color-primary) focus:outline-none" placeholder="0.00" />
+                <input
+                  required
+                  type="number"
+                  step="0.01"
+                  name="amount"
+                  className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-number-md focus:border-(--color-primary) focus:outline-none"
+                  placeholder="0.00"
+                />
               </div>
               <CategorySelect
                 categories={incomeCategories}
@@ -172,16 +205,20 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                 name="source"
                 label="Source"
               />
-              <DatePicker
-                name="date"
-                defaultValue={getTodayPKT()}
-                label="Date"
-              />
+              <DatePicker name="date" defaultValue={getTodayPKT()} label="Date" />
               <div>
                 <label className="block text-body-sm mb-1 text-(--color-muted)">Note</label>
-                <input type="text" name="note" className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" placeholder="Optional note" />
+                <input
+                  type="text"
+                  name="note"
+                  className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none"
+                  placeholder="Optional note"
+                />
               </div>
-              <button type="submit" className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-md py-3 mt-2 hover:bg-(--color-primary-active) transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-(--color-primary)/20">
+              <button
+                type="submit"
+                className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-md py-3 mt-2 hover:bg-(--color-primary-active) transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-(--color-primary)/20"
+              >
                 Add Income
               </button>
             </ActionForm>

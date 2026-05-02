@@ -4,7 +4,9 @@ import { ActionForm } from "@/components/ActionForm";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     return null; // Will be handled by middleware
@@ -17,7 +19,11 @@ export default async function ProfilePage() {
       <h1 className="text-title-lg text-(--color-on-dark)">Profile Settings</h1>
 
       <div className="bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-6">
-        <ActionForm action={updateProfile} successMessage="Profile updated successfully!" className="flex flex-col gap-6">
+        <ActionForm
+          action={updateProfile}
+          successMessage="Profile updated successfully!"
+          className="flex flex-col gap-6"
+        >
           <div>
             <label className="block text-body-sm mb-1 text-(--color-muted)">Name</label>
             <input
@@ -41,7 +47,9 @@ export default async function ProfilePage() {
           </div>
 
           <div>
-            <label className="block text-body-sm mb-1 text-(--color-muted)">New Password (leave blank to keep current)</label>
+            <label className="block text-body-sm mb-1 text-(--color-muted)">
+              New Password (leave blank to keep current)
+            </label>
             <input
               type="password"
               name="password"
@@ -87,7 +95,9 @@ export default async function ProfilePage() {
             <div className="flex items-center justify-between p-4 bg-(--color-canvas-dark)/50 rounded-xl border border-(--color-hairline-on-dark)">
               <div className="flex flex-col">
                 <span className="text-body-md text-(--color-on-dark)">Enable Status Tracking</span>
-                <span className="text-caption text-(--color-muted)">Transactions marked as "Pending" will be excluded from chart totals and summaries.</span>
+                <span className="text-caption text-(--color-muted)">
+                  Transactions marked as "Pending" will be excluded from chart totals and summaries.
+                </span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer group">
                 <input
@@ -103,7 +113,9 @@ export default async function ProfilePage() {
             <div className="flex items-center justify-between p-4 bg-(--color-canvas-dark)/50 rounded-xl border border-(--color-hairline-on-dark)">
               <div className="flex flex-col">
                 <span className="text-body-md text-(--color-on-dark)">Show Cursor Trail</span>
-                <span className="text-caption text-(--color-muted)">Enable the glowing magic trail follow your cursor.</span>
+                <span className="text-caption text-(--color-muted)">
+                  Enable the glowing magic trail follow your cursor.
+                </span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer group">
                 <input
@@ -119,7 +131,9 @@ export default async function ProfilePage() {
             <div className="flex items-center justify-between p-4 bg-(--color-canvas-dark)/50 rounded-xl border border-(--color-hairline-on-dark)">
               <div className="flex flex-col">
                 <span className="text-body-md text-(--color-on-dark)">Enable Pagination</span>
-                <span className="text-caption text-(--color-muted)">Split the transaction list into multiple pages.</span>
+                <span className="text-caption text-(--color-muted)">
+                  Split the transaction list into multiple pages.
+                </span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer group">
                 <input
@@ -133,7 +147,10 @@ export default async function ProfilePage() {
             </div>
           </div>
 
-          <button type="submit" className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-md py-3 mt-4 hover:bg-(--color-primary-active) transition-colors">
+          <button
+            type="submit"
+            className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-md py-3 mt-4 hover:bg-(--color-primary-active) transition-colors"
+          >
             Save Changes
           </button>
         </ActionForm>

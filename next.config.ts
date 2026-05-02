@@ -6,11 +6,11 @@ const nextConfig: NextConfig = {
 
   // Optimize images for Vercel
   images: {
-    formats: ['image/avif', 'image/webp'],
+    formats: ["image/avif", "image/webp"],
   },
 
   // Vercel-optimized standalone output
-  output: 'standalone',
+  output: "standalone",
 
   // Enable experimental features
   experimental: {

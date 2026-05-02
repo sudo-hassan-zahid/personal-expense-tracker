@@ -39,15 +39,17 @@ export function CategorySelect({
       await addCategory(formData);
 
       // Optimistically add to local state
-      setLocalCategories((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          name: newCategoryName.trim(),
-          type,
-          parent_id: null,
-        },
-      ].sort((a, b) => a.name.localeCompare(b.name)));
+      setLocalCategories((prev) =>
+        [
+          ...prev,
+          {
+            id: crypto.randomUUID(),
+            name: newCategoryName.trim(),
+            type,
+            parent_id: null,
+          },
+        ].sort((a, b) => a.name.localeCompare(b.name))
+      );
 
       setNewCategoryName("");
       setIsAdding(false);
@@ -60,9 +62,7 @@ export function CategorySelect({
 
   return (
     <div>
-      <label className="block text-body-sm mb-1 text-(--color-muted)">
-        {label}
-      </label>
+      <label className="block text-body-sm mb-1 text-(--color-muted)">{label}</label>
 
       {!isAdding ? (
         <div className="flex gap-2">
@@ -73,7 +73,11 @@ export function CategorySelect({
             className="flex-1 bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)"
           >
             {localCategories.map((cat) => (
-              <option key={cat.id} value={cat.name} className="bg-(--color-surface-card-dark) text-(--color-on-dark)">
+              <option
+                key={cat.id}
+                value={cat.name}
+                className="bg-(--color-surface-card-dark) text-(--color-on-dark)"
+              >
                 {cat.parent_id ? `  └ ${cat.name}` : cat.name}
               </option>
             ))}

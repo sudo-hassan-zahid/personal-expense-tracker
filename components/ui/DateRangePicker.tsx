@@ -7,12 +7,14 @@ import { Calendar } from "./Calendar";
 
 export function DateRangePicker({
   onRangeChange,
-  className = ""
+  className = "",
 }: {
-  onRangeChange: (start: Date, end: Date) => void,
-  className?: string
+  onRangeChange: (start: Date, end: Date) => void;
+  className?: string;
 }) {
-  const [startDate, setStartDate] = useState<Date>(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
+  const [startDate, setStartDate] = useState<Date>(
+    new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  );
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -50,16 +52,14 @@ export function DateRangePicker({
       >
         <CalendarIcon size={16} className="text-(--color-muted)" />
         <span>
-          {startDate ? format(startDate, "MMM d") : "Start"} - {endDate ? format(endDate, "MMM d, yyyy") : "End"}
+          {startDate ? format(startDate, "MMM d") : "Start"} -{" "}
+          {endDate ? format(endDate, "MMM d, yyyy") : "End"}
         </span>
       </button>
 
       {isOpen && (
         <div className="absolute z-50 mt-2 right-0 animate-in fade-in zoom-in duration-200 origin-top-right">
-          <Calendar
-            selected={startDate}
-            onSelect={handleSelect}
-          />
+          <Calendar selected={startDate} onSelect={handleSelect} />
           {/* Note: A true range picker would highlight days between, but for simplicity and elegance we'll start with this */}
         </div>
       )}

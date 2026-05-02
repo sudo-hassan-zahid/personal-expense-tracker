@@ -151,7 +151,7 @@ export function ParticleBackground() {
 
       // Rebuild spatial grid each frame
       grid.clear();
-      particles.forEach(p => grid.insert(p));
+      particles.forEach((p) => grid.insert(p));
 
       particles.forEach((p) => {
         p.update(canvas.width, canvas.height);
@@ -203,10 +203,5 @@ export function ParticleBackground() {
     };
   }, []);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0 opacity-40"
-    />
-  );
+  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0 opacity-40" />;
 }

@@ -37,8 +37,8 @@
 
   --font-nova: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-plex:
-    var(--font-plex), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
+    var(--font-plex), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
 
   /* Custom breakpoints */
   --breakpoint-md: 768px;

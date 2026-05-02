@@ -11,8 +11,10 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  * @returns The profile object or null if not found.
  */
 export async function getProfile(client?: SupabaseClient) {
-  const supabase = client || await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const supabase = client || (await createClient());
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) return null;
 
@@ -75,7 +77,7 @@ export async function updateProfile(formData: FormData) {
     pagination_enabled: paginationEnabled,
     enable_status_tracking: statusTrackingEnabled,
     show_cursor_trail: showCursorTrail,
-    updated_at: new Date().toISOString()
+    updated_at: new Date().toISOString(),
   };
 
   const { error: profileError } = await supabase

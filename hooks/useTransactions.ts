@@ -33,20 +33,22 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
       const dateText = format(date, "MMM d, yyyy").toLowerCase();
       const noteText = (t.note || "").toLowerCase();
 
-      const matchesSearch = (
+      const matchesSearch =
         categoryText.toLowerCase().includes(searchLower) ||
         amount.toString().includes(searchLower) ||
         dateText.includes(searchLower) ||
         noteText.includes(searchLower) ||
-        t.type.includes(searchLower)
-      );
+        t.type.includes(searchLower);
 
       const matchesMinAmount = minAmount === "" || amount >= Number(minAmount);
       const matchesMaxAmount = maxAmount === "" || amount <= Number(maxAmount);
-      const matchesDateRange = (!startDate || !endDate) || isWithinInterval(date, {
-        start: startOfDay(startDate),
-        end: endOfDay(endDate)
-      });
+      const matchesDateRange =
+        !startDate ||
+        !endDate ||
+        isWithinInterval(date, {
+          start: startOfDay(startDate),
+          end: endOfDay(endDate),
+        });
 
       return matchesSearch && matchesMinAmount && matchesMaxAmount && matchesDateRange;
     });
@@ -99,17 +101,28 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
   }, [filteredTransactions, sortField, sortOrder]);
 
   return {
-    search, setSearch,
-    sortField, setSortField,
-    sortOrder, setSortOrder,
-    currentPage, setCurrentPage,
-    minAmount, setMinAmount,
-    maxAmount, setMaxAmount,
-    startDate, setStartDate,
-    endDate, setEndDate,
+    search,
+    setSearch,
+    sortField,
+    setSortField,
+    sortOrder,
+    setSortOrder,
+    currentPage,
+    setCurrentPage,
+    minAmount,
+    setMinAmount,
+    maxAmount,
+    setMaxAmount,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
     sortedTransactions,
     totalItems: filteredTransactions.length,
     totalPages: Math.ceil(sortedTransactions.length / initialItemsPerPage),
-    displayedTransactions: sortedTransactions.slice((currentPage - 1) * initialItemsPerPage, currentPage * initialItemsPerPage)
+    displayedTransactions: sortedTransactions.slice(
+      (currentPage - 1) * initialItemsPerPage,
+      currentPage * initialItemsPerPage
+    ),
   };
 }
