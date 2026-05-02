@@ -95,12 +95,14 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
       </div>
 
       {/* Chart Section */}
-      <DashboardChart transactions={allTransactions} currency={currency} />
+      <div className="animate-slide-up stagger-4">
+        <DashboardChart transactions={allTransactions} currency={currency} />
+      </div>
 
       {/* 8/4 Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Col - 8 - Transactions Table */}
-        <div className="lg:col-span-8 bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-6">
+        <div className="lg:col-span-8 bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-6 animate-slide-up stagger-5">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <h2 className="text-title-lg text-(--color-on-dark)">Recent Transactions</h2>
             <TransactionFilter defaultType={filterType || "all"} />
@@ -115,7 +117,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
         </div>
 
         {/* Right Col - 4 - Actions */}
-        <div className="lg:col-span-4 flex flex-col gap-6">
+        <div className="lg:col-span-4 flex flex-col gap-6 animate-slide-up stagger-5">
           {/* Add Expense Card */}
           <div className="bg-(--color-surface-card-dark) rounded-xl p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
             <h2 className="text-title-md mb-4">Quick Add Expense</h2>
