@@ -16,3 +16,6 @@ Backend & Auth: Supabase (PostgreSQL + Auth)
 Styling: Tailwind CSS v4
 Icons: Lucide React
 Date Parsing: Date-fns
+
+## 🚀 How to Run and Test Locally
+Follow these steps to safely run the project in your local development environment:
