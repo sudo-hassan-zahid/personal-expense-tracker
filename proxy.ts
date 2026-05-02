@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request: {
       headers: request.headers,
@@ -29,6 +29,10 @@ export async function middleware(request: NextRequest) {
     }
   );
 
+  // IMPORTANT: Do NOT remove this getUser() call.
+  // It refreshes the auth token on every request via the setAll() callback above,
+  // which writes the refreshed tokens back as cookies. This is the core of the
+  // auto-refresh mechanism (access token: 15min, refresh token: 7 days).
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -58,7 +62,6 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
      */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
