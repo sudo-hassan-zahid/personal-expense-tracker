@@ -22,8 +22,8 @@ import { DateRangePicker } from "./ui/DateRangePicker";
  * Component for rendering the transaction history chart and summary statistics.
  * Supports date range filtering and optional status-based filtering.
  */
-export function DashboardChart({ transactions, currency, enableStatusTracking }: { 
-  transactions: Transaction[], 
+export function DashboardChart({ transactions, currency, enableStatusTracking }: {
+  transactions: Transaction[],
   currency: string,
   enableStatusTracking?: boolean
 }) {
@@ -51,11 +51,11 @@ export function DashboardChart({ transactions, currency, enableStatusTracking }:
   const chartData = useMemo(() => {
     let filtered = transactions;
     const { start: startDate, end: endDate } = dateRange;
-    
+
     // Generate all days in range
     const allDays = eachDayOfInterval({ start: startDate, end: endDate });
     const chartDataMap = new Map();
-    
+
     allDays.forEach(day => {
       const d = format(day, 'yyyy-MM-dd');
       chartDataMap.set(d, { date: d, income: 0, expense: 0 });
@@ -74,14 +74,14 @@ export function DashboardChart({ transactions, currency, enableStatusTracking }:
 
     // Category filter
     if (filterCategory !== "all") {
-       filtered = filtered.filter(t => {
-          const c = t.type === 'income' ? t.source : t.category;
-          return c?.toLowerCase() === filterCategory.toLowerCase();
-       });
+      filtered = filtered.filter(t => {
+        const c = t.type === 'income' ? t.source : t.category;
+        return c?.toLowerCase() === filterCategory.toLowerCase();
+      });
     }
 
     // Status filter: If enabled, only show completed transactions
-    const transactionsToProcess = enableStatusTracking 
+    const transactionsToProcess = enableStatusTracking
       ? filtered.filter(t => (t as any).status === 'done')
       : filtered;
 
@@ -96,8 +96,8 @@ export function DashboardChart({ transactions, currency, enableStatusTracking }:
     });
 
     return Array.from(chartDataMap.values()).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).map(d => ({
-        ...d,
-        displayDate: format(parseISO(d.date), "MMM dd")
+      ...d,
+      displayDate: format(parseISO(d.date), "MMM dd")
     }));
   }, [transactions, dateRange, filterType, filterCategory]);
 
@@ -114,17 +114,17 @@ export function DashboardChart({ transactions, currency, enableStatusTracking }:
           </h2>
           <p className="text-caption text-(--color-muted)">Interactive visualization of your financial trends</p>
         </div>
-        
+
         <div className="flex flex-wrap items-center gap-3 p-1.5 bg-(--color-canvas-dark)/50 backdrop-blur-md border border-(--color-hairline-on-dark) rounded-xl">
-          <DateRangePicker 
-            onRangeChange={(start, end) => setDateRange({ start, end })} 
+          <DateRangePicker
+            onRangeChange={(start, end) => setDateRange({ start, end })}
             className="border-none bg-transparent"
           />
 
           <div className="w-px h-6 bg-(--color-hairline-on-dark)" />
 
-          <select 
-            value={filterType} 
+          <select
+            value={filterType}
             onChange={(e) => setFilterType(e.target.value as any)}
             className="bg-transparent hover:bg-(--color-surface-elevated-dark) transition-colors rounded-lg px-3 py-2 text-body-sm text-(--color-on-dark) focus:outline-none cursor-pointer border-none"
           >
@@ -135,8 +135,8 @@ export function DashboardChart({ transactions, currency, enableStatusTracking }:
 
           <div className="w-px h-6 bg-(--color-hairline-on-dark)" />
 
-          <select 
-            value={filterCategory} 
+          <select
+            value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
             className="bg-transparent hover:bg-(--color-surface-elevated-dark) transition-colors rounded-lg px-3 py-2 text-body-sm text-(--color-on-dark) focus:outline-none cursor-pointer capitalize border-none"
           >
@@ -151,7 +151,7 @@ export function DashboardChart({ transactions, currency, enableStatusTracking }:
       <div className="h-[380px] w-full relative z-10 animate-slide-up stagger-2">
         {chartData.length === 0 ? (
           <div className="h-full w-full flex flex-col items-center justify-center text-(--color-muted) text-body-md border border-dashed border-(--color-hairline-on-dark) rounded-xl bg-(--color-canvas-dark)/20">
-             <div className="text-4xl mb-2 opacity-50">📊</div>
+            <div className="text-4xl mb-2 opacity-50">📊</div>
             No data for selected filters.
           </div>
         ) : isMounted ? (
@@ -159,81 +159,81 @@ export function DashboardChart({ transactions, currency, enableStatusTracking }:
             <AreaChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.5}/>
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.5} />
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.5}/>
-                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.5} />
+                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="var(--color-hairline-on-dark)" opacity={0.4} />
-              <XAxis 
-                dataKey="displayDate" 
-                stroke="var(--color-muted)" 
-                fontSize={12} 
-                tickLine={false} 
-                axisLine={false} 
-                dy={15} 
+              <XAxis
+                dataKey="displayDate"
+                stroke="var(--color-muted)"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+                dy={15}
                 tick={{ fill: 'var(--color-muted)' }}
               />
-              <YAxis 
-                stroke="var(--color-muted)" 
-                fontSize={12} 
-                tickLine={false} 
-                axisLine={false} 
-                tickFormatter={(val) => Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(val)} 
+              <YAxis
+                stroke="var(--color-muted)"
+                fontSize={12}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(val) => Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(val)}
                 dx={-10}
                 tick={{ fill: 'var(--color-muted)' }}
               />
-              <Tooltip 
+              <Tooltip
                 cursor={{ stroke: 'var(--color-primary)', strokeWidth: 1, strokeDasharray: '4 4', fill: 'transparent' }}
-                contentStyle={{ 
-                  backgroundColor: 'rgba(23, 23, 23, 0.85)', 
-                  border: '1px solid var(--color-hairline-on-dark)', 
-                  borderRadius: '12px', 
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.5)', 
-                  backdropFilter: 'blur(12px)' 
+                contentStyle={{
+                  backgroundColor: 'rgba(23, 23, 23, 0.85)',
+                  border: '1px solid var(--color-hairline-on-dark)',
+                  borderRadius: '12px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+                  backdropFilter: 'blur(12px)'
                 }}
                 itemStyle={{ fontWeight: 600 }}
                 labelStyle={{ color: 'var(--color-muted)', marginBottom: '4px' }}
                 formatter={(value: any) => [formatCurrency(Number(value) || 0, currency), undefined]}
               />
-              <Legend 
-                wrapperStyle={{ fontSize: '13px', paddingTop: '20px' }} 
-                iconType="circle" 
+              <Legend
+                wrapperStyle={{ fontSize: '13px', paddingTop: '20px' }}
+                iconType="circle"
               />
               {(filterType === 'all' || filterType === 'income') && (
-                 <Area 
-                   type="monotone" 
-                   dataKey="income" 
-                   stroke="#10b981" 
-                   strokeWidth={3} 
-                   fillOpacity={1} 
-                   fill="url(#colorIncome)" 
-                   name="Income" 
-                   activeDot={{ r: 6, strokeWidth: 2, stroke: '#10b981', fill: "var(--color-canvas-dark)" }} 
-                   isAnimationActive={true}
-                   animationDuration={1500}
-                   animationBegin={400}
-                   animationEasing="ease-in-out"
-                 />
+                <Area
+                  type="monotone"
+                  dataKey="income"
+                  stroke="#10b981"
+                  strokeWidth={3}
+                  fillOpacity={1}
+                  fill="url(#colorIncome)"
+                  name="Income"
+                  activeDot={{ r: 6, strokeWidth: 2, stroke: '#10b981', fill: "var(--color-canvas-dark)" }}
+                  isAnimationActive={true}
+                  animationDuration={1500}
+                  animationBegin={400}
+                  animationEasing="ease-in-out"
+                />
               )}
               {(filterType === 'all' || filterType === 'expense') && (
-                 <Area 
-                   type="monotone" 
-                   dataKey="expense" 
-                   stroke="#ef4444" 
-                   strokeWidth={3} 
-                   fillOpacity={1} 
-                   fill="url(#colorExpense)" 
-                   name="Expense" 
-                   activeDot={{ r: 6, strokeWidth: 2, stroke: '#ef4444', fill: "var(--color-canvas-dark)" }} 
-                   isAnimationActive={true}
-                   animationDuration={1500}
-                   animationBegin={600}
-                   animationEasing="ease-in-out"
-                 />
+                <Area
+                  type="monotone"
+                  dataKey="expense"
+                  stroke="#ef4444"
+                  strokeWidth={3}
+                  fillOpacity={1}
+                  fill="url(#colorExpense)"
+                  name="Expense"
+                  activeDot={{ r: 6, strokeWidth: 2, stroke: '#ef4444', fill: "var(--color-canvas-dark)" }}
+                  isAnimationActive={true}
+                  animationDuration={1500}
+                  animationBegin={600}
+                  animationEasing="ease-in-out"
+                />
               )}
             </AreaChart>
           </ResponsiveContainer>
