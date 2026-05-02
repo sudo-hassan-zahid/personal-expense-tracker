@@ -16,6 +16,8 @@ export function CursorTrail() {
     let sparkles: { x: number; y: number; vx: number; vy: number; age: number; color: string }[] = [];
     const maxAge = 40;
     const sparkleMaxAge = 60;
+    const MAX_POINTS = 50; // Cap trail length to prevent unbounded growth
+    const MAX_SPARKLES = 40; // Cap sparkle count
     let animationFrameId: number;
 
     const resize = () => {
@@ -25,11 +27,22 @@ export function CursorTrail() {
 
     const colors = ["#fcd535", "#f0b90b", "#ffffff", "#3b82f6"];
 
+    // Throttle mousemove to 16ms intervals (60fps cap)
+    let lastMove = 0;
     const onMouseMove = (e: MouseEvent) => {
+      const now = performance.now();
+      if (now - lastMove < 16) return;
+      lastMove = now;
+
       points.push({ x: e.clientX, y: e.clientY, age: 0 });
 
-      // Add sparkles
-      for (let i = 0; i < 2; i++) {
+      // Cap trail points to prevent unbounded memory growth
+      if (points.length > MAX_POINTS) {
+        points = points.slice(-MAX_POINTS);
+      }
+
+      // Add sparkles (only 1 per move instead of 2, with cap)
+      if (sparkles.length < MAX_SPARKLES) {
         sparkles.push({
           x: e.clientX,
           y: e.clientY,
@@ -41,7 +54,16 @@ export function CursorTrail() {
       }
     };
 
-    const animate = () => {
+    // Frame-rate cap at 30fps — cursor trail is decorative
+    let lastFrame = 0;
+    const FRAME_INTERVAL = 33;
+
+    const animate = (time: number) => {
+      animationFrameId = requestAnimationFrame(animate);
+
+      if (time - lastFrame < FRAME_INTERVAL) return;
+      lastFrame = time;
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Draw Trail
@@ -84,14 +106,12 @@ export function CursorTrail() {
         ctx.fill();
       });
       ctx.globalAlpha = 1;
-
-      animationFrameId = requestAnimationFrame(animate);
     };
 
     window.addEventListener("resize", resize);
-    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
     resize();
-    animate();
+    animationFrameId = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener("resize", resize);
