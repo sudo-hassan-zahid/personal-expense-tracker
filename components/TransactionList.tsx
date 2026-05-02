@@ -19,6 +19,7 @@ interface Transaction {
   note: string;
   type: "expense" | "income";
   status?: string;
+  created_at: string;
 }
 
 import { useTransactions } from "@/hooks/useTransactions";
@@ -172,22 +173,22 @@ export function TransactionList({
 
       <div className="flex flex-col gap-2">
         {/* Table Header */}
-        <div className={`grid ${enableStatusTracking ? 'grid-cols-[auto_2fr_1fr_1fr_1fr_1fr_auto]' : 'grid-cols-[auto_2fr_1fr_1fr_1fr_auto]'} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}>
-          <div className="whitespace-nowrap pl-2">#</div>
+        <div className={`grid ${enableStatusTracking ? 'grid-cols-[48px_minmax(0,2fr)_140px_100px_120px_100px_80px]' : 'grid-cols-[48px_minmax(0,2fr)_140px_100px_120px_80px]'} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}>
+          <div className="pl-2">#</div>
           <div className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1" onClick={() => toggleSort("category")}>
             Description <ArrowUpDown size={12} />
           </div>
           <div className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1" onClick={() => toggleSort("date")}>
             Date <ArrowUpDown size={12} />
           </div>
-          <div className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1" onClick={() => toggleSort("type")}>
+          <div className="text-center cursor-pointer hover:text-(--color-on-dark) flex items-center justify-center gap-1" onClick={() => toggleSort("type")}>
             Type <ArrowUpDown size={12} />
           </div>
           <div className="text-right cursor-pointer hover:text-(--color-on-dark) flex items-center justify-end gap-1" onClick={() => toggleSort("amount")}>
             Amount <ArrowUpDown size={12} />
           </div>
           {enableStatusTracking && <div className="text-center">Status</div>}
-          <div className="text-right">Action</div>
+          <div className="text-right pr-2">Action</div>
         </div>
 
         {displayedTransactions.length === 0 && (
@@ -199,39 +200,39 @@ export function TransactionList({
         {displayedTransactions.map((t, i) => (
           <div 
             key={t.id + t.type} 
-            className={`grid ${enableStatusTracking ? 'grid-cols-[auto_2fr_1fr_1fr_1fr_1fr_auto]' : 'grid-cols-[auto_2fr_1fr_1fr_1fr_auto]'} gap-4 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-500 px-2 -mx-2 rounded-lg animate-slide-up ${i < 5 ? `stagger-${i + 1}` : 'opacity-100'} ${newlyAddedId === t.id ? 'bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse' : ''}`}
+            className={`grid ${enableStatusTracking ? 'grid-cols-[48px_minmax(0,2fr)_140px_100px_120px_100px_80px]' : 'grid-cols-[48px_minmax(0,2fr)_140px_100px_120px_80px]'} gap-4 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-500 px-2 -mx-2 rounded-lg animate-slide-up ${i < 5 ? `stagger-${i + 1}` : 'opacity-100'} ${newlyAddedId === t.id ? 'bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse' : ''}`}
           >
             <div className="text-number-sm text-(--color-muted) pl-2">
               {((currentPage - 1) * itemsPerPage) + i + 1}
             </div>
-            <div className="flex items-center gap-3 text-left">
+            <div className="flex items-center gap-3 text-left min-w-0">
               {t.type === "income" ? (
-                <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center text-green-500">
+                <div className="w-8 h-8 shrink-0 rounded-full bg-green-500/10 flex items-center justify-center text-green-500">
                   <ArrowUpRight size={16} />
                 </div>
               ) : (
-                <div className="w-8 h-8 rounded-full bg-red-500/10 flex items-center justify-center text-red-500">
+                <div className="w-8 h-8 shrink-0 rounded-full bg-red-500/10 flex items-center justify-center text-red-500">
                   <ArrowDownRight size={16} />
                 </div>
               )}
-              <div className="overflow-hidden">
-                <div className="text-body-md text-(--color-on-dark) font-medium truncate">
+              <div className="overflow-hidden min-w-0">
+                <div className="text-body-md text-(--color-on-dark) font-medium truncate" title={t.note || "No note"}>
                   {t.note || "No note"}
                 </div>
-                <div className="text-caption text-(--color-muted) truncate">
+                <div className="text-caption text-(--color-muted) truncate" title={(t.type === "income" ? t.source : t.category) || ""}>
                   {t.type === "income" ? t.source : t.category}
                 </div>
               </div>
             </div>
-            <div className="text-number-sm text-(--color-muted)">
+            <div className="text-number-sm text-(--color-muted) truncate">
               {format(new Date(t.date), "MMM d, yyyy")}
             </div>
-            <div className="text-body-sm capitalize">
+            <div className="text-body-sm capitalize flex justify-center">
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.type === 'income' ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'}`}>
                 {t.type}
               </span>
             </div>
-            <div className={`text-number-md font-semibold text-right ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
+            <div className={`text-number-md font-semibold text-right ${t.type === 'income' ? 'text-green-500' : 'text-red-500'} truncate`}>
               {t.type === "income" ? "+" : "-"}{formatCurrency(Number(t.amount), currency).replace(/^[^\d]*/, '')}
             </div>
             {enableStatusTracking && (
@@ -241,7 +242,7 @@ export function TransactionList({
                 </span>
               </div>
             )}
-            <div className="text-right flex justify-end gap-1">
+            <div className="text-right flex justify-end gap-1 pr-2">
               <button
                 onClick={() => setEditingTransaction(t)}
                 className="p-2 text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-primary)/10 rounded-md transition-all"
