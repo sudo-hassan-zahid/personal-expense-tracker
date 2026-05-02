@@ -9,6 +9,7 @@ interface Transaction {
   date: string;
   note: string;
   type: "expense" | "income";
+  status?: string;
 }
 
 export function useTransactions(initialTransactions: Transaction[], initialItemsPerPage: number) {
