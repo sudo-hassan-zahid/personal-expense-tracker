@@ -22,3 +22,26 @@ export async function getProfile() {
 
   return data;
 }
+
+export async function updateCurrency(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+
+  const currency = formData.get("currency") as string;
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ currency, updated_at: new Date().toISOString() })
+    .eq("id", user.id);
+
+  if (error) {
+    console.error("Error updating currency:", error);
+    throw new Error("Failed to update currency");
+  }
+
+  revalidatePath("/dashboard");
+}
