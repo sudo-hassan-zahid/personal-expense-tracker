@@ -184,7 +184,7 @@ export function TransactionList({
         {displayedTransactions.map((t, i) => (
           <div 
             key={t.id + t.type} 
-            className={`grid grid-cols-[auto_2fr_1fr_1fr_1fr_auto] gap-4 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-500 px-2 -mx-2 rounded-lg ${newlyAddedId === t.id ? 'bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse' : ''}`}
+            className={`grid grid-cols-[auto_2fr_1fr_1fr_1fr_auto] gap-4 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-500 px-2 -mx-2 rounded-lg animate-slide-up ${i < 5 ? `stagger-${i + 1}` : 'opacity-100'} ${newlyAddedId === t.id ? 'bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse' : ''}`}
           >
             <div className="text-number-sm text-(--color-muted) pl-2">
               {((currentPage - 1) * initialItemsPerPage) + i + 1}
