@@ -3,6 +3,10 @@
 import { createClient } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 
+/**
+ * Adds a new income record to the database.
+ * @param formData - The form data containing amount, source, date, and note.
+ */
 export async function addIncome(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -33,6 +37,10 @@ export async function addIncome(formData: FormData) {
   revalidatePath("/dashboard/income");
 }
 
+/**
+ * Deletes an income record by its ID.
+ * @param id - The UUID of the income to delete.
+ */
 export async function deleteIncome(id: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("incomes").delete().match({ id });
@@ -46,6 +54,11 @@ export async function deleteIncome(id: string) {
   revalidatePath("/dashboard/income");
 }
 
+/**
+ * Updates an existing income record.
+ * @param id - The UUID of the income to update.
+ * @param formData - The form data containing updated fields (amount, source, date, note, status).
+ */
 export async function updateIncome(id: string, formData: FormData) {
   const supabase = await createClient();
   const amount = parseFloat(formData.get("amount") as string);
