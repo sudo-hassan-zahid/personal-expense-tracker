@@ -56,6 +56,15 @@
   h1, h2, h3, h4, h5, h6 {
     color: var(--color-on-dark);
   }
+
+  .theme-light {
+    --color-canvas-dark: #ffffff;
+    --color-body: #181a20;
+    --color-on-dark: #181a20;
+    --color-surface-card-dark: #f5f5f5;
+    --color-surface-elevated-dark: #eaecef;
+    --color-hairline-on-dark: #cdd1d6;
+  }
 }
 
 /* Base utility classes for typography */
