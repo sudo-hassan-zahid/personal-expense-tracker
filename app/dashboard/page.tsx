@@ -170,7 +170,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                 <div className="text-number-sm text-(--color-muted) pl-2 pr-2">
                   {((currentPage - 1) * ITEMS_PER_PAGE) + i + 1}
                 </div>
-                <div className="flex items-center justify-center gap-3 text-left">
+                <div className="flex items-center gap-3 text-left">
                   {t.type === "income" ? (
                     <div className="w-8 h-8 rounded-full bg-(--color-trading-up)/10 flex items-center justify-center text-(--color-trading-up)">
                       <ArrowUpRight size={16} />
