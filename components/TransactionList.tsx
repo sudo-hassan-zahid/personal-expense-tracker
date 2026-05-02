@@ -25,6 +25,10 @@ import { useTransactions } from "@/hooks/useTransactions";
 import { EditTransactionModal } from "./EditTransactionModal";
 import { Category } from "./CategorySelect";
 
+/**
+ * Component for displaying and managing the list of transactions.
+ * Supports sorting, searching, pagination, and editing.
+ */
 export function TransactionList({
   initialTransactions,
   currency,
