@@ -1,16 +1,14 @@
 import { createClient } from "@/lib/supabase";
-import { formatCurrency } from "@/lib/currency";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import { getCurrentPKTDate } from "@/lib/date-utils";
 import { cacheTag } from "next/cache";
-import { cookies } from "next/headers";
 
 /**
  * Cached data fetcher for the dashboard.
  * Runs all 5 queries in parallel with a single Supabase client.
  * Cache is invalidated via revalidateTag("transactions"/"categories"/"profile").
  */
-export async function getDashboardData(cookieStore?: any) {
+export async function getDashboardData(cookieStore?: unknown) {
   "use cache";
   cacheTag("transactions", "categories", "profile");
 
@@ -22,7 +20,9 @@ export async function getDashboardData(cookieStore?: any) {
   const monthEnd = format(endOfMonth(todayPKT), "yyyy-MM-dd");
 
   // Get user first (needed for profile query)
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   const userId = user?.id ?? "";
 
   // Run ALL queries in parallel — this is the #1 optimization
@@ -53,11 +53,7 @@ export async function getDashboardData(cookieStore?: any) {
       .select("id, name, type, parent_id")
       .eq("type", "income")
       .order("name", { ascending: true }),
-    supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .maybeSingle(),
+    supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
   ]);
 
   return {
