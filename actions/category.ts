@@ -10,7 +10,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  * when called alongside other queries (e.g. in dashboard Promise.all).
  */
 export async function getCategories(type: "expense" | "income", client?: SupabaseClient) {
-  const supabase = client || await createClient();
+  const supabase = client || (await createClient());
 
   const { data, error } = await supabase
     .from("categories")
@@ -73,10 +73,7 @@ export async function updateCategory(id: string, name: string) {
   const type = category.type;
 
   // 2. Update the category name
-  const { error } = await supabase
-    .from("categories")
-    .update({ name })
-    .eq("id", id);
+  const { error } = await supabase.from("categories").update({ name }).eq("id", id);
 
   if (error) {
     if (error.code === "23505") {
@@ -89,15 +86,9 @@ export async function updateCategory(id: string, name: string) {
   // 3. Propagate name change to linked transactions (since they use text links)
   if (oldName !== name) {
     if (type === "expense") {
-      await supabase
-        .from("expenses")
-        .update({ category: name })
-        .ilike("category", oldName);
+      await supabase.from("expenses").update({ category: name }).ilike("category", oldName);
     } else {
-      await supabase
-        .from("incomes")
-        .update({ source: name })
-        .ilike("source", oldName);
+      await supabase.from("incomes").update({ source: name }).ilike("source", oldName);
     }
   }
 
