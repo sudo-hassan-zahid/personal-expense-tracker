@@ -3,6 +3,10 @@
 import { createClient } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 
+/**
+ * Fetches the current user's profile from the database.
+ * @returns The profile object or null if not found.
+ */
 export async function getProfile() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -23,6 +27,10 @@ export async function getProfile() {
   return data;
 }
 
+/**
+ * Updates the user's currency preference.
+ * @param formData - The form data containing the new currency code.
+ */
 export async function updateCurrency(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -45,6 +53,10 @@ export async function updateCurrency(formData: FormData) {
   revalidatePath("/dashboard");
 }
 
+/**
+ * Updates the user's full profile including theme, pagination, and status tracking.
+ * @param formData - The form data containing name, email, password, currency, theme, and feature toggles.
+ */
 export async function updateProfile(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
