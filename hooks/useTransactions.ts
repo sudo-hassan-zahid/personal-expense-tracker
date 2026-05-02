@@ -18,7 +18,7 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
   const [sortField, setSortField] = useState<string>("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   const [minAmount, setMinAmount] = useState<string>("");
   const [maxAmount, setMaxAmount] = useState<string>("");
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -43,9 +43,9 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
 
       const matchesMinAmount = minAmount === "" || amount >= Number(minAmount);
       const matchesMaxAmount = maxAmount === "" || amount <= Number(maxAmount);
-      const matchesDateRange = (!startDate || !endDate) || isWithinInterval(date, { 
-        start: startOfDay(startDate), 
-        end: endOfDay(endDate) 
+      const matchesDateRange = (!startDate || !endDate) || isWithinInterval(date, {
+        start: startOfDay(startDate),
+        end: endOfDay(endDate)
       });
 
       return matchesSearch && matchesMinAmount && matchesMaxAmount && matchesDateRange;
@@ -90,7 +90,7 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
 
       if (valA < valB) return sortOrder === "asc" ? -1 : 1;
       if (valA > valB) return sortOrder === "asc" ? 1 : -1;
-      
+
       // Tie breaker: newest created_at first for desc, oldest for asc
       const timeA = new Date(a.created_at).getTime();
       const timeB = new Date(b.created_at).getTime();

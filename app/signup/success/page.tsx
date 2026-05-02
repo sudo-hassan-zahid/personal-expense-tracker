@@ -14,16 +14,16 @@ export default function SignupSuccessPage() {
             <MailCheck size={48} />
           </div>
         </div>
-        
+
         <h2 className="text-[32px] tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 font-bold mb-4">
           Check your email
         </h2>
-        
+
         <div className="bg-(--color-surface-card-dark)/80 backdrop-blur-xl py-8 px-4 border border-(--color-hairline-on-dark) sm:rounded-2xl sm:px-10 shadow-2xl">
           <p className="text-body-md text-(--color-on-dark) mb-6">
             We've sent a confirmation link to your email address. Please click the link to activate your account.
           </p>
-          
+
           <div className="space-y-4">
             <Link
               href="/login"
@@ -31,7 +31,7 @@ export default function SignupSuccessPage() {
             >
               Back to Login
             </Link>
-            
+
             <p className="text-caption text-(--color-muted)">
               Didn't receive the email? Check your spam folder or try signing up again.
             </p>
