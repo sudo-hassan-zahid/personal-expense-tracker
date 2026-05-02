@@ -26,3 +26,15 @@ Make sure you are using pnpm as your package manager.
 ```bash
 pnpm install
 ```
+
+### 2. Configure Environment Variables
+Create a .env.local file in the root directory (you can copy from .env.example):
+
+```bash
+cp .env.example .env.local
+```
+
+Then, populate the file with your actual Supabase credentials:
+
+- NEXT_PUBLIC_SUPABASE_URL: Your Supabase Project URL
+- NEXT_PUBLIC_SUPABASE_ANON_KEY: Your Supabase anon / public API key. (Note: This key is safe to be exposed on the frontend since we are enforcing RLS.)
