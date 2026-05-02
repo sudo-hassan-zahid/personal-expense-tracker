@@ -3,6 +3,10 @@
 import { createClient } from "@/lib/supabase";
 import { revalidatePath } from "next/cache";
 
+/**
+ * Adds a new expense record to the database.
+ * @param formData - The form data containing amount, category, date, and note.
+ */
 export async function addExpense(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -33,6 +37,10 @@ export async function addExpense(formData: FormData) {
   revalidatePath("/dashboard/expenses");
 }
 
+/**
+ * Deletes an expense record by its ID.
+ * @param id - The UUID of the expense to delete.
+ */
 export async function deleteExpense(id: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("expenses").delete().match({ id });
@@ -46,6 +54,11 @@ export async function deleteExpense(id: string) {
   revalidatePath("/dashboard/expenses");
 }
 
+/**
+ * Updates an existing expense record.
+ * @param id - The UUID of the expense to update.
+ * @param formData - The form data containing updated fields (amount, category, date, note, status).
+ */
 export async function updateExpense(id: string, formData: FormData) {
   const supabase = await createClient();
   const amount = parseFloat(formData.get("amount") as string);
