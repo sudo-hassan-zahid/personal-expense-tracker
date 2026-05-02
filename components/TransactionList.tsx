@@ -38,6 +38,7 @@ export function TransactionList({
   expenseCategories,
   incomeCategories,
   enableStatusTracking,
+  isWideView = false,
 }: {
   initialTransactions: Transaction[];
   currency: string;
@@ -46,6 +47,7 @@ export function TransactionList({
   expenseCategories: Category[];
   incomeCategories: Category[];
   enableStatusTracking: boolean;
+  isWideView?: boolean;
 }) {
   const {
     search, setSearch,
@@ -173,10 +175,10 @@ export function TransactionList({
 
       <div className="flex flex-col gap-2">
         {/* Table Header */}
-        <div className={`grid ${enableStatusTracking ? 'grid-cols-[48px_minmax(0,2fr)_140px_100px_120px_100px_80px]' : 'grid-cols-[48px_minmax(0,2fr)_140px_100px_120px_80px]'} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}>
+        <div className={`grid ${enableStatusTracking ? (isWideView ? 'grid-cols-[48px_minmax(0,3fr)_140px_100px_120px_100px_80px]' : 'grid-cols-[48px_minmax(0,2fr)_140px_100px_120px_100px_80px]') : (isWideView ? 'grid-cols-[48px_minmax(0,3fr)_140px_100px_120px_80px]' : 'grid-cols-[48px_minmax(0,2fr)_140px_100px_120px_80px]')} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}>
           <div className="pl-2">#</div>
           <div className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1" onClick={() => toggleSort("category")}>
-            Description <ArrowUpDown size={12} />
+            Description <ArrowUpDown size={12} className={sortField === "category" ? "text-(--color-primary)" : ""} />
           </div>
           <div className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1" onClick={() => toggleSort("date")}>
             Date <ArrowUpDown size={12} />
@@ -187,7 +189,14 @@ export function TransactionList({
           <div className="text-right cursor-pointer hover:text-(--color-on-dark) flex items-center justify-end gap-1" onClick={() => toggleSort("amount")}>
             Amount <ArrowUpDown size={12} />
           </div>
-          {enableStatusTracking && <div className="text-center">Status</div>}
+          {enableStatusTracking && (
+            <div 
+              className="text-center cursor-pointer hover:text-(--color-on-dark) flex items-center justify-center gap-1 transition-colors" 
+              onClick={() => toggleSort("status")}
+            >
+              Status <ArrowUpDown size={12} className={sortField === "status" ? "text-(--color-primary)" : ""} />
+            </div>
+          )}
           <div className="text-right pr-2">Action</div>
         </div>
 
@@ -200,7 +209,7 @@ export function TransactionList({
         {displayedTransactions.map((t, i) => (
           <div 
             key={t.id + t.type} 
-            className={`grid ${enableStatusTracking ? 'grid-cols-[48px_minmax(0,2fr)_140px_100px_120px_100px_80px]' : 'grid-cols-[48px_minmax(0,2fr)_140px_100px_120px_80px]'} gap-4 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-500 px-2 -mx-2 rounded-lg animate-slide-up ${i < 5 ? `stagger-${i + 1}` : 'opacity-100'} ${newlyAddedId === t.id ? 'bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse' : ''}`}
+            className={`grid ${enableStatusTracking ? (isWideView ? 'grid-cols-[48px_minmax(0,3fr)_140px_100px_120px_100px_80px]' : 'grid-cols-[48px_minmax(0,2fr)_140px_100px_120px_100px_80px]') : (isWideView ? 'grid-cols-[48px_minmax(0,3fr)_140px_100px_120px_80px]' : 'grid-cols-[48px_minmax(0,2fr)_140px_100px_120px_80px]')} gap-4 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-500 px-2 -mx-2 rounded-lg animate-slide-up ${i < 5 ? `stagger-${i + 1}` : 'opacity-100'} ${newlyAddedId === t.id ? 'bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse' : ''}`}
           >
             <div className="text-number-sm text-(--color-muted) pl-2">
               {((currentPage - 1) * itemsPerPage) + i + 1}
@@ -215,11 +224,11 @@ export function TransactionList({
                   <ArrowDownRight size={16} />
                 </div>
               )}
-              <div className="overflow-hidden min-w-0">
-                <div className="text-body-md text-(--color-on-dark) font-medium truncate" title={t.note || "No note"}>
+              <div className="overflow-hidden min-w-0 flex-1">
+                <div className={`text-body-md text-(--color-on-dark) font-medium ${isWideView ? 'break-words' : 'truncate'}`} title={t.note || "No note"}>
                   {t.note || "No note"}
                 </div>
-                <div className="text-caption text-(--color-muted) truncate" title={(t.type === "income" ? t.source : t.category) || ""}>
+                <div className={`text-caption text-(--color-muted) ${isWideView ? 'break-words' : 'truncate'}`} title={(t.type === "income" ? t.source : t.category) || ""}>
                   {t.type === "income" ? t.source : t.category}
                 </div>
               </div>
