@@ -38,8 +38,11 @@ cp .env.example .env.local
 
 Then, populate the file with your actual Supabase credentials:
 
-- NEXT_PUBLIC_SUPABASE_URL: Your Supabase Project URL
-- NEXT_PUBLIC_SUPABASE_ANON_KEY: Your Supabase anon / public API key. (Note: This key is safe to be exposed on the frontend since we are enforcing RLS.)
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+(Note: The anon key is safe to be exposed on the frontend since we are enforcing RLS.)
 
 ### 3. Setup Database Schema & RLS
 Open your Supabase project dashboard, navigate to the SQL Editor, and copy-paste the contents of the database.sql file provided in this repository. Run the script to:
