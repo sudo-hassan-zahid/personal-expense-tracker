@@ -1,14 +1,35 @@
 /**
- * Format a number as currency using the Intl.NumberFormat API.
- * Uses the user's stored currency code (e.g., 'PKR', 'USD', 'EUR').
+ * Custom display symbols for currencies where Intl.NumberFormat
+ * doesn't output the commonly used symbol.
+ * e.g., PKR outputs "PKR 15,000.00" but we want "Rs. 15,000.00"
+ */
+const CURRENCY_SYMBOL_OVERRIDES: Record<string, string> = {
+  PKR: "Rs.",
+  INR: "₹",
+  BDT: "৳",
+  SAR: "SR",
+};
+
+/**
+ * Format a number as currency using the Intl.NumberFormat API,
+ * with custom symbol overrides for currencies like PKR → Rs.
  */
 export function formatCurrency(amount: number, currencyCode: string = "USD"): string {
-  return new Intl.NumberFormat("en-US", {
+  const formatted = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currencyCode,
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   }).format(amount);
+
+  const override = CURRENCY_SYMBOL_OVERRIDES[currencyCode];
+  if (override) {
+    // Replace the Intl-generated symbol with our custom one
+    // Intl outputs e.g. "PKR 15,000.00" or "PKR15,000.00"
+    return formatted.replace(/^[^\d\-−]*/, `${override} `);
+  }
+
+  return formatted;
 }
 
 /**
@@ -18,7 +39,7 @@ export const SUPPORTED_CURRENCIES = [
   { code: "USD", name: "US Dollar", symbol: "$" },
   { code: "EUR", name: "Euro", symbol: "€" },
   { code: "GBP", name: "British Pound", symbol: "£" },
-  { code: "PKR", name: "Pakistani Rupee", symbol: "Rs" },
+  { code: "PKR", name: "Pakistani Rupee", symbol: "Rs." },
   { code: "INR", name: "Indian Rupee", symbol: "₹" },
   { code: "AED", name: "UAE Dirham", symbol: "د.إ" },
   { code: "SAR", name: "Saudi Riyal", symbol: "﷼" },
