@@ -37,7 +37,10 @@ export default async function SignupPage(props: {
           )}
           <form className="space-y-6" action={signup}>
             <div>
-              <label htmlFor="name" className="block text-body-sm font-medium text-(--color-on-dark) mb-1.5">
+              <label
+                htmlFor="name"
+                className="block text-body-sm font-medium text-(--color-on-dark) mb-1.5"
+              >
                 Full Name
               </label>
               <div className="mt-1">
@@ -54,7 +57,10 @@ export default async function SignupPage(props: {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-body-sm font-medium text-(--color-on-dark) mb-1.5">
+              <label
+                htmlFor="email"
+                className="block text-body-sm font-medium text-(--color-on-dark) mb-1.5"
+              >
                 Email address
               </label>
               <div className="mt-1">
@@ -71,7 +77,10 @@ export default async function SignupPage(props: {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-body-sm font-medium text-(--color-on-dark) mb-1.5">
+              <label
+                htmlFor="password"
+                className="block text-body-sm font-medium text-(--color-on-dark) mb-1.5"
+              >
                 Password
               </label>
               <div className="mt-1">
@@ -111,7 +120,10 @@ export default async function SignupPage(props: {
 
             <div className="mt-6 text-center text-body-md text-(--color-muted)">
               Already have an account?{" "}
-              <Link href="/login" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+              <Link
+                href="/login"
+                className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+              >
                 Log in
               </Link>
             </div>
@@ -121,4 +133,3 @@ export default async function SignupPage(props: {
     </div>
   );
 }
-
