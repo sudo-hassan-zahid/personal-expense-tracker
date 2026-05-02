@@ -9,7 +9,7 @@ Live Demo: [https://expense-tracker-by-hassan.vercel.app](https://expense-tracke
 - Framework: Next.js 15 (App Router)
 - Backend: Supabase (PostgreSQL + Auth)
 - Database: Row Level Security (RLS)
-- Styling: Tailwind CSS v4
+- Styling: Tailwind CSS v4 (Engineered for performance)
 - Icons: Lucide React
 - Package Manager: pnpm
 
