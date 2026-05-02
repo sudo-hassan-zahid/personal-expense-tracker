@@ -26,7 +26,7 @@ Deployed Application: [https://expense-tracker-by-hassan.vercel.app](https://exp
 
 3. Initialize database schema using the `database.sql` file in the Supabase SQL Editor.
 
-4. Run the development server:
+4. Start the development server:
    ```bash
    pnpm dev
    ```
