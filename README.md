@@ -9,6 +9,9 @@ A fast, scalable personal finance tracker designed with a Binance-inspired UI. B
 - **Supabase Authentication**: Secure email/password login integrated seamlessly with Next.js middleware.
 - **Strict Row Level Security**: All PostgreSQL databases are protected by RLS (`user_id = auth.uid()`).
 - **Dashboard Filters**: Transaction tables support fast category and type filtering via native Next.js `searchParams`.
+- **Transaction Editing**: Full CRUD support for both income and expense records with type migration.
+- **Status Tracking**: Optional preference to track "Pending" vs "Done" transactions for more accurate financial summaries.
+- **Personalized UI**: Toggleable cursor trails and theme preferences stored in user profiles.
 
 ## ⚙️ Tech Stack
 
