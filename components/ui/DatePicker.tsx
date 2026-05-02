@@ -8,11 +8,11 @@ import { Calendar } from "./Calendar";
 export function DatePicker({
   name,
   defaultValue,
-  label
+  label,
 }: {
-  name: string,
-  defaultValue?: string,
-  label?: string
+  name: string;
+  defaultValue?: string;
+  label?: string;
 }) {
   const [selectedDate, setSelectedDate] = useState<Date>(
     defaultValue ? new Date(defaultValue) : new Date()
