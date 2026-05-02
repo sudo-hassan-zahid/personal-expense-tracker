@@ -26,4 +26,9 @@ Live Demo: [https://expense-tracker-by-hassan.vercel.app](https://expense-tracke
 
 3. Initialize database schema using `database.sql` in Supabase SQL Editor.
 
+4. Run the development server:
+   ```bash
+   pnpm dev
+   ```
+
 
