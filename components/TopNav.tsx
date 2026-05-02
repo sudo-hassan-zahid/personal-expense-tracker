@@ -27,7 +27,7 @@ export async function TopNav() {
       <div className="flex items-center gap-4">
         {user ? (
           <form action="/auth/signout" method="post">
-            <button className="text-button text-(--color-body) hover:text-(--color-primary) bg-transparent">Log Out</button>
+            <button className="text-button text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md transition-colors">Log Out</button>
           </form>
         ) : (
           <>
