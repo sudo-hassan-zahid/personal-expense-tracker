@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from "recharts";
 import { format, subDays, parseISO, eachDayOfInterval, startOfMonth, endOfMonth, startOfDay, endOfDay } from "date-fns";
 import { formatCurrency } from "@/lib/currency";
@@ -24,6 +24,11 @@ export function DashboardChart({ transactions, currency }: { transactions: Trans
   });
   const [filterType, setFilterType] = useState<"all" | "income" | "expense">("all");
   const [filterCategory, setFilterCategory] = useState<string>("all");
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const categories = useMemo(() => {
     const cats = new Set<string>();
@@ -135,8 +140,8 @@ export function DashboardChart({ transactions, currency }: { transactions: Trans
              <div className="text-4xl mb-2 opacity-50">📊</div>
             No data for selected filters.
           </div>
-        ) : (
-          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+        ) : isMounted ? (
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0} debounce={100}>
             <AreaChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
@@ -218,6 +223,8 @@ export function DashboardChart({ transactions, currency }: { transactions: Trans
               )}
             </AreaChart>
           </ResponsiveContainer>
+        ) : (
+          <div className="h-full w-full bg-(--color-canvas-dark)/10 animate-pulse rounded-xl" />
         )}
       </div>
     </div>
