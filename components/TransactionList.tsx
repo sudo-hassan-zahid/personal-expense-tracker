@@ -20,6 +20,8 @@ interface Transaction {
   type: "expense" | "income";
 }
 
+import { useTransactions } from "@/hooks/useTransactions";
+
 export function TransactionList({
   initialTransactions,
   currency,
@@ -31,18 +33,23 @@ export function TransactionList({
   paginationEnabled: boolean;
   itemsPerPage: number;
 }) {
-  const [search, setSearch] = useState("");
-  const [sortField, setSortField] = useState<string>("date");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [currentPage, setCurrentPage] = useState(1);
+  const {
+    search, setSearch,
+    sortField, setSortField,
+    sortOrder, setSortOrder,
+    currentPage, setCurrentPage,
+    minAmount, setMinAmount,
+    maxAmount, setMaxAmount,
+    startDate, setStartDate,
+    endDate, setEndDate,
+    sortedTransactions,
+    totalItems,
+    totalPages,
+    displayedTransactions
+  } = useTransactions(initialTransactions, initialItemsPerPage);
+
   const [newlyAddedId, setNewlyAddedId] = useState<string | null>(null);
-  
-  // Advanced filters
   const [showFilters, setShowFilters] = useState(false);
-  const [minAmount, setMinAmount] = useState<string>("");
-  const [maxAmount, setMaxAmount] = useState<string>("");
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
 
   // Monitor for new transactions to show highlight
   const [prevCount, setPrevCount] = useState(initialTransactions.length);
@@ -58,58 +65,6 @@ export function TransactionList({
     setPrevCount(initialTransactions.length);
   }, [initialTransactions]);
 
-  const filteredTransactions = useMemo(() => {
-    return initialTransactions.filter((t) => {
-      const searchLower = search.toLowerCase();
-      const categoryText = (t.type === "income" ? t.source : t.category) || "";
-      const amount = Number(t.amount);
-      const date = new Date(t.date);
-      const dateText = format(date, "MMM d, yyyy").toLowerCase();
-      const noteText = (t.note || "").toLowerCase();
-
-      // Basic Search
-      const matchesSearch = (
-        categoryText.toLowerCase().includes(searchLower) ||
-        amount.toString().includes(searchLower) ||
-        dateText.includes(searchLower) ||
-        noteText.includes(searchLower) ||
-        t.type.includes(searchLower)
-      );
-
-      // Advanced Filters
-      const matchesMinAmount = minAmount === "" || amount >= Number(minAmount);
-      const matchesMaxAmount = maxAmount === "" || amount <= Number(maxAmount);
-      const matchesDateRange = (!startDate || !endDate) || isWithinInterval(date, { 
-        start: startOfDay(startDate), 
-        end: endOfDay(endDate) 
-      });
-
-      return matchesSearch && matchesMinAmount && matchesMaxAmount && matchesDateRange;
-    });
-  }, [initialTransactions, search, minAmount, maxAmount, startDate, endDate]);
-
-  const sortedTransactions = useMemo(() => {
-    return [...filteredTransactions].sort((a, b) => {
-      let valA: any = a[sortField as keyof Transaction] || "";
-      let valB: any = b[sortField as keyof Transaction] || "";
-
-      if (sortField === "amount") {
-        valA = Number(a.amount);
-        valB = Number(b.amount);
-      } else if (sortField === "category") {
-        valA = (a.type === "income" ? a.source : a.category) || "";
-        valB = (b.type === "income" ? b.source : b.category) || "";
-      } else if (sortField === "date") {
-        valA = new Date(a.date).getTime();
-        valB = new Date(b.date).getTime();
-      }
-
-      if (valA < valB) return sortOrder === "asc" ? -1 : 1;
-      if (valA > valB) return sortOrder === "asc" ? 1 : -1;
-      return 0;
-    });
-  }, [filteredTransactions, sortField, sortOrder]);
-
   const toggleSort = (field: string) => {
     if (sortField === field) {
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
@@ -118,11 +73,6 @@ export function TransactionList({
       setSortOrder("desc");
     }
   };
-
-  const totalPages = Math.ceil(sortedTransactions.length / initialItemsPerPage);
-  const displayedTransactions = paginationEnabled 
-    ? sortedTransactions.slice((currentPage - 1) * initialItemsPerPage, currentPage * initialItemsPerPage)
-    : sortedTransactions;
 
   return (
     <div className="flex flex-col gap-4">
@@ -289,7 +239,7 @@ export function TransactionList({
         <PaginationControls
           currentPage={currentPage}
           totalPages={totalPages}
-          totalItems={filteredTransactions.length}
+          totalItems={totalItems}
           itemsPerPage={initialItemsPerPage}
           onPageChange={setCurrentPage}
         />
