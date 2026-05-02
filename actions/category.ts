@@ -54,8 +54,58 @@ export async function addCategory(formData: FormData) {
   revalidatePath("/dashboard");
 }
 
+export async function updateCategory(id: string, name: string) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("categories")
+    .update({ name, updated_at: new Date().toISOString() })
+    .eq("id", id);
+
+  if (error) {
+    console.error("Error updating category:", error);
+    throw new Error("Failed to update category");
+  }
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/categories");
+}
+
 export async function deleteCategory(id: string) {
   const supabase = await createClient();
+  
+  // Get category details first
+  const { data: category, error: fetchError } = await supabase
+    .from("categories")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (fetchError || !category) {
+    throw new Error("Category not found");
+  }
+
+  // Check if linked to expenses or incomes
+  if (category.type === "expense") {
+    const { count, error: checkError } = await supabase
+      .from("expenses")
+      .select("*", { count: "exact", head: true })
+      .eq("category", category.name);
+    
+    if (checkError) throw checkError;
+    if (count && count > 0) {
+      throw new Error(`Cannot delete: This category is linked to ${count} record(s)`);
+    }
+  } else {
+    const { count, error: checkError } = await supabase
+      .from("incomes")
+      .select("*", { count: "exact", head: true })
+      .eq("source", category.name);
+    
+    if (checkError) throw checkError;
+    if (count && count > 0) {
+      throw new Error(`Cannot delete: This source is linked to ${count} record(s)`);
+    }
+  }
 
   const { error } = await supabase.from("categories").delete().match({ id });
 
@@ -65,4 +115,5 @@ export async function deleteCategory(id: string) {
   }
 
   revalidatePath("/dashboard");
+  revalidatePath("/dashboard/categories");
 }
