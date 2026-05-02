@@ -81,18 +81,56 @@ export default async function ProfilePage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
-            <label className="relative inline-flex items-center cursor-pointer group">
-              <input 
-                type="checkbox" 
-                id="pagination" 
-                name="pagination" 
-                defaultChecked={profile?.pagination_enabled ?? true}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-(--color-surface-elevated-dark) border border-(--color-hairline-on-dark) peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-indigo-500 group-hover:after:scale-95"></div>
-              <span className="ml-3 text-body-md text-(--color-on-dark)">Enable Pagination on Dashboard</span>
-            </label>
+          <div className="flex flex-col gap-4 border-t border-(--color-hairline-on-dark) pt-6">
+            <h3 className="text-body-md font-semibold text-(--color-on-dark)">Preferences</h3>
+            
+            <div className="flex items-center justify-between p-4 bg-(--color-canvas-dark)/50 rounded-xl border border-(--color-hairline-on-dark)">
+              <div className="flex flex-col">
+                <span className="text-body-md text-(--color-on-dark)">Enable Status Tracking</span>
+                <span className="text-caption text-(--color-muted)">Only "Done" transactions will be calculated in totals.</span>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer group">
+                <input 
+                  type="checkbox" 
+                  name="enable_status_tracking" 
+                  defaultChecked={profile?.enable_status_tracking ?? false}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-(--color-surface-elevated-dark) border border-(--color-hairline-on-dark) peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-indigo-500"></div>
+              </label>
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-(--color-canvas-dark)/50 rounded-xl border border-(--color-hairline-on-dark)">
+              <div className="flex flex-col">
+                <span className="text-body-md text-(--color-on-dark)">Show Cursor Trail</span>
+                <span className="text-caption text-(--color-muted)">Enable the glowing magic trail follow your cursor.</span>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer group">
+                <input 
+                  type="checkbox" 
+                  name="show_cursor_trail" 
+                  defaultChecked={profile?.show_cursor_trail ?? true}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-(--color-surface-elevated-dark) border border-(--color-hairline-on-dark) peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-indigo-500"></div>
+              </label>
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-(--color-canvas-dark)/50 rounded-xl border border-(--color-hairline-on-dark)">
+              <div className="flex flex-col">
+                <span className="text-body-md text-(--color-on-dark)">Enable Pagination</span>
+                <span className="text-caption text-(--color-muted)">Split the transaction list into multiple pages.</span>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer group">
+                <input 
+                  type="checkbox" 
+                  name="pagination" 
+                  defaultChecked={profile?.pagination_enabled ?? true}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-(--color-surface-elevated-dark) border border-(--color-hairline-on-dark) peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-indigo-500"></div>
+              </label>
+            </div>
           </div>
 
           <button type="submit" className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-md py-3 mt-4 hover:bg-(--color-primary-active) transition-colors">
