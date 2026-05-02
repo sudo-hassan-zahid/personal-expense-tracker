@@ -19,3 +19,10 @@ Date Parsing: Date-fns
 
 ## 🚀 How to Run and Test Locally
 Follow these steps to safely run the project in your local development environment:
+
+### 1. Install Dependencies
+Make sure you are using pnpm as your package manager.
+
+```bash
+pnpm install
+```
