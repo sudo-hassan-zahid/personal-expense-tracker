@@ -83,12 +83,12 @@ export function DashboardChart({ transactions, currency }: { transactions: Trans
   }, [transactions, dateRange, filterType, filterCategory]);
 
   return (
-    <div className="w-full bg-(--color-surface-card-dark) p-6 md:p-8 rounded-2xl border border-(--color-hairline-on-dark) flex flex-col gap-8 shadow-2xl relative overflow-hidden">
+    <div className="w-full bg-(--color-surface-card-dark) p-6 md:p-8 rounded-2xl border border-(--color-hairline-on-dark) flex flex-col gap-8 shadow-2xl relative overflow-hidden animate-slide-up">
       {/* Background glow effects */}
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-purple-500/10 rounded-full blur-[80px] pointer-events-none" />
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10 animate-slide-up stagger-1">
         <div>
           <h2 className="text-[24px] tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 font-bold mb-1">
             Dynamic Cashflow Analytics
@@ -129,7 +129,7 @@ export function DashboardChart({ transactions, currency }: { transactions: Trans
         </div>
       </div>
 
-      <div className="h-[380px] w-full relative z-10">
+      <div className="h-[380px] w-full relative z-10 animate-slide-up stagger-2">
         {chartData.length === 0 ? (
           <div className="h-full w-full flex flex-col items-center justify-center text-(--color-muted) text-body-md border border-dashed border-(--color-hairline-on-dark) rounded-xl bg-(--color-canvas-dark)/20">
              <div className="text-4xl mb-2 opacity-50">📊</div>
@@ -194,6 +194,10 @@ export function DashboardChart({ transactions, currency }: { transactions: Trans
                    fill="url(#colorIncome)" 
                    name="Income" 
                    activeDot={{ r: 6, strokeWidth: 2, stroke: '#10b981', fill: "var(--color-canvas-dark)" }} 
+                   isAnimationActive={true}
+                   animationDuration={1500}
+                   animationBegin={400}
+                   animationEasing="ease-in-out"
                  />
               )}
               {(filterType === 'all' || filterType === 'expense') && (
@@ -206,6 +210,10 @@ export function DashboardChart({ transactions, currency }: { transactions: Trans
                    fill="url(#colorExpense)" 
                    name="Expense" 
                    activeDot={{ r: 6, strokeWidth: 2, stroke: '#ef4444', fill: "var(--color-canvas-dark)" }} 
+                   isAnimationActive={true}
+                   animationDuration={1500}
+                   animationBegin={600}
+                   animationEasing="ease-in-out"
                  />
               )}
             </AreaChart>
