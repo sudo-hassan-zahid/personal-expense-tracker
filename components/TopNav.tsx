@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
+import { ThemeToggle } from "./ThemeToggle";
 
-export async function TopNav() {
+export async function TopNav({ activeTheme }: { activeTheme: "light" | "dark" }) {
   const supabase = await createClient();
   const { data } = await supabase.auth.getUser();
   const user = data?.user;
@@ -25,6 +26,8 @@ export async function TopNav() {
       </div>
 
       <div className="flex items-center gap-4">
+        <ThemeToggle initialTheme={activeTheme} />
+        
         {user ? (
           <form action="/auth/signout" method="post">
             <button className="text-button text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md transition-colors">Log Out</button>
