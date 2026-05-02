@@ -8,3 +8,11 @@ Server Actions & SSR: Optimized using Next.js Server Components and Server Actio
 Supabase Authentication: Secure email/password login integrated seamlessly with Next.js middleware.
 Strict Row Level Security: All PostgreSQL databases are protected by RLS (user_id = auth.uid()).
 Dashboard Filters: Transaction tables support fast category and type filtering via native Next.js searchParams.
+
+## ⚙️ Tech Stack
+Framework: Next.js (App Router)
+Package Manager: pnpm
+Backend & Auth: Supabase (PostgreSQL + Auth)
+Styling: Tailwind CSS v4
+Icons: Lucide React
+Date Parsing: Date-fns
