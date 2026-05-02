@@ -25,8 +25,8 @@ export function PaginationControls({
   const createQueryString = (name: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set(name, value);
-    if (name === 'limit') {
-      params.set('page', '1'); // reset to page 1 on limit change
+    if (name === "limit") {
+      params.set("page", "1"); // reset to page 1 on limit change
     }
     return params.toString();
   };
@@ -34,7 +34,8 @@ export function PaginationControls({
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between mt-6 pt-4 border-t border-(--color-hairline-on-dark) gap-4">
       <div className="text-caption text-(--color-muted)">
-        Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+        Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+        {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
       </div>
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
@@ -44,15 +45,28 @@ export function PaginationControls({
             onChange={(e) => {
               const val = parseInt(e.target.value);
               if (onLimitChange) onLimitChange(val);
-              else router.push(pathname + "?" + createQueryString("limit", String(val)), { scroll: false });
+              else
+                router.push(pathname + "?" + createQueryString("limit", String(val)), {
+                  scroll: false,
+                });
             }}
             className="bg-transparent border border-(--color-hairline-on-dark) rounded-md px-2 py-1 text-body-sm text-(--color-on-dark) focus:border-(--color-primary) focus:outline-none"
           >
-            <option value="5" className="bg-(--color-surface-elevated-dark)">5</option>
-            <option value="10" className="bg-(--color-surface-elevated-dark)">10</option>
-            <option value="20" className="bg-(--color-surface-elevated-dark)">20</option>
-            <option value="50" className="bg-(--color-surface-elevated-dark)">50</option>
-            <option value="100" className="bg-(--color-surface-elevated-dark)">100</option>
+            <option value="5" className="bg-(--color-surface-elevated-dark)">
+              5
+            </option>
+            <option value="10" className="bg-(--color-surface-elevated-dark)">
+              10
+            </option>
+            <option value="20" className="bg-(--color-surface-elevated-dark)">
+              20
+            </option>
+            <option value="50" className="bg-(--color-surface-elevated-dark)">
+              50
+            </option>
+            <option value="100" className="bg-(--color-surface-elevated-dark)">
+              100
+            </option>
           </select>
         </div>
         <div className="flex items-center gap-2">
@@ -60,10 +74,13 @@ export function PaginationControls({
             onClick={() => {
               const newPage = Math.max(1, currentPage - 1);
               if (onPageChange) onPageChange(newPage);
-              else router.push(pathname + "?" + createQueryString("page", String(newPage)), { scroll: false });
+              else
+                router.push(pathname + "?" + createQueryString("page", String(newPage)), {
+                  scroll: false,
+                });
             }}
             disabled={currentPage === 1}
-            className={`p-2 rounded border border-(--color-hairline-on-dark) ${currentPage === 1 ? 'opacity-50 pointer-events-none' : 'hover:bg-(--color-surface-elevated-dark) text-(--color-on-dark)'}`}
+            className={`p-2 rounded border border-(--color-hairline-on-dark) ${currentPage === 1 ? "opacity-50 pointer-events-none" : "hover:bg-(--color-surface-elevated-dark) text-(--color-on-dark)"}`}
           >
             <ChevronLeft size={16} />
           </button>
@@ -74,10 +91,13 @@ export function PaginationControls({
             onClick={() => {
               const newPage = Math.min(totalPages, currentPage + 1);
               if (onPageChange) onPageChange(newPage);
-              else router.push(pathname + "?" + createQueryString("page", String(newPage)), { scroll: false });
+              else
+                router.push(pathname + "?" + createQueryString("page", String(newPage)), {
+                  scroll: false,
+                });
             }}
             disabled={currentPage === totalPages}
-            className={`p-2 rounded border border-(--color-hairline-on-dark) ${currentPage === totalPages ? 'opacity-50 pointer-events-none' : 'hover:bg-(--color-surface-elevated-dark) text-(--color-on-dark)'}`}
+            className={`p-2 rounded border border-(--color-hairline-on-dark) ${currentPage === totalPages ? "opacity-50 pointer-events-none" : "hover:bg-(--color-surface-elevated-dark) text-(--color-on-dark)"}`}
           >
             <ChevronRight size={16} />
           </button>
