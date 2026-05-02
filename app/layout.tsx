@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { TopNav } from "@/components/TopNav";
 import { getProfile } from "@/actions/profile";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const inter = Inter({
@@ -35,6 +36,7 @@ export default async function RootLayout({
       <body className={`min-h-full flex flex-col bg-(--color-canvas-dark) text-(--color-body) ${theme}`}>
         <TopNav />
         <main className="flex-1 flex flex-col">{children}</main>
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );
