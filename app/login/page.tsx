@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { login } from "./actions";
 
-export default function LoginPage() {
+export default async function LoginPage(props: {
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const searchParams = await props.searchParams;
+  const error = searchParams?.error as string | undefined;
+  const message = searchParams?.message as string | undefined;
+
   return (
     <div className="flex-1 flex flex-col bg-(--color-canvas-light) text-(--color-ink) justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -10,6 +16,16 @@ export default function LoginPage() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-(--color-canvas-light) py-8 px-4 border border-(--color-hairline-on-light) sm:rounded-lg sm:px-10">
+          {error && (
+            <div className="mb-6 p-3 rounded-md bg-red-50 border border-red-200 text-red-700 text-body-sm">
+              {error}
+            </div>
+          )}
+          {message && (
+            <div className="mb-6 p-3 rounded-md bg-green-50 border border-green-200 text-green-700 text-body-sm">
+              {message}
+            </div>
+          )}
           <form className="space-y-6" action={login}>
             <div>
               <label htmlFor="email" className="block text-body-md text-(--color-ink)">
@@ -75,3 +91,4 @@ export default function LoginPage() {
     </div>
   );
 }
+
