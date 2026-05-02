@@ -17,6 +17,7 @@ import { DeleteButton } from "@/components/DeleteButton";
 import { DashboardChart } from "@/components/DashboardChart";
 import { TransactionList } from "@/components/TransactionList";
 import { DatePicker } from "@/components/ui/DatePicker";
+import { TransactionFilter } from "@/components/TransactionFilter";
 
 export default async function DashboardPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const searchParams = await props.searchParams;
