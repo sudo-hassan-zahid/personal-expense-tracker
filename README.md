@@ -5,3 +5,8 @@ A fast, scalable personal finance tracker designed with a Binance-inspired UI. B
 Live Demo: [https://expense-tracker-by-hassan.vercel.app](https://expense-tracker-by-hassan.vercel.app)
 
 ## Tech Stack
+
+- Framework: Next.js 15 (App Router)
+- Backend: Supabase (PostgreSQL + Auth)
+- Database: Row Level Security (RLS)
+
