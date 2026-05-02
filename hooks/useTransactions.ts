@@ -54,24 +54,44 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
 
   const sortedTransactions = useMemo(() => {
     return [...filteredTransactions].sort((a, b) => {
-      let valA: any = a[sortField as keyof Transaction] || "";
-      let valB: any = b[sortField as keyof Transaction] || "";
+      let valA: any;
+      let valB: any;
 
-      if (sortField === "amount") {
-        valA = Number(a.amount);
-        valB = Number(b.amount);
-      } else if (sortField === "category") {
-        valA = (a.type === "income" ? a.source : a.category) || "";
-        valB = (b.type === "income" ? b.source : b.category) || "";
-      } else if (sortField === "date") {
-        valA = new Date(a.date).getTime();
-        valB = new Date(b.date).getTime();
+      switch (sortField) {
+        case "amount":
+          valA = Number(a.amount);
+          valB = Number(b.amount);
+          break;
+        case "category":
+          // Special handling for category/source
+          valA = ((a.type === "income" ? a.source : a.category) || "").toLowerCase();
+          valB = ((b.type === "income" ? b.source : b.category) || "").toLowerCase();
+          break;
+        case "note":
+          valA = (a.note || "").toLowerCase();
+          valB = (b.note || "").toLowerCase();
+          break;
+        case "date":
+          valA = new Date(a.date).getTime();
+          valB = new Date(b.date).getTime();
+          break;
+        case "type":
+          valA = a.type;
+          valB = b.type;
+          break;
+        case "status":
+          valA = (a.status || "pending").toLowerCase();
+          valB = (b.status || "pending").toLowerCase();
+          break;
+        default:
+          valA = (a as any)[sortField] || "";
+          valB = (b as any)[sortField] || "";
       }
 
       if (valA < valB) return sortOrder === "asc" ? -1 : 1;
       if (valA > valB) return sortOrder === "asc" ? 1 : -1;
       
-      // Tie breaker: created_at
+      // Tie breaker: newest created_at first for desc, oldest for asc
       const timeA = new Date(a.created_at).getTime();
       const timeB = new Date(b.created_at).getTime();
       return sortOrder === "asc" ? timeA - timeB : timeB - timeA;

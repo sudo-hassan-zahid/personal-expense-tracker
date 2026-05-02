@@ -26,8 +26,8 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
 
   // Date filtering for current month in PKT
   const todayPKT = getCurrentPKTDate();
-  const monthStart = formatISO(startOfMonth(todayPKT));
-  const monthEnd = formatISO(endOfMonth(todayPKT));
+  const monthStart = format(startOfMonth(todayPKT), "yyyy-MM-dd");
+  const monthEnd = format(endOfMonth(todayPKT), "yyyy-MM-dd");
 
   // Fetch data
   const { data: expenses } = await supabase

@@ -9,6 +9,7 @@ import { deleteExpense } from "@/actions/expense";
 import { deleteIncome } from "@/actions/income";
 import { PaginationControls } from "./PaginationControls";
 import { DateRangePicker } from "./ui/DateRangePicker";
+import { toast } from "sonner";
 
 interface Transaction {
   id: string;
@@ -179,8 +180,8 @@ export function TransactionList({
         {/* Table Header */}
         <div className={`grid ${enableStatusTracking ? 'grid-cols-[48px_1fr_140px_100px_120px_100px_80px]' : 'grid-cols-[48px_1fr_140px_100px_120px_80px]'} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}>
           <div className="pl-2">#</div>
-          <div className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1" onClick={() => toggleSort("category")}>
-            Description <ArrowUpDown size={12} className={sortField === "category" ? "text-(--color-primary)" : ""} />
+          <div className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1" onClick={() => toggleSort("note")}>
+            Description <ArrowUpDown size={12} className={sortField === "note" ? "text-(--color-primary)" : ""} />
           </div>
           <div className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1" onClick={() => toggleSort("date")}>
             Date <ArrowUpDown size={12} className={sortField === "date" ? "text-(--color-primary)" : ""} />
@@ -321,10 +322,10 @@ export function TransactionList({
                     try {
                       if (transactionToDelete.type === "income") await deleteIncome(transactionToDelete.id);
                       else await deleteExpense(transactionToDelete.id);
-                      import("sonner").then(({ toast }) => toast.success("Transaction deleted successfully"));
+                      toast.success("Transaction deleted successfully");
                       setTransactionToDelete(null);
                     } catch (error: any) {
-                      import("sonner").then(({ toast }) => toast.error(error.message || "Failed to delete"));
+                      toast.error(error.message || "Failed to delete");
                     } finally {
                       setIsDeleting(false);
                     }
