@@ -91,12 +91,12 @@ export async function updateCategory(id: string, name: string) {
       await supabase
         .from("expenses")
         .update({ category: name })
-        .eq("category", oldName);
+        .ilike("category", oldName);
     } else {
       await supabase
         .from("incomes")
         .update({ source: name })
-        .eq("source", oldName);
+        .ilike("source", oldName);
     }
   }
 
@@ -123,7 +123,7 @@ export async function deleteCategory(id: string) {
     const { count, error: checkError } = await supabase
       .from("expenses")
       .select("*", { count: "exact", head: true })
-      .eq("category", category.name);
+      .ilike("category", category.name);
     
     if (checkError) throw checkError;
     if (count && count > 0) {
@@ -133,7 +133,7 @@ export async function deleteCategory(id: string) {
     const { count, error: checkError } = await supabase
       .from("incomes")
       .select("*", { count: "exact", head: true })
-      .eq("source", category.name);
+      .ilike("source", category.name);
     
     if (checkError) throw checkError;
     if (count && count > 0) {
