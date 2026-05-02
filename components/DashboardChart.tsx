@@ -15,8 +15,13 @@ type Transaction = {
   source?: string;
 };
 
+import { DateRangePicker } from "./ui/DateRangePicker";
+
 export function DashboardChart({ transactions, currency }: { transactions: Transaction[], currency: string }) {
-  const [timeRange, setTimeRange] = useState<"7d" | "30d" | "all">("all");
+  const [dateRange, setDateRange] = useState<{ start: Date, end: Date }>({
+    start: startOfMonth(new Date()),
+    end: new Date()
+  });
   const [filterType, setFilterType] = useState<"all" | "income" | "expense">("all");
   const [filterCategory, setFilterCategory] = useState<string>("all");
 
@@ -31,26 +36,13 @@ export function DashboardChart({ transactions, currency }: { transactions: Trans
 
   const chartData = useMemo(() => {
     let filtered = transactions;
-    const today = new Date();
-    let startDate: Date;
-    let endDate = today;
+    const { start: startDate, end: endDate } = dateRange;
     
-    // Time filter
-    if (timeRange === "7d") {
-      startDate = subDays(today, 6);
-    } else if (timeRange === "30d") {
-      startDate = subDays(today, 29);
-    } else {
-      startDate = startOfMonth(today);
-      endDate = endOfMonth(today); // Show full month to keep scale consistent
-    }
-
-    // Generate all days in range to prevent single-dot empty space
+    // Generate all days in range
     const allDays = eachDayOfInterval({ start: startDate, end: endDate });
     const chartDataMap = new Map();
     
     allDays.forEach(day => {
-      // Local date string format YYYY-MM-DD
       const d = format(day, 'yyyy-MM-dd');
       chartDataMap.set(d, { date: d, income: 0, expense: 0 });
     });
@@ -58,7 +50,7 @@ export function DashboardChart({ transactions, currency }: { transactions: Trans
     // Pre-filter by our precise date range
     filtered = filtered.filter(t => {
       const tDate = new Date(t.date);
-      return tDate >= startDate && tDate <= new Date(endDate.setHours(23, 59, 59, 999));
+      return tDate >= startOfDay(startDate) && tDate <= endOfDay(endDate);
     });
 
     // Type filter
@@ -75,19 +67,12 @@ export function DashboardChart({ transactions, currency }: { transactions: Trans
     }
 
     filtered.forEach(t => {
-      const tDate = new Date(t.date);
-      // Adjusting for timezone offset so we get the correct local YYYY-MM-DD
-      const d = format(new Date(tDate.getTime() + tDate.getTimezoneOffset() * 60000), 'yyyy-MM-dd');
-      // If the date is still slightly off due to parse string format, let's try direct split if ISO
-      const dateKey = t.date.includes('T') ? t.date.split('T')[0] : d;
+      const dateKey = t.date.includes('T') ? t.date.split('T')[0] : t.date;
 
       if (chartDataMap.has(dateKey)) {
         const entry = chartDataMap.get(dateKey);
         if (t.type === 'income') entry.income += Number(t.amount);
         else entry.expense += Number(t.amount);
-      } else {
-        // Fallback in case of timezone mismatch
-        chartDataMap.set(dateKey, { date: dateKey, income: t.type === 'income' ? Number(t.amount) : 0, expense: t.type === 'expense' ? Number(t.amount) : 0 });
       }
     });
 
@@ -95,7 +80,7 @@ export function DashboardChart({ transactions, currency }: { transactions: Trans
         ...d,
         displayDate: format(parseISO(d.date), "MMM dd")
     }));
-  }, [transactions, timeRange, filterType, filterCategory]);
+  }, [transactions, dateRange, filterType, filterCategory]);
 
   return (
     <div className="w-full bg-(--color-surface-card-dark) p-6 md:p-8 rounded-2xl border border-(--color-hairline-on-dark) flex flex-col gap-8 shadow-2xl relative overflow-hidden">
@@ -112,15 +97,10 @@ export function DashboardChart({ transactions, currency }: { transactions: Trans
         </div>
         
         <div className="flex flex-wrap items-center gap-3 p-1.5 bg-(--color-canvas-dark)/50 backdrop-blur-md border border-(--color-hairline-on-dark) rounded-xl">
-          <select 
-            value={timeRange} 
-            onChange={(e) => setTimeRange(e.target.value as any)}
-            className="bg-transparent hover:bg-(--color-surface-elevated-dark) transition-colors rounded-lg px-3 py-2 text-body-sm text-(--color-on-dark) focus:outline-none cursor-pointer border-none"
-          >
-            <option value="7d" className="bg-(--color-surface-elevated-dark)">Last 7 Days</option>
-            <option value="30d" className="bg-(--color-surface-elevated-dark)">Last 30 Days</option>
-            <option value="all" className="bg-(--color-surface-elevated-dark)">This Month</option>
-          </select>
+          <DateRangePicker 
+            onRangeChange={(start, end) => setDateRange({ start, end })} 
+            className="border-none bg-transparent"
+          />
 
           <div className="w-px h-6 bg-(--color-hairline-on-dark)" />
 
