@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { ArrowUpRight, ArrowDownRight, Trash2, Search, ArrowUpDown, Filter, X as CloseIcon } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Trash2, Search, ArrowUpDown, Filter, X as CloseIcon, Pencil } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
 import { format, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { DeleteButton } from "./DeleteButton";
@@ -18,20 +18,29 @@ interface Transaction {
   date: string;
   note: string;
   type: "expense" | "income";
+  status?: string;
 }
 
 import { useTransactions } from "@/hooks/useTransactions";
+import { EditTransactionModal } from "./EditTransactionModal";
+import { Category } from "./CategorySelect";
 
 export function TransactionList({
   initialTransactions,
   currency,
   paginationEnabled,
-  itemsPerPage: initialItemsPerPage,
+  itemsPerPage,
+  expenseCategories,
+  incomeCategories,
+  enableStatusTracking,
 }: {
   initialTransactions: Transaction[];
   currency: string;
   paginationEnabled: boolean;
   itemsPerPage: number;
+  expenseCategories: Category[];
+  incomeCategories: Category[];
+  enableStatusTracking: boolean;
 }) {
   const {
     search, setSearch,
@@ -46,10 +55,11 @@ export function TransactionList({
     totalItems,
     totalPages,
     displayedTransactions
-  } = useTransactions(initialTransactions, initialItemsPerPage);
+  } = useTransactions(initialTransactions, itemsPerPage);
 
   const [newlyAddedId, setNewlyAddedId] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 
   // Monitor for new transactions to show highlight
   const [prevCount, setPrevCount] = useState(initialTransactions.length);
@@ -158,7 +168,7 @@ export function TransactionList({
 
       <div className="flex flex-col gap-2">
         {/* Table Header */}
-        <div className="grid grid-cols-[auto_2fr_1fr_1fr_1fr_auto] gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2">
+        <div className={`grid ${enableStatusTracking ? 'grid-cols-[auto_2fr_1fr_1fr_1fr_1fr_auto]' : 'grid-cols-[auto_2fr_1fr_1fr_1fr_auto]'} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}>
           <div className="whitespace-nowrap pl-2">#</div>
           <div className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1" onClick={() => toggleSort("category")}>
             Description <ArrowUpDown size={12} />
@@ -172,6 +182,7 @@ export function TransactionList({
           <div className="text-right cursor-pointer hover:text-(--color-on-dark) flex items-center justify-end gap-1" onClick={() => toggleSort("amount")}>
             Amount <ArrowUpDown size={12} />
           </div>
+          {enableStatusTracking && <div className="text-center">Status</div>}
           <div className="text-right">Action</div>
         </div>
 
@@ -184,10 +195,10 @@ export function TransactionList({
         {displayedTransactions.map((t, i) => (
           <div 
             key={t.id + t.type} 
-            className={`grid grid-cols-[auto_2fr_1fr_1fr_1fr_auto] gap-4 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-500 px-2 -mx-2 rounded-lg animate-slide-up ${i < 5 ? `stagger-${i + 1}` : 'opacity-100'} ${newlyAddedId === t.id ? 'bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse' : ''}`}
+            className={`grid ${enableStatusTracking ? 'grid-cols-[auto_2fr_1fr_1fr_1fr_1fr_auto]' : 'grid-cols-[auto_2fr_1fr_1fr_1fr_auto]'} gap-4 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-500 px-2 -mx-2 rounded-lg animate-slide-up ${i < 5 ? `stagger-${i + 1}` : 'opacity-100'} ${newlyAddedId === t.id ? 'bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse' : ''}`}
           >
             <div className="text-number-sm text-(--color-muted) pl-2">
-              {((currentPage - 1) * initialItemsPerPage) + i + 1}
+              {((currentPage - 1) * itemsPerPage) + i + 1}
             </div>
             <div className="flex items-center gap-3 text-left">
               {t.type === "income" ? (
@@ -219,7 +230,20 @@ export function TransactionList({
             <div className={`text-number-md font-semibold text-right ${t.type === 'income' ? 'text-green-500' : 'text-red-500'}`}>
               {t.type === "income" ? "+" : "-"}{formatCurrency(Number(t.amount), currency).replace(/^[^\d]*/, '')}
             </div>
-            <div className="text-right flex justify-end">
+            {enableStatusTracking && (
+              <div className="text-center">
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.status === 'done' ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'}`}>
+                  {t.status || 'done'}
+                </span>
+              </div>
+            )}
+            <div className="text-right flex justify-end gap-1">
+              <button
+                onClick={() => setEditingTransaction(t)}
+                className="p-2 text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-primary)/10 rounded-md transition-all"
+              >
+                <Pencil size={16} />
+              </button>
               <DeleteButton
                 action={async () => {
                   if (t.type === "income") await deleteIncome(t.id);
@@ -240,8 +264,18 @@ export function TransactionList({
           currentPage={currentPage}
           totalPages={totalPages}
           totalItems={totalItems}
-          itemsPerPage={initialItemsPerPage}
+          itemsPerPage={itemsPerPage}
           onPageChange={setCurrentPage}
+        />
+      )}
+
+      {editingTransaction && (
+        <EditTransactionModal 
+          transaction={editingTransaction}
+          expenseCategories={expenseCategories}
+          incomeCategories={incomeCategories}
+          showStatusTracking={enableStatusTracking}
+          onClose={() => setEditingTransaction(null)}
         />
       )}
     </div>
