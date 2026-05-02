@@ -28,7 +28,7 @@ export function EditTransactionModal({
   expenseCategories,
   incomeCategories,
   onClose,
-  showStatusTracking
+  showStatusTracking,
 }: {
   transaction: Transaction;
   expenseCategories: Category[];
@@ -36,7 +36,7 @@ export function EditTransactionModal({
   onClose: () => void;
   showStatusTracking: boolean;
 }) {
-  const [status, setStatus] = useState(transaction.status || 'done');
+  const [status, setStatus] = useState(transaction.status || "done");
   const [type, setType] = useState<"expense" | "income">(transaction.type);
 
   return (
@@ -51,7 +51,10 @@ export function EditTransactionModal({
       <div className="relative w-full max-w-lg bg-(--color-surface-card-dark)/80 backdrop-blur-2xl border border-(--color-hairline-on-dark) rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
         <div className="flex items-center justify-between p-6 border-b border-(--color-hairline-on-dark)">
           <h2 className="text-title-md text-(--color-on-dark)">Edit Transaction</h2>
-          <button onClick={onClose} className="p-2 text-(--color-muted) hover:text-(--color-on-dark) transition-colors">
+          <button
+            onClick={onClose}
+            className="p-2 text-(--color-muted) hover:text-(--color-on-dark) transition-colors"
+          >
             <X size={20} />
           </button>
         </div>
@@ -62,7 +65,7 @@ export function EditTransactionModal({
               // If type changed, we need to delete from old table and insert into new
               if (type !== transaction.type) {
                 // First delete from current table
-                if (transaction.type === 'income') {
+                if (transaction.type === "income") {
                   await deleteIncome(transaction.id);
                   await addExpense(formData);
                 } else {
@@ -71,7 +74,7 @@ export function EditTransactionModal({
                 }
               } else {
                 // Normal update
-                if (type === 'income') {
+                if (type === "income") {
                   await updateIncome(transaction.id, formData);
                 } else {
                   await updateExpense(transaction.id, formData);
@@ -88,15 +91,15 @@ export function EditTransactionModal({
               <div className="flex gap-2 p-1 bg-(--color-canvas-dark)/50 rounded-lg border border-(--color-hairline-on-dark)">
                 <button
                   type="button"
-                  onClick={() => setType('income')}
-                  className={`flex-1 py-1.5 rounded-md text-caption font-bold transition-all ${type === 'income' ? 'bg-green-500/20 text-green-500 border border-green-500/30' : 'text-(--color-muted) hover:text-(--color-on-dark)'}`}
+                  onClick={() => setType("income")}
+                  className={`flex-1 py-1.5 rounded-md text-caption font-bold transition-all ${type === "income" ? "bg-green-500/20 text-green-500 border border-green-500/30" : "text-(--color-muted) hover:text-(--color-on-dark)"}`}
                 >
                   INCOME
                 </button>
                 <button
                   type="button"
-                  onClick={() => setType('expense')}
-                  className={`flex-1 py-1.5 rounded-md text-caption font-bold transition-all ${type === 'expense' ? 'bg-red-500/20 text-red-500 border border-red-500/30' : 'text-(--color-muted) hover:text-(--color-on-dark)'}`}
+                  onClick={() => setType("expense")}
+                  className={`flex-1 py-1.5 rounded-md text-caption font-bold transition-all ${type === "expense" ? "bg-red-500/20 text-red-500 border border-red-500/30" : "text-(--color-muted) hover:text-(--color-on-dark)"}`}
                 >
                   EXPENSE
                 </button>
@@ -116,19 +119,21 @@ export function EditTransactionModal({
                 />
               </div>
 
-              <DatePicker
-                name="date"
-                defaultValue={transaction.date.split('T')[0]}
-                label="Date"
-              />
+              <DatePicker name="date" defaultValue={transaction.date.split("T")[0]} label="Date" />
             </div>
 
             <CategorySelect
-              categories={type === 'income' ? incomeCategories : expenseCategories}
+              categories={type === "income" ? incomeCategories : expenseCategories}
               type={type}
-              name={type === 'income' ? "source" : "category"}
-              label={type === 'income' ? "Source" : "Category"}
-              defaultValue={type === transaction.type ? (type === 'income' ? transaction.source : transaction.category) : ""}
+              name={type === "income" ? "source" : "category"}
+              label={type === "income" ? "Source" : "Category"}
+              defaultValue={
+                type === transaction.type
+                  ? type === "income"
+                    ? transaction.source
+                    : transaction.category
+                  : ""
+              }
             />
 
             <div>
@@ -148,15 +153,15 @@ export function EditTransactionModal({
                 <div className="flex gap-2 p-1 bg-(--color-canvas-dark)/50 rounded-lg border border-(--color-hairline-on-dark)">
                   <button
                     type="button"
-                    onClick={() => setStatus('pending')}
-                    className={`flex-1 py-1.5 rounded-md text-caption font-bold transition-all ${status === 'pending' ? 'bg-yellow-500/20 text-yellow-500 border border-yellow-500/30' : 'text-(--color-muted) hover:text-(--color-on-dark)'}`}
+                    onClick={() => setStatus("pending")}
+                    className={`flex-1 py-1.5 rounded-md text-caption font-bold transition-all ${status === "pending" ? "bg-yellow-500/20 text-yellow-500 border border-yellow-500/30" : "text-(--color-muted) hover:text-(--color-on-dark)"}`}
                   >
                     PENDING
                   </button>
                   <button
                     type="button"
-                    onClick={() => setStatus('done')}
-                    className={`flex-1 py-1.5 rounded-md text-caption font-bold transition-all ${status === 'done' ? 'bg-green-500/20 text-green-500 border border-green-500/30' : 'text-(--color-muted) hover:text-(--color-on-dark)'}`}
+                    onClick={() => setStatus("done")}
+                    className={`flex-1 py-1.5 rounded-md text-caption font-bold transition-all ${status === "done" ? "bg-green-500/20 text-green-500 border border-green-500/30" : "text-(--color-muted) hover:text-(--color-on-dark)"}`}
                   >
                     DONE
                   </button>
