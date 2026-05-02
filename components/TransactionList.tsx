@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { ArrowUpRight, ArrowDownRight, Trash2, Search, ArrowUpDown, Filter, X as CloseIcon, Pencil } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Trash2, Search, ArrowUpDown, Filter, X as CloseIcon, Pencil, AlertCircle } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
 import { format, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { DeleteButton } from "./DeleteButton";
@@ -67,6 +67,8 @@ export function TransactionList({
   const [newlyAddedId, setNewlyAddedId] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Monitor for new transactions to show highlight
   const [prevCount, setPrevCount] = useState(initialTransactions.length);
@@ -175,19 +177,19 @@ export function TransactionList({
 
       <div className="flex flex-col gap-2">
         {/* Table Header */}
-        <div className={`grid ${enableStatusTracking ? (isWideView ? 'grid-cols-[48px_minmax(0,3fr)_140px_100px_120px_100px_80px]' : 'grid-cols-[48px_minmax(0,2fr)_140px_100px_120px_100px_80px]') : (isWideView ? 'grid-cols-[48px_minmax(0,3fr)_140px_100px_120px_80px]' : 'grid-cols-[48px_minmax(0,2fr)_140px_100px_120px_80px]')} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}>
+        <div className={`grid ${enableStatusTracking ? 'grid-cols-[48px_1fr_140px_100px_120px_100px_80px]' : 'grid-cols-[48px_1fr_140px_100px_120px_80px]'} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}>
           <div className="pl-2">#</div>
           <div className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1" onClick={() => toggleSort("category")}>
             Description <ArrowUpDown size={12} className={sortField === "category" ? "text-(--color-primary)" : ""} />
           </div>
           <div className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1" onClick={() => toggleSort("date")}>
-            Date <ArrowUpDown size={12} />
+            Date <ArrowUpDown size={12} className={sortField === "date" ? "text-(--color-primary)" : ""} />
           </div>
           <div className="text-center cursor-pointer hover:text-(--color-on-dark) flex items-center justify-center gap-1" onClick={() => toggleSort("type")}>
-            Type <ArrowUpDown size={12} />
+            Type <ArrowUpDown size={12} className={sortField === "type" ? "text-(--color-primary)" : ""} />
           </div>
           <div className="text-right cursor-pointer hover:text-(--color-on-dark) flex items-center justify-end gap-1" onClick={() => toggleSort("amount")}>
-            Amount <ArrowUpDown size={12} />
+            Amount <ArrowUpDown size={12} className={sortField === "amount" ? "text-(--color-primary)" : ""} />
           </div>
           {enableStatusTracking && (
             <div 
@@ -209,7 +211,7 @@ export function TransactionList({
         {displayedTransactions.map((t, i) => (
           <div 
             key={t.id + t.type} 
-            className={`grid ${enableStatusTracking ? (isWideView ? 'grid-cols-[48px_minmax(0,3fr)_140px_100px_120px_100px_80px]' : 'grid-cols-[48px_minmax(0,2fr)_140px_100px_120px_100px_80px]') : (isWideView ? 'grid-cols-[48px_minmax(0,3fr)_140px_100px_120px_80px]' : 'grid-cols-[48px_minmax(0,2fr)_140px_100px_120px_80px]')} gap-4 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-500 px-2 -mx-2 rounded-lg animate-slide-up ${i < 5 ? `stagger-${i + 1}` : 'opacity-100'} ${newlyAddedId === t.id ? 'bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse' : ''}`}
+            className={`grid ${enableStatusTracking ? 'grid-cols-[48px_1fr_140px_100px_120px_100px_80px]' : 'grid-cols-[48px_1fr_140px_100px_120px_80px]'} gap-4 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-500 px-2 -mx-2 rounded-lg animate-slide-up ${i < 5 ? `stagger-${i + 1}` : 'opacity-100'} ${newlyAddedId === t.id ? 'bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse' : ''}`}
           >
             <div className="text-number-sm text-(--color-muted) pl-2">
               {((currentPage - 1) * itemsPerPage) + i + 1}
@@ -259,11 +261,7 @@ export function TransactionList({
                 <Pencil size={16} />
               </button>
               <DeleteButton
-                action={async () => {
-                  if (t.type === "income") await deleteIncome(t.id);
-                  else await deleteExpense(t.id);
-                }}
-                successMessage={`${t.type === "income" ? "Income" : "Expense"} deleted successfully`}
+                onClick={() => setTransactionToDelete(t)}
                 className="p-2 text-(--color-muted) hover:text-red-500 hover:bg-red-500/10 rounded-md transition-all"
               >
                 <Trash2 size={16} />
@@ -291,6 +289,55 @@ export function TransactionList({
           showStatusTracking={enableStatusTracking}
           onClose={() => setEditingTransaction(null)}
         />
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {transactionToDelete && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="bg-(--color-surface-card-dark) border border-(--color-hairline-on-dark) rounded-2xl p-6 w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex flex-col items-center text-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 mb-2">
+                <AlertCircle size={24} />
+              </div>
+              <div>
+                <h3 className="text-title-md text-(--color-on-dark) mb-2">Confirm Deletion</h3>
+                <p className="text-body-sm text-(--color-muted)">
+                  Are you sure you want to delete this {transactionToDelete.type}? This action cannot be undone.
+                </p>
+              </div>
+              <div className="flex w-full gap-3 mt-4">
+                <button
+                  type="button"
+                  onClick={() => setTransactionToDelete(null)}
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2 rounded-xl border border-(--color-hairline-on-dark) text-(--color-on-dark) hover:bg-(--color-surface-elevated-dark) transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setIsDeleting(true);
+                    try {
+                      if (transactionToDelete.type === "income") await deleteIncome(transactionToDelete.id);
+                      else await deleteExpense(transactionToDelete.id);
+                      import("sonner").then(({ toast }) => toast.success("Transaction deleted successfully"));
+                      setTransactionToDelete(null);
+                    } catch (error: any) {
+                      import("sonner").then(({ toast }) => toast.error(error.message || "Failed to delete"));
+                    } finally {
+                      setIsDeleting(false);
+                    }
+                  }}
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20 disabled:opacity-50 flex items-center justify-center"
+                >
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
