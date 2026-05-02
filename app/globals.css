@@ -205,4 +205,37 @@
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
+  /* Premium Toast Refinements */
+  .premium-toast {
+    padding: 16px !important;
+    font-family: var(--font-nova) !important;
+  }
+
+  .premium-toast [data-icon] {
+    margin-right: 12px !important;
+    transform: scale(1.1);
+  }
+
+  .premium-toast [data-title] {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  .premium-toast [data-description] {
+    font-size: 13px !important;
+    opacity: 0.8 !important;
+  }
+
+  /* Success Glow */
+  [data-sonner-toast][data-type='success'] {
+    border-color: rgba(14, 203, 129, 0.3) !important;
+    box-shadow: 0 0 30px rgba(14, 203, 129, 0.1) !important;
+  }
+
+  /* Error Glow */
+  [data-sonner-toast][data-type='error'] {
+    border-color: rgba(246, 70, 93, 0.3) !important;
+    box-shadow: 0 0 30px rgba(246, 70, 93, 0.1) !important;
+  }
 }

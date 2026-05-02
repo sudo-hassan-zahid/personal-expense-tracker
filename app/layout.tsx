@@ -41,7 +41,23 @@ export default async function RootLayout({
       <body className={`min-h-full flex flex-col bg-(--color-canvas-dark) text-(--color-body) ${themeClass}`}>
         <TopNav activeTheme={activeTheme as "light" | "dark"} />
         <main className="flex-1 flex flex-col">{children}</main>
-        <Toaster richColors position="top-right" />
+        <Toaster 
+          richColors 
+          position="top-right" 
+          expand={true}
+          visibleToasts={5}
+          toastOptions={{
+            style: {
+              background: 'rgba(30, 35, 41, 0.8)',
+              backdropFilter: 'blur(16px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '16px',
+              color: 'var(--color-on-dark)',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
+            },
+            className: 'premium-toast',
+          }}
+        />
       </body>
     </html>
   );
