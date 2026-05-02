@@ -13,11 +13,16 @@ type Transaction = {
   note?: string;
   category?: string;
   source?: string;
+  status?: string;
 };
 
 import { DateRangePicker } from "./ui/DateRangePicker";
 
-export function DashboardChart({ transactions, currency }: { transactions: Transaction[], currency: string }) {
+export function DashboardChart({ transactions, currency, enableStatusTracking }: { 
+  transactions: Transaction[], 
+  currency: string,
+  enableStatusTracking?: boolean
+}) {
   const [dateRange, setDateRange] = useState<{ start: Date, end: Date }>({
     start: startOfMonth(new Date()),
     end: new Date()
@@ -69,6 +74,11 @@ export function DashboardChart({ transactions, currency }: { transactions: Trans
           const c = t.type === 'income' ? t.source : t.category;
           return c?.toLowerCase() === filterCategory.toLowerCase();
        });
+    }
+
+    // Status filter
+    if (enableStatusTracking) {
+      filtered = filtered.filter(t => (t as any).status === 'done');
     }
 
     filtered.forEach(t => {
