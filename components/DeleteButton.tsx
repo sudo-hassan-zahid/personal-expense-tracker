@@ -17,11 +17,7 @@ export function DeleteButton({
   className?: string;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={className}
-    >
+    <button type="button" onClick={onClick} className={className}>
       {children}
     </button>
   );
