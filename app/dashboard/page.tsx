@@ -95,7 +95,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
   }
 
   if (filterCategory && filterCategory !== "all") {
-    allTransactions = allTransactions.filter((t) => 
+    allTransactions = allTransactions.filter((t) =>
       (t.type === "income" ? (t as { source: string }).source : (t as { category: string }).category).toLowerCase() === filterCategory.toLowerCase()
     );
   }
@@ -103,7 +103,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
   const ITEMS_PER_PAGE = 10;
   const currentPage = parseInt((searchParams?.page as string) || "1");
   const totalPages = Math.max(1, Math.ceil(allTransactions.length / ITEMS_PER_PAGE));
-  
+
   let displayedTransactions = allTransactions;
   if (paginationEnabled) {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -152,7 +152,8 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
             <TransactionFilter defaultType={filterType || "all"} />
           </div>
           <div className="flex flex-col gap-2">
-            <div className="grid grid-cols-6 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark)">
+            <div className="grid grid-cols-7 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark)">
+              <div className="col-span-1">Sr. No</div>
               <div className="col-span-2">Type / Note</div>
               <div className="flex items-center">Date <SortButton field="date" /></div>
               <div>Kind</div>
@@ -164,8 +165,11 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                 No transactions found.
               </div>
             )}
-            {displayedTransactions.map((t) => (
-              <div key={t.id + t.type} className="grid grid-cols-6 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-colors px-2 -mx-2 rounded-md">
+            {displayedTransactions.map((t, i) => (
+              <div key={t.id + t.type} className="grid grid-cols-7 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-colors px-2 -mx-2 rounded-md">
+                <div className="col-span-1 text-number-sm text-(--color-muted) pl-2">
+                  {((currentPage - 1) * ITEMS_PER_PAGE) + i + 1}
+                </div>
                 <div className="col-span-2 flex items-center gap-3">
                   {t.type === "income" ? (
                     <div className="w-8 h-8 rounded-full bg-(--color-trading-up)/10 flex items-center justify-center text-(--color-trading-up)">
@@ -178,10 +182,10 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                   )}
                   <div>
                     <div className="text-body-md text-(--color-on-dark)">
-                      {t.type === "income" ? (t as { source: string }).source : (t as { category: string }).category}
+                      {t.note || "No note"}
                     </div>
                     <div className="text-caption text-(--color-muted)">
-                      {t.note || "No note"}
+                      {t.type === "income" ? (t as { source: string }).source : (t as { category: string }).category}
                     </div>
                   </div>
                 </div>
