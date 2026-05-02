@@ -5,6 +5,7 @@ import { getCategories } from "@/actions/category";
 import { getProfile } from "@/actions/profile";
 import { formatCurrency } from "@/lib/currency";
 import { format, startOfMonth, endOfMonth, formatISO } from "date-fns";
+import { getTodayPKT, getCurrentPKTDate } from "@/lib/date-utils";
 import { ArrowUpRight, ArrowDownRight, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { deleteExpense } from "@/actions/expense";
@@ -14,9 +15,8 @@ import { CurrencySelector } from "@/components/CurrencySelector";
 import { ActionForm } from "@/components/ActionForm";
 import { DeleteButton } from "@/components/DeleteButton";
 import { DashboardChart } from "@/components/DashboardChart";
-import { TransactionFilter } from "@/components/TransactionFilter";
-import { SortButton } from "@/components/SortButton";
-import { PaginationControls } from "@/components/PaginationControls";
+import { TransactionList } from "@/components/TransactionList";
+import { DatePicker } from "@/components/ui/DatePicker";
 
 export default async function DashboardPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const searchParams = await props.searchParams;
@@ -25,10 +25,10 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
 
   const supabase = await createClient();
 
-  // Date filtering for current month
-  const today = new Date();
-  const monthStart = formatISO(startOfMonth(today));
-  const monthEnd = formatISO(endOfMonth(today));
+  // Date filtering for current month in PKT
+  const todayPKT = getCurrentPKTDate();
+  const monthStart = formatISO(startOfMonth(todayPKT));
+  const monthEnd = formatISO(endOfMonth(todayPKT));
 
   // Fetch data
   const { data: expenses } = await supabase
@@ -63,44 +63,13 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
   const totalIncome = incomesList.reduce((acc, curr) => acc + Number(curr.amount), 0);
   const netBalance = totalIncome - totalExpenses;
 
-  // Combine and sort recent transactions
-  let allTransactions = [
+  // Combine transactions
+  const allTransactions = [
     ...expensesList.map((e) => ({ ...e, type: "expense" as const })),
     ...incomesList.map((i) => ({ ...i, type: "income" as const })),
-  ];
-
-  const sort = searchParams?.sort as string | undefined;
-  if (sort === 'date_asc') {
-    allTransactions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  } else if (sort === 'amount_desc') {
-    allTransactions.sort((a, b) => Number(b.amount) - Number(a.amount));
-  } else if (sort === 'amount_asc') {
-    allTransactions.sort((a, b) => Number(a.amount) - Number(b.amount));
-  } else {
-    allTransactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }
-
-  // Map chart data is no longer needed here as it's handled by DashboardChart client component
-
-  if (filterType && filterType !== "all") {
-    allTransactions = allTransactions.filter((t) => t.type === filterType);
-  }
-
-  if (filterCategory && filterCategory !== "all") {
-    allTransactions = allTransactions.filter((t) =>
-      (t.type === "income" ? (t as { source: string }).source : (t as { category: string }).category).toLowerCase() === filterCategory.toLowerCase()
-    );
-  }
+  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   const ITEMS_PER_PAGE = parseInt((searchParams?.limit as string) || "10");
-  const currentPage = parseInt((searchParams?.page as string) || "1");
-  const totalPages = Math.max(1, Math.ceil(allTransactions.length / ITEMS_PER_PAGE));
-
-  let displayedTransactions = allTransactions;
-  if (paginationEnabled) {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    displayedTransactions = allTransactions.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-6 py-[40px] flex flex-col gap-8 flex-1">
@@ -137,81 +106,13 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
             <h2 className="text-title-lg text-(--color-on-dark)">Recent Transactions</h2>
             <TransactionFilter defaultType={filterType || "all"} />
           </div>
-          <div className="flex flex-col gap-2">
-            <div className="grid grid-cols-[auto_2fr_1fr_auto_1fr_auto] gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark)">
-              <div className="whitespace-nowrap pl-2">#</div>
-              <div className="text-center">Description</div>
-              <div className="flex items-center">Date <SortButton field="date" /></div>
-              <div>Type</div>
-              <div className="text-right flex items-center justify-end">Amount <SortButton field="amount" /></div>
-              <div className="text-right">Action</div>
-            </div>
-            {displayedTransactions.length === 0 && (
-              <div className="py-8 text-center text-body-md text-(--color-muted)">
-                No transactions found.
-              </div>
-            )}
-            {displayedTransactions.map((t, i) => (
-              <div key={t.id + t.type} className="grid grid-cols-[auto_2fr_1fr_auto_1fr_auto] gap-4 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-colors px-2 -mx-2 rounded-md">
-                <div className="text-number-sm text-(--color-muted) pl-2 pr-2">
-                  {((currentPage - 1) * ITEMS_PER_PAGE) + i + 1}
-                </div>
-                <div className="flex items-center gap-3 text-left">
-                  {t.type === "income" ? (
-                    <div className="w-8 h-8 rounded-full bg-(--color-trading-up)/10 flex items-center justify-center text-(--color-trading-up)">
-                      <ArrowUpRight size={16} />
-                    </div>
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-(--color-trading-down)/10 flex items-center justify-center text-(--color-trading-down)">
-                      <ArrowDownRight size={16} />
-                    </div>
-                  )}
-                  <div>
-                    <div className="text-body-md text-(--color-on-dark)">
-                      {t.note || "-"}
-                    </div>
-                    <div className="text-caption text-(--color-muted)">
-                      {t.type === "income" ? (t as { source: string }).source : (t as { category: string }).category}
-                    </div>
-                  </div>
-                </div>
-                <div className="text-number-sm text-(--color-muted)">
-                  {format(new Date(t.date), "MMM d, yyyy")}
-                </div>
-                <div className="text-body-sm capitalize">
-                  <span className={`px-2 py-1 rounded-full text-xs ${t.type === 'income' ? 'bg-(--color-trading-up)/10 text-(--color-trading-up)' : 'bg-(--color-trading-down)/10 text-(--color-trading-down)'}`}>
-                    {t.type}
-                  </span>
-                </div>
-                <div className={`text-number-md text-right ${t.type === 'income' ? 'text-(--color-trading-up)' : 'text-(--color-trading-down)'}`}>
-                  {t.type === "income" ? "+" : "-"}{formatCurrency(Number(t.amount), currency).replace(/^[^\d]*/, '')}
-                </div>
-                <div className="text-right flex justify-end">
-                  <DeleteButton
-                    action={async () => {
-                      "use server";
-                      if (t.type === "income") await deleteIncome(t.id);
-                      else await deleteExpense(t.id);
-                    }}
-                    successMessage={`${t.type === "income" ? "Income" : "Expense"} deleted successfully`}
-                    className="p-2 text-(--color-muted) hover:text-(--color-trading-down) transition-colors"
-                  >
-                    <Trash2 size={16} />
-                  </DeleteButton>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Pagination Controls */}
-          {paginationEnabled && (
-            <PaginationControls
-              currentPage={currentPage}
-              totalPages={totalPages}
-              totalItems={allTransactions.length}
-              itemsPerPage={ITEMS_PER_PAGE}
-            />
-          )}
+          
+          <TransactionList 
+            initialTransactions={allTransactions} 
+            currency={currency}
+            paginationEnabled={paginationEnabled}
+            itemsPerPage={ITEMS_PER_PAGE}
+          />
         </div>
 
         {/* Right Col - 4 - Actions */}
@@ -230,10 +131,11 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                 name="category"
                 label="Category"
               />
-              <div>
-                <label className="block text-body-sm mb-1 text-(--color-muted)">Date</label>
-                <input required type="date" name="date" defaultValue={new Date().toISOString().split('T')[0]} className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" />
-              </div>
+              <DatePicker 
+                name="date" 
+                defaultValue={getTodayPKT()} 
+                label="Date"
+              />
               <div>
                 <label className="block text-body-sm mb-1 text-(--color-muted)">Note</label>
                 <input type="text" name="note" className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" placeholder="Optional note" />
@@ -258,10 +160,11 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                 name="source"
                 label="Source"
               />
-              <div>
-                <label className="block text-body-sm mb-1 text-(--color-muted)">Date</label>
-                <input required type="date" name="date" defaultValue={new Date().toISOString().split('T')[0]} className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" />
-              </div>
+              <DatePicker 
+                name="date" 
+                defaultValue={getTodayPKT()} 
+                label="Date"
+              />
               <div>
                 <label className="block text-body-sm mb-1 text-(--color-muted)">Note</label>
                 <input type="text" name="note" className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" placeholder="Optional note" />
