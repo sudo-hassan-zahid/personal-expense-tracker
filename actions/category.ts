@@ -19,3 +19,37 @@ export async function getCategories(type: "expense" | "income") {
 
   return data || [];
 }
+
+export async function addCategory(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+
+  const name = (formData.get("name") as string).trim();
+  const type = formData.get("type") as "expense" | "income";
+  const parentId = formData.get("parent_id") as string | null;
+
+  if (!name) {
+    throw new Error("Category name is required");
+  }
+
+  const { error } = await supabase.from("categories").insert({
+    user_id: user.id,
+    name,
+    type,
+    parent_id: parentId || null,
+  });
+
+  if (error) {
+    if (error.code === "23505") {
+      throw new Error("Category already exists");
+    }
+    console.error("Error adding category:", error);
+    throw new Error("Failed to add category");
+  }
+
+  revalidatePath("/dashboard");
+}
