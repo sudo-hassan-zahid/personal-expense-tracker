@@ -10,6 +10,7 @@ interface Transaction {
   note: string;
   type: "expense" | "income";
   status?: string;
+  created_at: string;
 }
 
 export function useTransactions(initialTransactions: Transaction[], initialItemsPerPage: number) {
@@ -69,7 +70,11 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
 
       if (valA < valB) return sortOrder === "asc" ? -1 : 1;
       if (valA > valB) return sortOrder === "asc" ? 1 : -1;
-      return 0;
+      
+      // Tie breaker: created_at
+      const timeA = new Date(a.created_at).getTime();
+      const timeB = new Date(b.created_at).getTime();
+      return sortOrder === "asc" ? timeA - timeB : timeB - timeA;
     });
   }, [filteredTransactions, sortField, sortOrder]);
 
