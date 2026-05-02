@@ -67,40 +67,8 @@ export function CategoryManager({
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Add Category Section */}
-        <div className="lg:col-span-4">
-          <div className="bg-(--color-surface-card-dark) p-6 rounded-xl border border-(--color-hairline-on-dark)">
-            <h3 className="text-title-md mb-4 flex items-center gap-2">
-              <Plus size={20} className="text-(--color-primary)" />
-              Add {type === 'expense' ? 'Expense' : 'Income'} Category
-            </h3>
-            <ActionForm 
-              action={addCategory} 
-              successMessage="Category added successfully"
-              className="flex flex-col gap-4"
-            >
-              <input type="hidden" name="type" value={type} />
-              <div>
-                <label className="block text-body-sm mb-1.5 text-(--color-muted)">Category Name</label>
-                <input 
-                  required 
-                  name="name" 
-                  placeholder="e.g. Food, Rent, Salary"
-                  className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-lg px-4 py-2.5 text-body-md focus:border-(--color-primary) focus:outline-none transition-all"
-                />
-              </div>
-              <button 
-                type="submit" 
-                className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-lg py-3 hover:bg-(--color-primary-active) transition-all shadow-lg shadow-blue-500/10"
-              >
-                Create Category
-              </button>
-            </ActionForm>
-          </div>
-        </div>
-
         {/* Categories List Section */}
-        <div className="lg:col-span-8">
+        <div className="lg:col-span-8 order-2 lg:order-1">
           <div className="bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) overflow-hidden">
             <div className="p-4 border-b border-(--color-hairline-on-dark) bg-(--color-canvas-dark)/30">
               <h3 className="text-title-sm text-(--color-on-dark)">Existing Categories</h3>
@@ -161,6 +129,38 @@ export function CategoryManager({
                 ))
               )}
             </div>
+          </div>
+        </div>
+
+        {/* Add Category Section */}
+        <div className="lg:col-span-4 order-1 lg:order-2">
+          <div className="bg-(--color-surface-card-dark) p-6 rounded-xl border border-(--color-hairline-on-dark)">
+            <h3 className="text-title-md mb-4 flex items-center gap-2">
+              <Plus size={20} className="text-(--color-primary)" />
+              Add {type === 'expense' ? 'Expense' : 'Income'} Category
+            </h3>
+            <ActionForm 
+              action={addCategory} 
+              successMessage="Category added successfully"
+              className="flex flex-col gap-4"
+            >
+              <input type="hidden" name="type" value={type} />
+              <div>
+                <label className="block text-body-sm mb-1.5 text-(--color-muted)">Category Name</label>
+                <input 
+                  required 
+                  name="name" 
+                  placeholder="e.g. Food, Rent, Salary"
+                  className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-lg px-4 py-2.5 text-body-md focus:border-(--color-primary) focus:outline-none transition-all"
+                />
+              </div>
+              <button 
+                type="submit" 
+                className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-lg py-3 hover:bg-(--color-primary-active) transition-all shadow-lg shadow-blue-500/10"
+              >
+                Create Category
+              </button>
+            </ActionForm>
           </div>
         </div>
       </div>
