@@ -21,6 +21,11 @@ BEGIN
     SET currency = 'PKR', updated_at = now()
     WHERE id = target_user_id;
 
+    -- Step 1c: Clear existing data for this user (makes script re-runnable)
+    DELETE FROM public.expenses WHERE user_id = target_user_id;
+    DELETE FROM public.incomes WHERE user_id = target_user_id;
+    DELETE FROM public.categories WHERE user_id = target_user_id;
+
     -- Step 2: Seed expense categories
     INSERT INTO public.categories (user_id, name, type) VALUES
         (target_user_id, 'Savings & Investments', 'expense'),
