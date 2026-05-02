@@ -80,12 +80,12 @@ export function DashboardChart({ transactions, currency, enableStatusTracking }:
        });
     }
 
-    // Status filter
-    if (enableStatusTracking) {
-      filtered = filtered.filter(t => (t as any).status === 'done');
-    }
+    // Status filter: If enabled, only show completed transactions
+    const transactionsToProcess = enableStatusTracking 
+      ? filtered.filter(t => (t as any).status === 'done')
+      : filtered;
 
-    filtered.forEach(t => {
+    transactionsToProcess.forEach(t => {
       const dateKey = t.date.includes('T') ? t.date.split('T')[0] : t.date;
 
       if (chartDataMap.has(dateKey)) {
