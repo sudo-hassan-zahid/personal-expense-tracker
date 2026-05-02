@@ -19,6 +19,10 @@ interface Transaction {
   status?: string;
 }
 
+/**
+ * Modal component for editing an existing transaction (expense or income).
+ * Handles type switching between income and expense, including data migration between tables.
+ */
 export function EditTransactionModal({
   transaction,
   expenseCategories,
