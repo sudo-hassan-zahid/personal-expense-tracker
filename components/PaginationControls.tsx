@@ -8,11 +8,15 @@ export function PaginationControls({
   totalPages,
   totalItems,
   itemsPerPage,
+  onPageChange,
+  onLimitChange,
 }: {
   currentPage: number;
   totalPages: number;
   totalItems: number;
   itemsPerPage: number;
+  onPageChange?: (page: number) => void;
+  onLimitChange?: (limit: number) => void;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -37,7 +41,11 @@ export function PaginationControls({
            <span className="text-caption text-(--color-muted)">Per page:</span>
            <select 
              value={itemsPerPage}
-             onChange={(e) => router.push(pathname + "?" + createQueryString("limit", e.target.value), { scroll: false })}
+             onChange={(e) => {
+               const val = parseInt(e.target.value);
+               if (onLimitChange) onLimitChange(val);
+               else router.push(pathname + "?" + createQueryString("limit", String(val)), { scroll: false });
+             }}
              className="bg-transparent border border-(--color-hairline-on-dark) rounded-md px-2 py-1 text-body-sm text-(--color-on-dark) focus:border-(--color-primary) focus:outline-none"
            >
              <option value="5" className="bg-(--color-surface-elevated-dark)">5</option>
@@ -49,7 +57,11 @@ export function PaginationControls({
         </div>
         <div className="flex items-center gap-2">
           <button
-            onClick={() => router.push(pathname + "?" + createQueryString("page", String(Math.max(1, currentPage - 1))), { scroll: false })}
+            onClick={() => {
+              const newPage = Math.max(1, currentPage - 1);
+              if (onPageChange) onPageChange(newPage);
+              else router.push(pathname + "?" + createQueryString("page", String(newPage)), { scroll: false });
+            }}
             disabled={currentPage === 1}
             className={`p-2 rounded border border-(--color-hairline-on-dark) ${currentPage === 1 ? 'opacity-50 pointer-events-none' : 'hover:bg-(--color-surface-elevated-dark) text-(--color-on-dark)'}`}
           >
@@ -59,7 +71,11 @@ export function PaginationControls({
             Page {currentPage} of {totalPages}
           </div>
           <button
-            onClick={() => router.push(pathname + "?" + createQueryString("page", String(Math.min(totalPages, currentPage + 1))), { scroll: false })}
+            onClick={() => {
+              const newPage = Math.min(totalPages, currentPage + 1);
+              if (onPageChange) onPageChange(newPage);
+              else router.push(pathname + "?" + createQueryString("page", String(newPage)), { scroll: false });
+            }}
             disabled={currentPage === totalPages}
             className={`p-2 rounded border border-(--color-hairline-on-dark) ${currentPage === totalPages ? 'opacity-50 pointer-events-none' : 'hover:bg-(--color-surface-elevated-dark) text-(--color-on-dark)'}`}
           >
