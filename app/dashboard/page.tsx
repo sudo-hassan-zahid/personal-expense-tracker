@@ -12,28 +12,35 @@ import { TransactionList } from "@/components/TransactionList";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { TransactionFilter } from "@/components/TransactionFilter";
 
+import { cookies } from "next/headers";
+
 export default async function DashboardPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
   // searchParams is dynamic — must be outside of 'use cache'
   const searchParams = await props.searchParams;
   const filterType = searchParams?.type as string | undefined;
 
+  // Get cookies outside of 'use cache' scope
+  const cookieStore = await cookies();
+  const allCookies = cookieStore.getAll();
+
   // Cached data fetching — all 5 queries run in parallel, result is cached
-  const { expenses, incomes, expenseCategories, incomeCategories, profile } = await getDashboardData();
+  // Pass cookies explicitly to avoid dynamic access error
+  const { expenses, incomes, expenseCategories, incomeCategories, profile } = await getDashboardData(allCookies);
 
   const currency = profile?.currency || "USD";
   const paginationEnabled = profile?.pagination_enabled ?? true;
 
   // Calculate totals (only "done" if tracking is enabled)
   const isStatusTrackingEnabled = profile?.enable_status_tracking ?? false;
-  
+
   const totalExpenses = expenses
     .filter((e: any) => !isStatusTrackingEnabled || e.status === 'done')
     .reduce((acc: number, curr: any) => acc + Number(curr.amount), 0);
-    
+
   const totalIncome = incomes
     .filter((i: any) => !isStatusTrackingEnabled || i.status === 'done')
     .reduce((acc: number, curr: any) => acc + Number(curr.amount), 0);
-    
+
   const netBalance = totalIncome - totalExpenses;
 
   // Combine transactions
@@ -74,10 +81,10 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
       </div>
 
       {/* Chart Section */}
-      <DashboardChart 
-        transactions={allTransactions} 
-        currency={currency} 
-        enableStatusTracking={profile?.enable_status_tracking} 
+      <DashboardChart
+        transactions={allTransactions}
+        currency={currency}
+        enableStatusTracking={profile?.enable_status_tracking}
       />
 
       {/* 8/4 or 12 Split Layout */}
@@ -87,7 +94,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div className="flex items-center gap-4">
               <h2 className="text-title-lg text-(--color-on-dark)">Recent Transactions</h2>
-              <Link 
+              <Link
                 href={`/dashboard?${new URLSearchParams({ ...Object.fromEntries(Object.entries(searchParams || {})), view: isWideView ? 'standard' : 'wide' }).toString()}`}
                 className="p-2 hover:bg-(--color-canvas-dark) rounded-lg transition-colors text-(--color-muted) hover:text-(--color-on-dark) border border-transparent hover:border-(--color-hairline-on-dark)"
                 title={isWideView ? "Standard View" : "Expand Table"}
@@ -107,9 +114,9 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
             </div>
             <TransactionFilter defaultType={filterType || "all"} />
           </div>
-          
-          <TransactionList 
-            initialTransactions={allTransactions} 
+
+          <TransactionList
+            initialTransactions={allTransactions}
             currency={currency}
             paginationEnabled={paginationEnabled}
             itemsPerPage={ITEMS_PER_PAGE}
@@ -136,9 +143,9 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                 name="category"
                 label="Category"
               />
-              <DatePicker 
-                name="date" 
-                defaultValue={getTodayPKT()} 
+              <DatePicker
+                name="date"
+                defaultValue={getTodayPKT()}
                 label="Date"
               />
               <div>
@@ -165,9 +172,9 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                 name="source"
                 label="Source"
               />
-              <DatePicker 
-                name="date" 
-                defaultValue={getTodayPKT()} 
+              <DatePicker
+                name="date"
+                defaultValue={getTodayPKT()}
                 label="Date"
               />
               <div>
