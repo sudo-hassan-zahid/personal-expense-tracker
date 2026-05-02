@@ -1,6 +1,6 @@
 # Personal Expense Tracker
 
-A fast, scalable personal finance tracker designed with a Binance-inspired UI. Built with Next.js (App Router), Tailwind CSS v4, and Supabase.
+A high-performance personal finance tracking application featuring a Binance-inspired professional trading interface. Built for speed and granular data control.
 
 Live Demo: [https://expense-tracker-by-hassan.vercel.app](https://expense-tracker-by-hassan.vercel.app)
 
