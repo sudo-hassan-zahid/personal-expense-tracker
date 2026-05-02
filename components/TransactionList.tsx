@@ -1,7 +1,17 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { ArrowUpRight, ArrowDownRight, Trash2, Search, ArrowUpDown, Filter, X as CloseIcon, Pencil, AlertCircle } from "lucide-react";
+import {
+  ArrowUpRight,
+  ArrowDownRight,
+  Trash2,
+  Search,
+  ArrowUpDown,
+  Filter,
+  X as CloseIcon,
+  Pencil,
+  AlertCircle,
+} from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
 import { format, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { DeleteButton } from "./DeleteButton";
@@ -51,18 +61,26 @@ export function TransactionList({
   isWideView?: boolean;
 }) {
   const {
-    search, setSearch,
-    sortField, setSortField,
-    sortOrder, setSortOrder,
-    currentPage, setCurrentPage,
-    minAmount, setMinAmount,
-    maxAmount, setMaxAmount,
-    startDate, setStartDate,
-    endDate, setEndDate,
+    search,
+    setSearch,
+    sortField,
+    setSortField,
+    sortOrder,
+    setSortOrder,
+    currentPage,
+    setCurrentPage,
+    minAmount,
+    setMinAmount,
+    maxAmount,
+    setMaxAmount,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
     sortedTransactions,
     totalItems,
     totalPages,
-    displayedTransactions
+    displayedTransactions,
   } = useTransactions(initialTransactions, itemsPerPage);
 
   const [newlyAddedId, setNewlyAddedId] = useState<string | null>(null);
@@ -113,7 +131,7 @@ export function TransactionList({
 
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all ${showFilters ? 'bg-(--color-primary) text-white border-(--color-primary)' : 'bg-(--color-canvas-dark)/50 border-(--color-hairline-on-dark) text-(--color-muted) hover:text-(--color-on-dark)'}`}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all ${showFilters ? "bg-(--color-primary) text-white border-(--color-primary)" : "bg-(--color-canvas-dark)/50 border-(--color-hairline-on-dark) text-(--color-muted) hover:text-(--color-on-dark)"}`}
         >
           <Filter size={18} />
           <span className="text-body-sm font-medium">Advanced Filters</span>
@@ -178,26 +196,60 @@ export function TransactionList({
 
       <div className="flex flex-col gap-2">
         {/* Table Header */}
-        <div className={`grid ${enableStatusTracking ? 'grid-cols-[48px_1fr_140px_100px_120px_100px_80px]' : 'grid-cols-[48px_1fr_140px_100px_120px_80px]'} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}>
+        <div
+          className={`grid ${enableStatusTracking ? "grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}
+        >
           <div className="pl-2">#</div>
-          <div className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1" onClick={() => toggleSort("note")}>
-            Description <ArrowUpDown size={12} className={sortField === "note" ? "text-(--color-primary)" : ""} />
+          <div
+            className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1"
+            onClick={() => toggleSort("note")}
+          >
+            Description{" "}
+            <ArrowUpDown
+              size={12}
+              className={sortField === "note" ? "text-(--color-primary)" : ""}
+            />
           </div>
-          <div className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1" onClick={() => toggleSort("date")}>
-            Date <ArrowUpDown size={12} className={sortField === "date" ? "text-(--color-primary)" : ""} />
+          <div
+            className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1"
+            onClick={() => toggleSort("date")}
+          >
+            Date{" "}
+            <ArrowUpDown
+              size={12}
+              className={sortField === "date" ? "text-(--color-primary)" : ""}
+            />
           </div>
-          <div className="text-center cursor-pointer hover:text-(--color-on-dark) flex items-center justify-center gap-1" onClick={() => toggleSort("type")}>
-            Type <ArrowUpDown size={12} className={sortField === "type" ? "text-(--color-primary)" : ""} />
+          <div
+            className="text-center cursor-pointer hover:text-(--color-on-dark) flex items-center justify-center gap-1"
+            onClick={() => toggleSort("type")}
+          >
+            Type{" "}
+            <ArrowUpDown
+              size={12}
+              className={sortField === "type" ? "text-(--color-primary)" : ""}
+            />
           </div>
-          <div className="text-right cursor-pointer hover:text-(--color-on-dark) flex items-center justify-end gap-1" onClick={() => toggleSort("amount")}>
-            Amount <ArrowUpDown size={12} className={sortField === "amount" ? "text-(--color-primary)" : ""} />
+          <div
+            className="text-right cursor-pointer hover:text-(--color-on-dark) flex items-center justify-end gap-1"
+            onClick={() => toggleSort("amount")}
+          >
+            Amount{" "}
+            <ArrowUpDown
+              size={12}
+              className={sortField === "amount" ? "text-(--color-primary)" : ""}
+            />
           </div>
           {enableStatusTracking && (
             <div
               className="text-center cursor-pointer hover:text-(--color-on-dark) flex items-center justify-center gap-1 transition-colors"
               onClick={() => toggleSort("status")}
             >
-              Status <ArrowUpDown size={12} className={sortField === "status" ? "text-(--color-primary)" : ""} />
+              Status{" "}
+              <ArrowUpDown
+                size={12}
+                className={sortField === "status" ? "text-(--color-primary)" : ""}
+              />
             </div>
           )}
           <div className="text-right pr-2">Action</div>
@@ -212,10 +264,10 @@ export function TransactionList({
         {displayedTransactions.map((t, i) => (
           <div
             key={t.id + t.type}
-            className={`grid ${enableStatusTracking ? 'grid-cols-[48px_1fr_140px_100px_120px_100px_80px]' : 'grid-cols-[48px_1fr_140px_100px_120px_80px]'} gap-4 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-500 px-2 -mx-2 rounded-lg animate-slide-up ${i < 5 ? `stagger-${i + 1}` : 'opacity-100'} ${newlyAddedId === t.id ? 'bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse' : ''}`}
+            className={`grid ${enableStatusTracking ? "grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-4 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-500 px-2 -mx-2 rounded-lg animate-slide-up ${i < 5 ? `stagger-${i + 1}` : "opacity-100"} ${newlyAddedId === t.id ? "bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse" : ""}`}
           >
             <div className="text-number-sm text-(--color-muted) pl-2">
-              {((currentPage - 1) * itemsPerPage) + i + 1}
+              {(currentPage - 1) * itemsPerPage + i + 1}
             </div>
             <div className="flex items-center gap-3 text-left min-w-0">
               {t.type === "income" ? (
@@ -228,10 +280,16 @@ export function TransactionList({
                 </div>
               )}
               <div className="overflow-hidden min-w-0 flex-1">
-                <div className={`text-body-md text-(--color-on-dark) font-medium ${isWideView ? 'break-words' : 'truncate'}`} title={t.note || "No note"}>
+                <div
+                  className={`text-body-md text-(--color-on-dark) font-medium ${isWideView ? "break-words" : "truncate"}`}
+                  title={t.note || "No note"}
+                >
                   {t.note || "No note"}
                 </div>
-                <div className={`text-caption text-(--color-muted) ${isWideView ? 'break-words' : 'truncate'}`} title={(t.type === "income" ? t.source : t.category) || ""}>
+                <div
+                  className={`text-caption text-(--color-muted) ${isWideView ? "break-words" : "truncate"}`}
+                  title={(t.type === "income" ? t.source : t.category) || ""}
+                >
                   {t.type === "income" ? t.source : t.category}
                 </div>
               </div>
@@ -240,17 +298,24 @@ export function TransactionList({
               {format(new Date(t.date), "MMM d, yyyy")}
             </div>
             <div className="text-body-sm capitalize flex justify-center">
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.type === 'income' ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'}`}>
+              <span
+                className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.type === "income" ? "bg-green-500/10 text-green-500 border border-green-500/20" : "bg-red-500/10 text-red-500 border border-red-500/20"}`}
+              >
                 {t.type}
               </span>
             </div>
-            <div className={`text-number-md font-semibold text-right ${t.type === 'income' ? 'text-green-500' : 'text-red-500'} truncate`}>
-              {t.type === "income" ? "+" : "-"}{formatCurrency(Number(t.amount), currency).replace(/^[^\d]*/, '')}
+            <div
+              className={`text-number-md font-semibold text-right ${t.type === "income" ? "text-green-500" : "text-red-500"} truncate`}
+            >
+              {t.type === "income" ? "+" : "-"}
+              {formatCurrency(Number(t.amount), currency).replace(/^[^\d]*/, "")}
             </div>
             {enableStatusTracking && (
               <div className="text-center">
-                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.status === 'done' ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'}`}>
-                  {t.status || 'done'}
+                <span
+                  className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.status === "done" ? "bg-green-500/10 text-green-500 border border-green-500/20" : "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"}`}
+                >
+                  {t.status || "done"}
                 </span>
               </div>
             )}
@@ -303,7 +368,8 @@ export function TransactionList({
               <div>
                 <h3 className="text-title-md text-(--color-on-dark) mb-2">Confirm Deletion</h3>
                 <p className="text-body-sm text-(--color-muted)">
-                  Are you sure you want to delete this {transactionToDelete.type}? This action cannot be undone.
+                  Are you sure you want to delete this {transactionToDelete.type}? This action
+                  cannot be undone.
                 </p>
               </div>
               <div className="flex w-full gap-3 mt-4">
@@ -320,7 +386,8 @@ export function TransactionList({
                   onClick={async () => {
                     setIsDeleting(true);
                     try {
-                      if (transactionToDelete.type === "income") await deleteIncome(transactionToDelete.id);
+                      if (transactionToDelete.type === "income")
+                        await deleteIncome(transactionToDelete.id);
                       else await deleteExpense(transactionToDelete.id);
                       toast.success("Transaction deleted successfully");
                       setTransactionToDelete(null);
