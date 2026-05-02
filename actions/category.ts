@@ -56,14 +56,48 @@ export async function addCategory(formData: FormData) {
 
 export async function updateCategory(id: string, name: string) {
   const supabase = await createClient();
+  
+  // 1. Get current category name and type
+  const { data: category, error: fetchError } = await supabase
+    .from("categories")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (fetchError || !category) {
+    throw new Error("Category not found");
+  }
+
+  const oldName = category.name;
+  const type = category.type;
+
+  // 2. Update the category name
   const { error } = await supabase
     .from("categories")
-    .update({ name, updated_at: new Date().toISOString() })
+    .update({ name })
     .eq("id", id);
 
   if (error) {
+    if (error.code === "23505") {
+      throw new Error("A category with this name already exists");
+    }
     console.error("Error updating category:", error);
     throw new Error("Failed to update category");
+  }
+
+  // 3. Propagate name change to linked transactions (since they use text links)
+  if (oldName !== name) {
+    if (type === "expense") {
+      await supabase
+        .from("expenses")
+        .update({ category: name })
+        .eq("category", oldName);
+    } else {
+      await supabase
+        .from("incomes")
+        .update({ source: name })
+        .eq("source", oldName);
+    }
   }
 
   revalidatePath("/dashboard");
