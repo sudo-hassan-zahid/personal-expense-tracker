@@ -15,46 +15,46 @@ export default async function ProfilePage() {
   return (
     <div className="w-full max-w-2xl mx-auto px-6 py-10 flex flex-col gap-8 flex-1">
       <h1 className="text-title-lg text-(--color-on-dark)">Profile Settings</h1>
-      
+
       <div className="bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-6">
         <ActionForm action={updateProfile} successMessage="Profile updated successfully!" className="flex flex-col gap-6">
           <div>
             <label className="block text-body-sm mb-1 text-(--color-muted)">Name</label>
-            <input 
-              type="text" 
-              name="name" 
-              defaultValue={profile?.name || ""} 
-              className="w-full bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)" 
-              placeholder="Your Name" 
+            <input
+              type="text"
+              name="name"
+              defaultValue={profile?.name || ""}
+              className="w-full bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)"
+              placeholder="Your Name"
             />
           </div>
 
           <div>
             <label className="block text-body-sm mb-1 text-(--color-muted)">Email Address</label>
-            <input 
-              type="email" 
-              name="email" 
-              defaultValue={user.email || ""} 
-              className="w-full bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)" 
-              placeholder="Email" 
+            <input
+              type="email"
+              name="email"
+              defaultValue={user.email || ""}
+              className="w-full bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)"
+              placeholder="Email"
             />
           </div>
 
           <div>
             <label className="block text-body-sm mb-1 text-(--color-muted)">New Password (leave blank to keep current)</label>
-            <input 
-              type="password" 
-              name="password" 
-              className="w-full bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)" 
-              placeholder="••••••••" 
+            <input
+              type="password"
+              name="password"
+              className="w-full bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)"
+              placeholder="••••••••"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-body-sm mb-1 text-(--color-muted)">Currency</label>
-              <select 
-                name="currency" 
+              <select
+                name="currency"
                 defaultValue={profile?.currency || "USD"}
                 className="w-full bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)"
               >
@@ -66,11 +66,11 @@ export default async function ProfilePage() {
                 <option value="PKR">PKR (Rs)</option>
               </select>
             </div>
-            
+
             <div>
               <label className="block text-body-sm mb-1 text-(--color-muted)">Theme</label>
-              <select 
-                name="theme" 
+              <select
+                name="theme"
                 defaultValue={profile?.theme || "dark"}
                 className="w-full bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)"
               >
@@ -83,16 +83,16 @@ export default async function ProfilePage() {
 
           <div className="flex flex-col gap-4 border-t border-(--color-hairline-on-dark) pt-6">
             <h3 className="text-body-md font-semibold text-(--color-on-dark)">Preferences</h3>
-            
+
             <div className="flex items-center justify-between p-4 bg-(--color-canvas-dark)/50 rounded-xl border border-(--color-hairline-on-dark)">
               <div className="flex flex-col">
                 <span className="text-body-md text-(--color-on-dark)">Enable Status Tracking</span>
                 <span className="text-caption text-(--color-muted)">Transactions marked as "Pending" will be excluded from chart totals and summaries.</span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer group">
-                <input 
-                  type="checkbox" 
-                  name="enable_status_tracking" 
+                <input
+                  type="checkbox"
+                  name="enable_status_tracking"
                   defaultChecked={profile?.enable_status_tracking ?? false}
                   className="sr-only peer"
                 />
@@ -106,9 +106,9 @@ export default async function ProfilePage() {
                 <span className="text-caption text-(--color-muted)">Enable the glowing magic trail follow your cursor.</span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer group">
-                <input 
-                  type="checkbox" 
-                  name="show_cursor_trail" 
+                <input
+                  type="checkbox"
+                  name="show_cursor_trail"
                   defaultChecked={profile?.show_cursor_trail ?? true}
                   className="sr-only peer"
                 />
@@ -122,9 +122,9 @@ export default async function ProfilePage() {
                 <span className="text-caption text-(--color-muted)">Split the transaction list into multiple pages.</span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer group">
-                <input 
-                  type="checkbox" 
-                  name="pagination" 
+                <input
+                  type="checkbox"
+                  name="pagination"
                   defaultChecked={profile?.pagination_enabled ?? true}
                   className="sr-only peer"
                 />

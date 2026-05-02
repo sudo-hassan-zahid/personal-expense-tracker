@@ -57,7 +57,7 @@ export async function addCategory(formData: FormData) {
 
 export async function updateCategory(id: string, name: string) {
   const supabase = await createClient();
-  
+
   // 1. Get current category name and type
   const { data: category, error: fetchError } = await supabase
     .from("categories")
@@ -107,7 +107,7 @@ export async function updateCategory(id: string, name: string) {
 
 export async function deleteCategory(id: string) {
   const supabase = await createClient();
-  
+
   // Get category details first
   const { data: category, error: fetchError } = await supabase
     .from("categories")
@@ -125,7 +125,7 @@ export async function deleteCategory(id: string) {
       .from("expenses")
       .select("*", { count: "exact", head: true })
       .ilike("category", category.name);
-    
+
     if (checkError) throw checkError;
     if (count && count > 0) {
       throw new Error(`Cannot delete: This category is linked to ${count} record(s)`);
@@ -135,7 +135,7 @@ export async function deleteCategory(id: string) {
       .from("incomes")
       .select("*", { count: "exact", head: true })
       .ilike("source", category.name);
-    
+
     if (checkError) throw checkError;
     if (count && count > 0) {
       throw new Error(`Cannot delete: This source is linked to ${count} record(s)`);

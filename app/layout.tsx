@@ -47,9 +47,9 @@ export default async function RootLayout({
         {profile?.show_cursor_trail !== false && <LazyCursorTrail />}
         <TopNav activeTheme={activeTheme as "light" | "dark"} />
         <main className="flex-1 flex flex-col relative z-10">{children}</main>
-        <Toaster 
-          richColors 
-          position="top-right" 
+        <Toaster
+          richColors
+          position="top-right"
           expand={true}
           visibleToasts={5}
           toastOptions={{
