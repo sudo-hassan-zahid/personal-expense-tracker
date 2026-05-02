@@ -45,3 +45,24 @@ export async function deleteExpense(id: string) {
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/expenses");
 }
+
+export async function updateExpense(id: string, formData: FormData) {
+  const supabase = await createClient();
+  const amount = parseFloat(formData.get("amount") as string);
+  const category = formData.get("category") as string;
+  const date = formData.get("date") as string;
+  const note = formData.get("note") as string;
+  const status = formData.get("status") as string;
+
+  const { error } = await supabase
+    .from("expenses")
+    .update({ amount, category, date, note, status })
+    .match({ id });
+
+  if (error) {
+    console.error("Error updating expense:", error);
+    throw new Error("Failed to update expense");
+  }
+
+  revalidatePath("/dashboard");
+}
