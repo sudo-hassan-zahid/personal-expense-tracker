@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from "recharts";
-import { format, subDays, parseISO, eachDayOfInterval, startOfMonth, endOfMonth } from "date-fns";
+import { format, subDays, parseISO, eachDayOfInterval, startOfMonth, endOfMonth, startOfDay, endOfDay } from "date-fns";
 import { formatCurrency } from "@/lib/currency";
 
 type Transaction = {
