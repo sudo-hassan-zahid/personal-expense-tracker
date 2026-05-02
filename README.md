@@ -20,4 +20,8 @@ Live Demo: [https://expense-tracker-by-hassan.vercel.app](https://expense-tracke
    pnpm install
    ```
 
+2. Configure environment variables in `.env.local`:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
 
