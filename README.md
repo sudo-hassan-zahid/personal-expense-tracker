@@ -6,6 +6,8 @@ Deployed Application: [https://expense-tracker-by-hassan.vercel.app](https://exp
 
 ## Key Features
 
+- Interactive Dashboard: Real-time data visualization with area charts and date range filtering.
+
 ## Tech Stack
 
 - Framework: Next.js 15 (App Router)
