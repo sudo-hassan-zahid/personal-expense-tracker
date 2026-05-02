@@ -57,9 +57,17 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
   const currency = profile?.currency || "USD";
   const paginationEnabled = profile?.pagination_enabled ?? true;
 
-  // Calculate totals
-  const totalExpenses = expensesList.reduce((acc, curr) => acc + Number(curr.amount), 0);
-  const totalIncome = incomesList.reduce((acc, curr) => acc + Number(curr.amount), 0);
+  // Calculate totals (only "done" if tracking is enabled)
+  const isStatusTrackingEnabled = profile?.enable_status_tracking ?? false;
+  
+  const totalExpenses = expensesList
+    .filter(e => !isStatusTrackingEnabled || e.status === 'done')
+    .reduce((acc, curr) => acc + Number(curr.amount), 0);
+    
+  const totalIncome = incomesList
+    .filter(i => !isStatusTrackingEnabled || i.status === 'done')
+    .reduce((acc, curr) => acc + Number(curr.amount), 0);
+    
   const netBalance = totalIncome - totalExpenses;
 
   // Combine transactions
@@ -95,7 +103,11 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
       </div>
 
       {/* Chart Section */}
-      <DashboardChart transactions={allTransactions} currency={currency} />
+      <DashboardChart 
+        transactions={allTransactions} 
+        currency={currency} 
+        enableStatusTracking={profile?.enable_status_tracking} 
+      />
 
       {/* 8/4 Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -111,6 +123,9 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
             currency={currency}
             paginationEnabled={paginationEnabled}
             itemsPerPage={ITEMS_PER_PAGE}
+            expenseCategories={expenseCategories}
+            incomeCategories={incomeCategories}
+            enableStatusTracking={isStatusTrackingEnabled}
           />
         </div>
 
