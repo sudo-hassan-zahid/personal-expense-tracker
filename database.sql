@@ -123,8 +123,11 @@ create policy "Users can insert their own profile"
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
-    insert into public.profiles (id)
-    values (new.id);
+    insert into public.profiles (id, name)
+    values (
+        new.id,
+        new.raw_user_meta_data->>'full_name'
+    );
     return new;
 end;
 $$ language plpgsql security definer;
