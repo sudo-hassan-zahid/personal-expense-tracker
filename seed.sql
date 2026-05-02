@@ -16,6 +16,11 @@ BEGIN
         RAISE EXCEPTION 'User hassanisavailable@gmail.com not found. Please sign up first.';
     END IF;
 
+    -- Step 1b: Set currency to PKR
+    UPDATE public.profiles
+    SET currency = 'PKR', updated_at = now()
+    WHERE id = target_user_id;
+
     -- Step 2: Seed expense categories
     INSERT INTO public.categories (user_id, name, type) VALUES
         (target_user_id, 'Savings & Investments', 'expense'),
