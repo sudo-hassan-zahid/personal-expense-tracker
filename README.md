@@ -44,3 +44,8 @@ Open your Supabase project dashboard, navigate to the SQL Editor, and copy-paste
 
 - Generate the expenses and incomes tables.
 - Enforce strict Row Level Security (RLS) policies linking records to auth.users.
+
+### 4. Start Development Server
+```bash
+pnpm run dev
+```
