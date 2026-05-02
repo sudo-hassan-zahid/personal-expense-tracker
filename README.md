@@ -13,4 +13,6 @@ Live Demo: [https://expense-tracker-by-hassan.vercel.app](https://expense-tracke
 - Icons: Lucide React
 - Package Manager: pnpm
 
+## Setup Steps
+
 
