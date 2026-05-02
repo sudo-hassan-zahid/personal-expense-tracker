@@ -37,11 +37,10 @@ export default async function RootLayout({
   const themeClass = activeTheme === "light" ? "theme-light" : "";
 
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
-    >
-      <body className={`min-h-full flex flex-col bg-(--color-canvas-dark) text-(--color-body) animate-liquid relative ${themeClass}`}>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}>
+      <body
+        className={`min-h-full flex flex-col bg-(--color-canvas-dark) text-(--color-body) animate-liquid relative ${themeClass}`}
+      >
         <div className="glow-mesh" />
         <LazyParticleBackground />
         {profile?.show_cursor_trail !== false && <LazyCursorTrail />}
@@ -54,14 +53,14 @@ export default async function RootLayout({
           visibleToasts={5}
           toastOptions={{
             style: {
-              background: 'rgba(30, 35, 41, 0.8)',
-              backdropFilter: 'blur(16px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '16px',
-              color: 'var(--color-on-dark)',
-              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
+              background: "rgba(30, 35, 41, 0.8)",
+              backdropFilter: "blur(16px)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              borderRadius: "16px",
+              color: "var(--color-on-dark)",
+              boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4)",
             },
-            className: 'premium-toast',
+            className: "premium-toast",
           }}
         />
       </body>
