@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase";
 import { getProfile, updateProfile } from "@/actions/profile";
+import { ActionForm } from "@/components/ActionForm";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -16,7 +17,7 @@ export default async function ProfilePage() {
       <h1 className="text-title-lg text-(--color-on-dark)">Profile Settings</h1>
       
       <div className="bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-6">
-        <form action={updateProfile} className="flex flex-col gap-6">
+        <ActionForm action={updateProfile} successMessage="Profile updated successfully!" className="flex flex-col gap-6">
           <div>
             <label className="block text-body-sm mb-1 text-(--color-muted)">Name</label>
             <input 
@@ -94,7 +95,7 @@ export default async function ProfilePage() {
           <button type="submit" className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-md py-3 mt-4 hover:bg-(--color-primary-active) transition-colors">
             Save Changes
           </button>
-        </form>
+        </ActionForm>
       </div>
     </div>
   );

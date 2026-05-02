@@ -11,6 +11,8 @@ import { deleteExpense } from "@/actions/expense";
 import { deleteIncome } from "@/actions/income";
 import { CategorySelect } from "@/components/CategorySelect";
 import { CurrencySelector } from "@/components/CurrencySelector";
+import { ActionForm } from "@/components/ActionForm";
+import { DeleteButton } from "@/components/DeleteButton";
 
 export default async function DashboardPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const searchParams = await props.searchParams;
@@ -129,9 +131,10 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
             </form>
           </div>
           <div className="flex flex-col gap-2">
-            <div className="grid grid-cols-5 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark)">
+            <div className="grid grid-cols-6 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark)">
               <div className="col-span-2">Type / Note</div>
               <div>Date</div>
+              <div>Kind</div>
               <div className="text-right">Amount</div>
               <div className="text-right">Action</div>
             </div>
@@ -141,7 +144,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
               </div>
             )}
             {displayedTransactions.map((t) => (
-              <div key={t.id + t.type} className="grid grid-cols-5 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-colors px-2 -mx-2 rounded-md">
+              <div key={t.id + t.type} className="grid grid-cols-6 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-colors px-2 -mx-2 rounded-md">
                 <div className="col-span-2 flex items-center gap-3">
                   {t.type === "income" ? (
                     <div className="w-8 h-8 rounded-full bg-(--color-trading-up)/10 flex items-center justify-center text-(--color-trading-up)">
@@ -164,19 +167,26 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                 <div className="text-number-sm text-(--color-muted)">
                   {format(new Date(t.date), "MMM d, yyyy")}
                 </div>
+                <div className="text-body-sm capitalize">
+                  <span className={`px-2 py-1 rounded-full text-xs ${t.type === 'income' ? 'bg-(--color-trading-up)/10 text-(--color-trading-up)' : 'bg-(--color-trading-down)/10 text-(--color-trading-down)'}`}>
+                    {t.type}
+                  </span>
+                </div>
                 <div className={`text-number-md text-right ${t.type === 'income' ? 'text-(--color-trading-up)' : 'text-(--color-trading-down)'}`}>
                   {t.type === "income" ? "+" : "-"}{formatCurrency(Number(t.amount), currency).replace(/^[^\d]*/, '')}
                 </div>
                 <div className="text-right flex justify-end">
-                  <form action={async () => {
-                    "use server";
-                    if (t.type === "income") await deleteIncome(t.id);
-                    else await deleteExpense(t.id);
-                  }}>
-                    <button type="submit" className="p-2 text-(--color-muted) hover:text-(--color-trading-down) transition-colors">
-                      <Trash2 size={16} />
-                    </button>
-                  </form>
+                  <DeleteButton
+                    action={async () => {
+                      "use server";
+                      if (t.type === "income") await deleteIncome(t.id);
+                      else await deleteExpense(t.id);
+                    }}
+                    successMessage={`${t.type === "income" ? "Income" : "Expense"} deleted successfully`}
+                    className="p-2 text-(--color-muted) hover:text-(--color-trading-down) transition-colors"
+                  >
+                    <Trash2 size={16} />
+                  </DeleteButton>
                 </div>
               </div>
             ))}
@@ -212,12 +222,12 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
         {/* Right Col - 4 - Actions */}
         <div className="lg:col-span-4 flex flex-col gap-6">
           {/* Add Expense Card */}
-          <div className="bg-(--color-canvas-light) rounded-xl p-6 text-(--color-ink) border border-(--color-hairline-on-light)">
+          <div className="bg-(--color-surface-card-dark) rounded-xl p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
             <h2 className="text-title-md mb-4">Quick Add Expense</h2>
-            <form action={addExpense} className="flex flex-col gap-4">
+            <ActionForm action={addExpense} successMessage="Expense added successfully" className="flex flex-col gap-4">
               <div>
-                <label className="block text-body-sm mb-1 text-(--color-body-on-light)">Amount</label>
-                <input required type="number" step="0.01" name="amount" className="w-full bg-transparent border border-(--color-hairline-on-light) rounded-md px-3 py-2 text-number-md focus:border-(--color-primary) focus:outline-none" placeholder="0.00" />
+                <label className="block text-body-sm mb-1 text-(--color-muted)">Amount</label>
+                <input required type="number" step="0.01" name="amount" className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-number-md focus:border-(--color-primary) focus:outline-none" placeholder="0.00" />
               </div>
               <CategorySelect
                 categories={expenseCategories}
@@ -226,26 +236,26 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                 label="Category"
               />
               <div>
-                <label className="block text-body-sm mb-1 text-(--color-body-on-light)">Date</label>
-                <input required type="date" name="date" defaultValue={new Date().toISOString().split('T')[0]} className="w-full bg-transparent border border-(--color-hairline-on-light) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" />
+                <label className="block text-body-sm mb-1 text-(--color-muted)">Date</label>
+                <input required type="date" name="date" defaultValue={new Date().toISOString().split('T')[0]} className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" />
               </div>
               <div>
-                <label className="block text-body-sm mb-1 text-(--color-body-on-light)">Note</label>
-                <input type="text" name="note" className="w-full bg-transparent border border-(--color-hairline-on-light) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" placeholder="Optional note" />
+                <label className="block text-body-sm mb-1 text-(--color-muted)">Note</label>
+                <input type="text" name="note" className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" placeholder="Optional note" />
               </div>
               <button type="submit" className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-md py-3 mt-2 hover:bg-(--color-primary-active) transition-colors">
                 Add Expense
               </button>
-            </form>
+            </ActionForm>
           </div>
 
           {/* Add Income Card */}
-          <div className="bg-(--color-canvas-light) rounded-xl p-6 text-(--color-ink) border border-(--color-hairline-on-light)">
+          <div className="bg-(--color-surface-card-dark) rounded-xl p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
             <h2 className="text-title-md mb-4">Quick Add Income</h2>
-            <form action={addIncome} className="flex flex-col gap-4">
+            <ActionForm action={addIncome} successMessage="Income added successfully" className="flex flex-col gap-4">
               <div>
-                <label className="block text-body-sm mb-1 text-(--color-body-on-light)">Amount</label>
-                <input required type="number" step="0.01" name="amount" className="w-full bg-transparent border border-(--color-hairline-on-light) rounded-md px-3 py-2 text-number-md focus:border-(--color-primary) focus:outline-none" placeholder="0.00" />
+                <label className="block text-body-sm mb-1 text-(--color-muted)">Amount</label>
+                <input required type="number" step="0.01" name="amount" className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-number-md focus:border-(--color-primary) focus:outline-none" placeholder="0.00" />
               </div>
               <CategorySelect
                 categories={incomeCategories}
@@ -254,17 +264,17 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                 label="Source"
               />
               <div>
-                <label className="block text-body-sm mb-1 text-(--color-body-on-light)">Date</label>
-                <input required type="date" name="date" defaultValue={new Date().toISOString().split('T')[0]} className="w-full bg-transparent border border-(--color-hairline-on-light) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" />
+                <label className="block text-body-sm mb-1 text-(--color-muted)">Date</label>
+                <input required type="date" name="date" defaultValue={new Date().toISOString().split('T')[0]} className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" />
               </div>
               <div>
-                <label className="block text-body-sm mb-1 text-(--color-body-on-light)">Note</label>
-                <input type="text" name="note" className="w-full bg-transparent border border-(--color-hairline-on-light) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" placeholder="Optional note" />
+                <label className="block text-body-sm mb-1 text-(--color-muted)">Note</label>
+                <input type="text" name="note" className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" placeholder="Optional note" />
               </div>
               <button type="submit" className="w-full bg-(--color-surface-card-dark) text-(--color-on-dark) text-button rounded-md py-3 mt-2 hover:bg-(--color-surface-elevated-dark) transition-colors">
                 Add Income
               </button>
-            </form>
+            </ActionForm>
           </div>
         </div>
       </div>
