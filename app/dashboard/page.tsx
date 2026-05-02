@@ -4,8 +4,9 @@ import { addIncome } from "@/actions/income";
 import { getCategories } from "@/actions/category";
 import { getProfile } from "@/actions/profile";
 import { formatCurrency } from "@/lib/currency";
-import { format } from "date-fns";
-import { ArrowUpRight, ArrowDownRight, Trash2 } from "lucide-react";
+import { format, startOfMonth, endOfMonth, formatISO } from "date-fns";
+import { ArrowUpRight, ArrowDownRight, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { deleteExpense } from "@/actions/expense";
 import { deleteIncome } from "@/actions/income";
 import { CategorySelect } from "@/components/CategorySelect";
@@ -18,15 +19,24 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
 
   const supabase = await createClient();
 
+  // Date filtering for current month
+  const today = new Date();
+  const monthStart = formatISO(startOfMonth(today));
+  const monthEnd = formatISO(endOfMonth(today));
+
   // Fetch data
   const { data: expenses } = await supabase
     .from("expenses")
     .select("*")
+    .gte("date", monthStart)
+    .lte("date", monthEnd)
     .order("date", { ascending: false });
 
   const { data: incomes } = await supabase
     .from("incomes")
     .select("*")
+    .gte("date", monthStart)
+    .lte("date", monthEnd)
     .order("date", { ascending: false });
 
   const expensesList = expenses || [];
@@ -40,6 +50,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
   ]);
 
   const currency = profile?.currency || "USD";
+  const paginationEnabled = profile?.pagination_enabled ?? true;
 
   // Calculate totals
   const totalExpenses = expensesList.reduce((acc, curr) => acc + Number(curr.amount), 0);
@@ -60,6 +71,16 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
     allTransactions = allTransactions.filter((t) => 
       (t.type === "income" ? (t as { source: string }).source : (t as { category: string }).category).toLowerCase() === filterCategory.toLowerCase()
     );
+  }
+
+  const ITEMS_PER_PAGE = 10;
+  const currentPage = parseInt((searchParams?.page as string) || "1");
+  const totalPages = Math.max(1, Math.ceil(allTransactions.length / ITEMS_PER_PAGE));
+  
+  let displayedTransactions = allTransactions;
+  if (paginationEnabled) {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    displayedTransactions = allTransactions.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   }
 
   return (
@@ -114,12 +135,12 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
               <div className="text-right">Amount</div>
               <div className="text-right">Action</div>
             </div>
-            {allTransactions.length === 0 && (
+            {displayedTransactions.length === 0 && (
               <div className="py-8 text-center text-body-md text-(--color-muted)">
                 No transactions found.
               </div>
             )}
-            {allTransactions.map((t) => (
+            {displayedTransactions.map((t) => (
               <div key={t.id + t.type} className="grid grid-cols-5 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-colors px-2 -mx-2 rounded-md">
                 <div className="col-span-2 flex items-center gap-3">
                   {t.type === "income" ? (
@@ -160,6 +181,32 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
               </div>
             ))}
           </div>
+
+          {/* Pagination Controls */}
+          {paginationEnabled && totalPages > 1 && (
+            <div className="flex items-center justify-between mt-6 pt-4 border-t border-(--color-hairline-on-dark)">
+              <div className="text-caption text-(--color-muted)">
+                Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, allTransactions.length)} of {allTransactions.length} entries
+              </div>
+              <div className="flex items-center gap-2">
+                <Link
+                  href={`/dashboard?page=${Math.max(1, currentPage - 1)}${filterType ? `&type=${filterType}` : ''}${filterCategory ? `&category=${filterCategory}` : ''}`}
+                  className={`p-2 rounded border border-(--color-hairline-on-dark) ${currentPage === 1 ? 'opacity-50 pointer-events-none' : 'hover:bg-(--color-surface-elevated-dark) text-(--color-on-dark)'}`}
+                >
+                  <ChevronLeft size={16} />
+                </Link>
+                <div className="text-body-sm text-(--color-on-dark) px-4">
+                  Page {currentPage} of {totalPages}
+                </div>
+                <Link
+                  href={`/dashboard?page=${Math.min(totalPages, currentPage + 1)}${filterType ? `&type=${filterType}` : ''}${filterCategory ? `&category=${filterCategory}` : ''}`}
+                  className={`p-2 rounded border border-(--color-hairline-on-dark) ${currentPage === totalPages ? 'opacity-50 pointer-events-none' : 'hover:bg-(--color-surface-elevated-dark) text-(--color-on-dark)'}`}
+                >
+                  <ChevronRight size={16} />
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right Col - 4 - Actions */}

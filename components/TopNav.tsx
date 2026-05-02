@@ -19,6 +19,7 @@ export async function TopNav() {
         {user && (
           <nav className="hidden md:flex items-center gap-6">
             <Link href="/dashboard" className="text-nav-link text-(--color-body) hover:text-(--color-primary) transition-colors">Dashboard</Link>
+            <Link href="/dashboard/profile" className="text-nav-link text-(--color-body) hover:text-(--color-primary) transition-colors">Profile</Link>
           </nav>
         )}
       </div>

@@ -95,6 +95,9 @@ create policy "Users can delete their own categories"
 -- Create profiles table for user preferences (currency, etc.)
 create table public.profiles (
     id uuid references auth.users primary key,
+    name text,
+    theme text not null default 'dark',
+    pagination_enabled boolean not null default true,
     currency text not null default 'USD',
     created_at timestamp with time zone default timezone('utc'::text, now()) not null,
     updated_at timestamp with time zone default timezone('utc'::text, now()) not null
