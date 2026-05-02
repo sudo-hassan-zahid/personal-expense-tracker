@@ -95,9 +95,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
       </div>
 
       {/* Chart Section */}
-      <div className="animate-slide-up stagger-4">
-        <DashboardChart transactions={allTransactions} currency={currency} />
-      </div>
+      <DashboardChart transactions={allTransactions} currency={currency} />
 
       {/* 8/4 Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
