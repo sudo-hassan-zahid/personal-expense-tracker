@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { addCategory } from "@/actions/category";
 
-type Category = {
+export type Category = {
   id: string;
   name: string;
   type: string;
@@ -15,11 +15,13 @@ export function CategorySelect({
   type,
   name,
   label,
+  defaultValue,
 }: {
   categories: Category[];
   type: "expense" | "income";
   name: string;
   label: string;
+  defaultValue?: string;
 }) {
   const [isAdding, setIsAdding] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
@@ -67,6 +69,7 @@ export function CategorySelect({
           <select
             required
             name={name}
+            defaultValue={defaultValue}
             className="flex-1 bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)"
           >
             {localCategories.map((cat) => (
