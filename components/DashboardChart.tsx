@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from "recharts";
-import { format, subDays, parseISO } from "date-fns";
+import { format, subDays, parseISO, eachDayOfInterval, startOfMonth, endOfMonth } from "date-fns";
 import { formatCurrency } from "@/lib/currency";
 
 type Transaction = {
@@ -31,13 +31,35 @@ export function DashboardChart({ transactions, currency }: { transactions: Trans
 
   const chartData = useMemo(() => {
     let filtered = transactions;
+    const today = new Date();
+    let startDate: Date;
+    let endDate = today;
     
     // Time filter
-    if (timeRange !== "all") {
-      const today = new Date();
-      const startDate = timeRange === "7d" ? subDays(today, 7) : subDays(today, 30);
-      filtered = filtered.filter(t => new Date(t.date) >= startDate);
+    if (timeRange === "7d") {
+      startDate = subDays(today, 6);
+    } else if (timeRange === "30d") {
+      startDate = subDays(today, 29);
+    } else {
+      startDate = startOfMonth(today);
+      endDate = endOfMonth(today); // Show full month to keep scale consistent
     }
+
+    // Generate all days in range to prevent single-dot empty space
+    const allDays = eachDayOfInterval({ start: startDate, end: endDate });
+    const chartDataMap = new Map();
+    
+    allDays.forEach(day => {
+      // Local date string format YYYY-MM-DD
+      const d = format(day, 'yyyy-MM-dd');
+      chartDataMap.set(d, { date: d, income: 0, expense: 0 });
+    });
+
+    // Pre-filter by our precise date range
+    filtered = filtered.filter(t => {
+      const tDate = new Date(t.date);
+      return tDate >= startDate && tDate <= new Date(endDate.setHours(23, 59, 59, 999));
+    });
 
     // Type filter
     if (filterType !== "all") {
@@ -52,13 +74,21 @@ export function DashboardChart({ transactions, currency }: { transactions: Trans
        });
     }
 
-    const chartDataMap = new Map();
     filtered.forEach(t => {
-      const d = new Date(t.date).toISOString().split('T')[0];
-      if (!chartDataMap.has(d)) chartDataMap.set(d, { date: d, income: 0, expense: 0 });
-      const entry = chartDataMap.get(d);
-      if (t.type === 'income') entry.income += Number(t.amount);
-      else entry.expense += Number(t.amount);
+      const tDate = new Date(t.date);
+      // Adjusting for timezone offset so we get the correct local YYYY-MM-DD
+      const d = format(new Date(tDate.getTime() + tDate.getTimezoneOffset() * 60000), 'yyyy-MM-dd');
+      // If the date is still slightly off due to parse string format, let's try direct split if ISO
+      const dateKey = t.date.includes('T') ? t.date.split('T')[0] : d;
+
+      if (chartDataMap.has(dateKey)) {
+        const entry = chartDataMap.get(dateKey);
+        if (t.type === 'income') entry.income += Number(t.amount);
+        else entry.expense += Number(t.amount);
+      } else {
+        // Fallback in case of timezone mismatch
+        chartDataMap.set(dateKey, { date: dateKey, income: t.type === 'income' ? Number(t.amount) : 0, expense: t.type === 'expense' ? Number(t.amount) : 0 });
+      }
     });
 
     return Array.from(chartDataMap.values()).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).map(d => ({
