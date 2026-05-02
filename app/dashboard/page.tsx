@@ -1,10 +1,12 @@
 import { createClient } from "@/lib/supabase";
 import { addExpense } from "@/actions/expense";
 import { addIncome } from "@/actions/income";
+import { getCategories } from "@/actions/category";
 import { format } from "date-fns";
 import { ArrowUpRight, ArrowDownRight, Trash2 } from "lucide-react";
 import { deleteExpense } from "@/actions/expense";
 import { deleteIncome } from "@/actions/income";
+import { CategorySelect } from "@/components/CategorySelect";
 
 export default async function DashboardPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const searchParams = await props.searchParams;
@@ -26,6 +28,12 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
 
   const expensesList = expenses || [];
   const incomesList = incomes || [];
+
+  // Fetch user categories
+  const [expenseCategories, incomeCategories] = await Promise.all([
+    getCategories("expense"),
+    getCategories("income"),
+  ]);
 
   // Calculate totals
   const totalExpenses = expensesList.reduce((acc, curr) => acc + Number(curr.amount), 0);
@@ -152,17 +160,12 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                 <label className="block text-body-sm mb-1 text-(--color-body-on-light)">Amount</label>
                 <input required type="number" step="0.01" name="amount" className="w-full bg-transparent border border-(--color-hairline-on-light) rounded-md px-3 py-2 text-number-md focus:border-(--color-primary) focus:outline-none" placeholder="0.00" />
               </div>
-              <div>
-                <label className="block text-body-sm mb-1 text-(--color-body-on-light)">Category</label>
-                <select required name="category" className="w-full bg-transparent border border-(--color-hairline-on-light) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none">
-                  <option value="Food">Food</option>
-                  <option value="Transport">Transport</option>
-                  <option value="Housing">Housing</option>
-                  <option value="Utilities">Utilities</option>
-                  <option value="Entertainment">Entertainment</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
+              <CategorySelect
+                categories={expenseCategories}
+                type="expense"
+                name="category"
+                label="Category"
+              />
               <div>
                 <label className="block text-body-sm mb-1 text-(--color-body-on-light)">Date</label>
                 <input required type="date" name="date" defaultValue={new Date().toISOString().split('T')[0]} className="w-full bg-transparent border border-(--color-hairline-on-light) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" />
@@ -185,16 +188,12 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                 <label className="block text-body-sm mb-1 text-(--color-body-on-light)">Amount</label>
                 <input required type="number" step="0.01" name="amount" className="w-full bg-transparent border border-(--color-hairline-on-light) rounded-md px-3 py-2 text-number-md focus:border-(--color-primary) focus:outline-none" placeholder="0.00" />
               </div>
-              <div>
-                <label className="block text-body-sm mb-1 text-(--color-body-on-light)">Source</label>
-                <select required name="source" className="w-full bg-transparent border border-(--color-hairline-on-light) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none">
-                  <option value="Salary">Salary</option>
-                  <option value="Freelance">Freelance</option>
-                  <option value="Investments">Investments</option>
-                  <option value="Gift">Gift</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
+              <CategorySelect
+                categories={incomeCategories}
+                type="income"
+                name="source"
+                label="Source"
+              />
               <div>
                 <label className="block text-body-sm mb-1 text-(--color-body-on-light)">Date</label>
                 <input required type="date" name="date" defaultValue={new Date().toISOString().split('T')[0]} className="w-full bg-transparent border border-(--color-hairline-on-light) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" />
