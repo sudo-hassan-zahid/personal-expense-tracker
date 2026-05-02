@@ -13,7 +13,8 @@ export function CursorTrail() {
     if (!ctx) return;
 
     let points: { x: number; y: number; age: number }[] = [];
-    let sparkles: { x: number; y: number; vx: number; vy: number; age: number; color: string }[] = [];
+    let sparkles: { x: number; y: number; vx: number; vy: number; age: number; color: string }[] =
+      [];
     const maxAge = 40;
     const sparkleMaxAge = 60;
     const MAX_POINTS = 50; // Cap trail length to prevent unbounded growth
@@ -49,7 +50,7 @@ export function CursorTrail() {
           vx: (Math.random() - 0.5) * 5,
           vy: (Math.random() - 0.5) * 5,
           age: 0,
-          color: colors[Math.floor(Math.random() * colors.length)]
+          color: colors[Math.floor(Math.random() * colors.length)],
         });
       }
     };
@@ -91,8 +92,8 @@ export function CursorTrail() {
       }
 
       // Draw Sparkles
-      sparkles = sparkles.filter(s => s.age < sparkleMaxAge);
-      sparkles.forEach(s => {
+      sparkles = sparkles.filter((s) => s.age < sparkleMaxAge);
+      sparkles.forEach((s) => {
         s.x += s.vx;
         s.y += s.vy;
         s.age += 1;
@@ -120,10 +121,5 @@ export function CursorTrail() {
     };
   }, []);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-[9999]"
-    />
-  );
+  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[9999]" />;
 }
