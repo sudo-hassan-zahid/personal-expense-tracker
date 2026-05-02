@@ -5,6 +5,7 @@ import { addCategory, deleteCategory, updateCategory } from "@/actions/category"
 import { ActionForm } from "./ActionForm";
 import { Trash2, Edit2, Check, X, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { DeleteButton } from "./DeleteButton";
 
 interface Category {
   id: string;
@@ -40,14 +41,7 @@ export function CategoryManager({
     }
   };
 
-  const handleDelete = async (id: string) => {
-    try {
-      await deleteCategory(id);
-      toast.success("Category deleted successfully");
-    } catch (error: any) {
-      toast.error(error.message);
-    }
-  };
+
 
   return (
     <div className="flex flex-col gap-8">
@@ -148,12 +142,13 @@ export function CategoryManager({
                           >
                             <Edit2 size={16} />
                           </button>
-                          <button 
-                            onClick={() => handleDelete(cat.id)}
+                          <DeleteButton 
+                            action={async () => await deleteCategory(cat.id)}
+                            successMessage="Category deleted successfully"
                             className="p-2 text-(--color-muted) hover:text-(--color-trading-down) hover:bg-(--color-trading-down)/10 rounded-md transition-all"
                           >
                             <Trash2 size={16} />
-                          </button>
+                          </DeleteButton>
                         </div>
                       </>
                     )}
