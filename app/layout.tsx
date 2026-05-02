@@ -43,7 +43,7 @@ export default async function RootLayout({
       <body className={`min-h-full flex flex-col bg-(--color-canvas-dark) text-(--color-body) animate-liquid relative ${themeClass}`}>
         <div className="glow-mesh" />
         <ParticleBackground />
-        <CursorTrail />
+        {profile?.show_cursor_trail !== false && <CursorTrail />}
         <TopNav activeTheme={activeTheme as "light" | "dark"} />
         <main className="flex-1 flex flex-col relative z-10">{children}</main>
         <Toaster 
