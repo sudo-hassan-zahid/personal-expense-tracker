@@ -1,0 +1,41 @@
+"use client";
+
+import { Moon, Sun } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
+export function ThemeToggle({ initialTheme }: { initialTheme: "light" | "dark" }) {
+  const [theme, setTheme] = useState(initialTheme);
+  const router = useRouter();
+
+  // Sync state if initialTheme prop changes (e.g., user updates DB profile)
+  useEffect(() => {
+    setTheme(initialTheme);
+  }, [initialTheme]);
+
+  const toggleTheme = () => {
+    const newTheme = theme === "light" ? "dark" : "light";
+    setTheme(newTheme);
+    
+    // Apply immediately to avoid delay
+    if (newTheme === "light") {
+      document.body.classList.add("theme-light");
+    } else {
+      document.body.classList.remove("theme-light");
+    }
+
+    // Save session preference to cookie
+    document.cookie = `theme=${newTheme}; path=/; max-age=31536000`;
+    router.refresh(); // Refresh to ensure server components know about it
+  };
+
+  return (
+    <button
+      onClick={toggleTheme}
+      className="p-2 rounded-full border border-(--color-hairline-on-dark) text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-surface-elevated-dark) transition-colors flex items-center justify-center"
+      title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
+    >
+      {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+    </button>
+  );
+}
