@@ -111,47 +111,52 @@ export function CategoryManager({
                   No categories found for {type}s.
                 </div>
               ) : (
-                categories.map((cat) => (
-                  <div key={cat.id} className="flex items-center justify-between p-4 hover:bg-(--color-surface-elevated-dark) transition-colors">
-                    {editingId === cat.id ? (
-                      <div className="flex-1 flex items-center gap-2 mr-4">
-                        <input 
-                          autoFocus
-                          value={editName}
-                          onChange={(e) => setEditName(e.target.value)}
-                          className="flex-1 bg-transparent border border-(--color-primary) rounded-md px-3 py-1.5 text-body-md focus:outline-none"
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') handleUpdate(cat.id);
-                            if (e.key === 'Escape') setEditingId(null);
-                          }}
-                        />
-                        <button onClick={() => handleUpdate(cat.id)} className="p-2 text-green-500 hover:bg-green-500/10 rounded-md">
-                          <Check size={18} />
-                        </button>
-                        <button onClick={() => setEditingId(null)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-md">
-                          <X size={18} />
-                        </button>
-                      </div>
-                    ) : (
-                      <>
-                        <span className="text-body-md text-(--color-on-dark) font-medium">{cat.name}</span>
-                        <div className="flex items-center gap-2">
-                          <button 
-                            onClick={() => handleEdit(cat)}
-                            className="p-2 text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-primary)/10 rounded-md transition-all"
-                          >
-                            <Edit2 size={16} />
+                [...categories].sort((a, b) => a.name.localeCompare(b.name)).map((cat, index) => (
+                  <div key={cat.id} className="flex items-center justify-between p-4 hover:bg-(--color-surface-elevated-dark) transition-colors animate-in fade-in slide-in-from-left-2" style={{ animationDelay: `${index * 50}ms` }}>
+                    <div className="flex items-center gap-4 flex-1">
+                      <span className="text-caption font-bold text-(--color-primary) w-6 opacity-50">
+                        {(index + 1).toString().padStart(2, '0')}
+                      </span>
+                      {editingId === cat.id ? (
+                        <div className="flex-1 flex items-center gap-2 mr-4">
+                          <input 
+                            autoFocus
+                            value={editName}
+                            onChange={(e) => setEditName(e.target.value)}
+                            className="flex-1 bg-transparent border border-(--color-primary) rounded-md px-3 py-1.5 text-body-md focus:outline-none"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') handleUpdate(cat.id);
+                              if (e.key === 'Escape') setEditingId(null);
+                            }}
+                          />
+                          <button onClick={() => handleUpdate(cat.id)} className="p-2 text-green-500 hover:bg-green-500/10 rounded-md">
+                            <Check size={18} />
                           </button>
-                          <DeleteButton 
-                            action={async () => await deleteCategory(cat.id)}
-                            successMessage="Category deleted successfully"
-                            className="p-2 text-(--color-muted) hover:text-(--color-trading-down) hover:bg-(--color-trading-down)/10 rounded-md transition-all"
-                          >
-                            <Trash2 size={16} />
-                          </DeleteButton>
+                          <button onClick={() => setEditingId(null)} className="p-2 text-red-500 hover:bg-red-500/10 rounded-md">
+                            <X size={18} />
+                          </button>
                         </div>
-                      </>
-                    )}
+                      ) : (
+                        <>
+                          <span className="text-body-md text-(--color-on-dark) font-medium">{cat.name}</span>
+                          <div className="flex items-center gap-2">
+                            <button 
+                              onClick={() => handleEdit(cat)}
+                              className="p-2 text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-primary)/10 rounded-md transition-all"
+                            >
+                              <Edit2 size={16} />
+                            </button>
+                            <DeleteButton 
+                              action={async () => await deleteCategory(cat.id)}
+                              successMessage="Category deleted successfully"
+                              className="p-2 text-(--color-muted) hover:text-(--color-trading-down) hover:bg-(--color-trading-down)/10 rounded-md transition-all"
+                            >
+                              <Trash2 size={16} />
+                            </DeleteButton>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
                 ))
               )}
