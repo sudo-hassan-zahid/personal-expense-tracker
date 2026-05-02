@@ -24,4 +24,6 @@ Live Demo: [https://expense-tracker-by-hassan.vercel.app](https://expense-tracke
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
+3. Initialize database schema using `database.sql` in Supabase SQL Editor.
+
 
