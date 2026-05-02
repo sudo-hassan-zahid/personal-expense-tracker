@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase";
 import { redirect } from "next/navigation";
 
 export async function signup(formData: FormData) {
+  const name = formData.get("name") as string;
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const supabase = await createClient();
@@ -11,6 +12,11 @@ export async function signup(formData: FormData) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
+    options: {
+      data: {
+        full_name: name,
+      },
+    },
   });
 
   if (error) {
@@ -27,8 +33,8 @@ export async function signup(formData: FormData) {
     redirect("/dashboard");
   }
 
-  // Otherwise, email confirmation is enabled — tell the user to check their email
-  redirect(`/login?message=${encodeURIComponent("Check your email to confirm your account before logging in.")}`);
+  // Otherwise, email confirmation is enabled — show success page
+  redirect("/signup/success");
 }
 
 
