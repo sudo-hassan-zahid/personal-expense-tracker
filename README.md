@@ -4,6 +4,8 @@ A high-performance personal finance tracking application featuring a Binance-ins
 
 Deployed Application: [https://expense-tracker-by-hassan.vercel.app](https://expense-tracker-by-hassan.vercel.app)
 
+## Key Features
+
 ## Tech Stack
 
 - Framework: Next.js 15 (App Router)
