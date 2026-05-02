@@ -1,8 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
-export async function createClient(cookieStore?: any) {
-  const effectiveCookies = cookieStore || await cookies();
+export async function createClient(cookieStore?: unknown) {
+  const effectiveCookies = (cookieStore as any) || (await cookies());
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -10,12 +10,12 @@ export async function createClient(cookieStore?: any) {
     {
       cookies: {
         getAll() {
-          return typeof effectiveCookies.getAll === 'function' 
-            ? effectiveCookies.getAll() 
+          return typeof effectiveCookies.getAll === "function"
+            ? effectiveCookies.getAll()
             : effectiveCookies;
         },
         setAll(cookiesToSet) {
-          if (typeof effectiveCookies.set === 'function') {
+          if (typeof effectiveCookies.set === "function") {
             try {
               cookiesToSet.forEach(({ name, value, options }) =>
                 effectiveCookies.set(name, value, options)
@@ -37,7 +37,10 @@ export async function createClient(cookieStore?: any) {
  */
 export async function getAuthenticatedClient() {
   const supabase = await createClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
   if (error || !user) {
     throw new Error("Unauthorized");
   }
