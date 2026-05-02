@@ -45,3 +45,24 @@ export async function deleteIncome(id: string) {
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/income");
 }
+
+export async function updateIncome(id: string, formData: FormData) {
+  const supabase = await createClient();
+  const amount = parseFloat(formData.get("amount") as string);
+  const source = formData.get("source") as string;
+  const date = formData.get("date") as string;
+  const note = formData.get("note") as string;
+  const status = formData.get("status") as string;
+
+  const { error } = await supabase
+    .from("incomes")
+    .update({ amount, source, date, note, status })
+    .match({ id });
+
+  if (error) {
+    console.error("Error updating income:", error);
+    throw new Error("Failed to update income");
+  }
+
+  revalidatePath("/dashboard");
+}
