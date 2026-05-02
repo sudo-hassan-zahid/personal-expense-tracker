@@ -57,12 +57,16 @@ export async function updateProfile(formData: FormData) {
   const currency = formData.get("currency") as string;
   const theme = formData.get("theme") as string;
   const paginationEnabled = formData.get("pagination") === "on";
+  const statusTrackingEnabled = formData.get("enable_status_tracking") === "on";
+  const showCursorTrail = formData.get("show_cursor_trail") === "on";
 
   const updates: any = {
     name,
     currency,
     theme,
     pagination_enabled: paginationEnabled,
+    enable_status_tracking: statusTrackingEnabled,
+    show_cursor_trail: showCursorTrail,
     updated_at: new Date().toISOString()
   };
 
