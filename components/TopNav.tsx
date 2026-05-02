@@ -19,9 +19,18 @@ export async function TopNav({ activeTheme }: { activeTheme: "light" | "dark" })
 
         {user && (
           <nav className="hidden md:flex items-center gap-6">
-            <Link href="/dashboard" className="text-nav-link text-(--color-body) hover:text-(--color-primary) transition-colors">Dashboard</Link>
-            <Link href="/dashboard/categories" className="text-nav-link text-(--color-body) hover:text-(--color-primary) transition-colors">Categories</Link>
-            <Link href="/dashboard/profile" className="text-nav-link text-(--color-body) hover:text-(--color-primary) transition-colors">Profile</Link>
+            <Link href="/dashboard" className="relative group text-nav-link text-(--color-body) hover:text-(--color-primary) transition-colors">
+              Dashboard
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-(--color-primary) transition-all duration-300 group-hover:w-full" />
+            </Link>
+            <Link href="/dashboard/categories" className="relative group text-nav-link text-(--color-body) hover:text-(--color-primary) transition-colors">
+              Categories
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-(--color-primary) transition-all duration-300 group-hover:w-full" />
+            </Link>
+            <Link href="/dashboard/profile" className="relative group text-nav-link text-(--color-body) hover:text-(--color-primary) transition-colors">
+              Profile
+              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-(--color-primary) transition-all duration-300 group-hover:w-full" />
+            </Link>
           </nav>
         )}
       </div>
