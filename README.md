@@ -9,6 +9,8 @@ Deployed Application: [https://expense-tracker-by-hassan.vercel.app](https://exp
 - Interactive Dashboard: Real-time data visualization with area charts and date range filtering.
 - Transaction Management: Full CRUD support for income and expenses with advanced editing and table migration.
 - Advanced Organization: Custom category creation and status tracking (Pending vs Done) for precise accounting.
+- Security and Privacy: Row Level Security (RLS) and secure authentication via Supabase.
+- User Personalization: Theme toggles, currency selection, and UI preferences stored in user profiles.
 
 ## Tech Stack
 
