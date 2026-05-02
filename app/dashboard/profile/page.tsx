@@ -82,14 +82,17 @@ export default async function ProfilePage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <input 
-              type="checkbox" 
-              id="pagination" 
-              name="pagination" 
-              defaultChecked={profile?.pagination_enabled ?? true}
-              className="w-5 h-5 accent-(--color-primary)"
-            />
-            <label htmlFor="pagination" className="text-body-md text-(--color-on-dark)">Enable Pagination on Dashboard</label>
+            <label className="relative inline-flex items-center cursor-pointer group">
+              <input 
+                type="checkbox" 
+                id="pagination" 
+                name="pagination" 
+                defaultChecked={profile?.pagination_enabled ?? true}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-(--color-surface-elevated-dark) border border-(--color-hairline-on-dark) peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-500/50 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-indigo-500 group-hover:after:scale-95"></div>
+              <span className="ml-3 text-body-md text-(--color-on-dark)">Enable Pagination on Dashboard</span>
+            </label>
           </div>
 
           <button type="submit" className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-md py-3 mt-4 hover:bg-(--color-primary-active) transition-colors">
