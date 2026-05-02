@@ -6,3 +6,5 @@ A fast, scalable personal finance tracker designed with a Binance-inspired UI. B
 Binance-Inspired UI: Built with strict adherence to the Binance design system with standard dark/light canvases and signature primary-yellow accents.
 Server Actions & SSR: Optimized using Next.js Server Components and Server Actions to ensure minimal client-side state.
 Supabase Authentication: Secure email/password login integrated seamlessly with Next.js middleware.
+Strict Row Level Security: All PostgreSQL databases are protected by RLS (user_id = auth.uid()).
+Dashboard Filters: Transaction tables support fast category and type filtering via native Next.js searchParams.
