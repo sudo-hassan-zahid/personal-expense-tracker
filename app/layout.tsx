@@ -38,9 +38,10 @@ export default async function RootLayout({
       lang="en"
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className={`min-h-full flex flex-col bg-(--color-canvas-dark) text-(--color-body) ${themeClass}`}>
+      <body className={`min-h-full flex flex-col bg-(--color-canvas-dark) text-(--color-body) animate-liquid relative ${themeClass}`}>
+        <div className="glow-mesh" />
         <TopNav activeTheme={activeTheme as "light" | "dark"} />
-        <main className="flex-1 flex flex-col">{children}</main>
+        <main className="flex-1 flex flex-col relative z-10">{children}</main>
         <Toaster 
           richColors 
           position="top-right" 
