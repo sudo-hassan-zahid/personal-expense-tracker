@@ -112,12 +112,6 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-6 py-[40px] flex flex-col gap-8 flex-1">
-      {/* Currency Selector */}
-      <div className="flex items-center justify-end gap-3">
-        <span className="text-body-sm text-(--color-muted)">Currency:</span>
-        <CurrencySelector currentCurrency={currency} />
-      </div>
-
       {/* Top Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-(--color-surface-card-dark) p-6 rounded-xl border border-(--color-hairline-on-dark)">
