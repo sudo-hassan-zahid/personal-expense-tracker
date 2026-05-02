@@ -3,17 +3,18 @@ import { formatCurrency } from "@/lib/currency";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import { getCurrentPKTDate } from "@/lib/date-utils";
 import { cacheTag } from "next/cache";
+import { cookies } from "next/headers";
 
 /**
  * Cached data fetcher for the dashboard.
  * Runs all 5 queries in parallel with a single Supabase client.
  * Cache is invalidated via revalidateTag("transactions"/"categories"/"profile").
  */
-export async function getDashboardData() {
+export async function getDashboardData(cookieStore?: any) {
   "use cache";
   cacheTag("transactions", "categories", "profile");
 
-  const supabase = await createClient();
+  const supabase = await createClient(cookieStore);
 
   // Date filtering for current month in PKT
   const todayPKT = getCurrentPKTDate();
