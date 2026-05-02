@@ -83,6 +83,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
   });
 
   const ITEMS_PER_PAGE = parseInt((searchParams?.limit as string) || "10");
+  const isWideView = searchParams?.view === "wide";
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-6 py-[40px] flex flex-col gap-8 flex-1">
@@ -115,12 +116,31 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
         enableStatusTracking={profile?.enable_status_tracking} 
       />
 
-      {/* 8/4 Split Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Col - 8 - Transactions Table */}
-        <div className="lg:col-span-8 bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-6 animate-slide-up stagger-5">
+      {/* 8/4 or 12 Split Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Col - 8 or 12 - Transactions Table */}
+        <div className={`${isWideView ? 'lg:col-span-12' : 'lg:col-span-8'} bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-6 animate-slide-up stagger-5 transition-all duration-500`}>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-            <h2 className="text-title-lg text-(--color-on-dark)">Recent Transactions</h2>
+            <div className="flex items-center gap-4">
+              <h2 className="text-title-lg text-(--color-on-dark)">Recent Transactions</h2>
+              <Link 
+                href={`/dashboard?${new URLSearchParams({ ...Object.fromEntries(Object.entries(searchParams || {})), view: isWideView ? 'standard' : 'wide' }).toString()}`}
+                className="p-2 hover:bg-(--color-canvas-dark) rounded-lg transition-colors text-(--color-muted) hover:text-(--color-on-dark) border border-transparent hover:border-(--color-hairline-on-dark)"
+                title={isWideView ? "Standard View" : "Expand Table"}
+              >
+                {isWideView ? (
+                  <div className="flex items-center gap-2 text-caption font-medium uppercase tracking-wider">
+                    <ChevronLeft size={16} />
+                    Collapse
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-caption font-medium uppercase tracking-wider">
+                    Expand
+                    <ChevronRight size={16} />
+                  </div>
+                )}
+              </Link>
+            </div>
             <TransactionFilter defaultType={filterType || "all"} />
           </div>
           
@@ -132,11 +152,12 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
             expenseCategories={expenseCategories}
             incomeCategories={incomeCategories}
             enableStatusTracking={isStatusTrackingEnabled}
+            isWideView={isWideView}
           />
         </div>
 
-        {/* Right Col - 4 - Actions */}
-        <div className="lg:col-span-4 flex flex-col gap-6 animate-slide-up stagger-5">
+        {/* Right Col - 4 - Actions (Stacked below in wide view) */}
+        <div className={`${isWideView ? 'lg:col-span-12 grid grid-cols-1 md:grid-cols-2' : 'lg:col-span-4 flex flex-col'} gap-6 animate-slide-up stagger-5 transition-all duration-500`}>
           {/* Add Expense Card */}
           <div className="bg-(--color-surface-card-dark) rounded-xl p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
             <h2 className="text-title-md mb-4">Quick Add Expense</h2>
