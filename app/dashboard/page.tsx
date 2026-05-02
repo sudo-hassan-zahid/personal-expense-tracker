@@ -176,7 +176,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                   )}
                   <div>
                     <div className="text-body-md text-(--color-on-dark)">
-                      {t.note || "No note"}
+                      {t.note || "-"}
                     </div>
                     <div className="text-caption text-(--color-muted)">
                       {t.type === "income" ? (t as { source: string }).source : (t as { category: string }).category}
