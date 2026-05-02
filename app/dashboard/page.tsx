@@ -152,9 +152,9 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
             <TransactionFilter defaultType={filterType || "all"} />
           </div>
           <div className="flex flex-col gap-2">
-            <div className="grid grid-cols-7 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark)">
-              <div className="col-span-1">Sr. No</div>
-              <div className="col-span-2">Type / Note</div>
+            <div className="grid grid-cols-[auto_2fr_1fr_auto_1fr_auto] gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark)">
+              <div className="whitespace-nowrap pl-2">#</div>
+              <div>Type / Note</div>
               <div className="flex items-center">Date <SortButton field="date" /></div>
               <div>Kind</div>
               <div className="text-right flex items-center justify-end">Amount <SortButton field="amount" /></div>
@@ -166,11 +166,11 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
               </div>
             )}
             {displayedTransactions.map((t, i) => (
-              <div key={t.id + t.type} className="grid grid-cols-7 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-colors px-2 -mx-2 rounded-md">
-                <div className="col-span-1 text-number-sm text-(--color-muted) pl-2">
+              <div key={t.id + t.type} className="grid grid-cols-[auto_2fr_1fr_auto_1fr_auto] gap-4 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-colors px-2 -mx-2 rounded-md">
+                <div className="text-number-sm text-(--color-muted) pl-2 pr-2">
                   {((currentPage - 1) * ITEMS_PER_PAGE) + i + 1}
                 </div>
-                <div className="col-span-2 flex items-center gap-3">
+                <div className="flex items-center gap-3">
                   {t.type === "income" ? (
                     <div className="w-8 h-8 rounded-full bg-(--color-trading-up)/10 flex items-center justify-center text-(--color-trading-up)">
                       <ArrowUpRight size={16} />
