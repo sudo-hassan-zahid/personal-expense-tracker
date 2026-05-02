@@ -156,7 +156,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
               <div className="whitespace-nowrap pl-2">#</div>
               <div>Type / Note</div>
               <div className="flex items-center">Date <SortButton field="date" /></div>
-              <div>Kind</div>
+              <div>Type</div>
               <div className="text-right flex items-center justify-end">Amount <SortButton field="amount" /></div>
               <div className="text-right">Action</div>
             </div>
