@@ -16,7 +16,7 @@ export function ThemeToggle({ initialTheme }: { initialTheme: "light" | "dark" }
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
-    
+
     // Apply immediately to avoid delay
     if (newTheme === "light") {
       document.body.classList.add("theme-light");

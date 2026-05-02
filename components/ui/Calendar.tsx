@@ -4,12 +4,12 @@ import { useState } from "react";
 import { format, addMonths, subMonths, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addDays, startOfWeek, endOfWeek } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-export function Calendar({ 
-  selected, 
+export function Calendar({
+  selected,
   onSelect,
   className = ""
-}: { 
-  selected?: Date, 
+}: {
+  selected?: Date,
   onSelect: (date: Date) => void,
   className?: string
 }) {
@@ -27,13 +27,13 @@ export function Calendar({
           {format(currentMonth, "MMMM yyyy")}
         </h4>
         <div className="flex gap-1">
-          <button 
+          <button
             onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
             className="p-1.5 hover:bg-(--color-surface-elevated-dark) rounded-md text-(--color-muted) hover:text-(--color-on-dark) transition-colors"
           >
             <ChevronLeft size={18} />
           </button>
-          <button 
+          <button
             onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}
             className="p-1.5 hover:bg-(--color-surface-elevated-dark) rounded-md text-(--color-muted) hover:text-(--color-on-dark) transition-colors"
           >

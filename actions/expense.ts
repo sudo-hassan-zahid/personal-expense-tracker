@@ -1,19 +1,14 @@
 "use server";
 
-import { createClient } from "@/lib/supabase";
-import { revalidatePath } from "next/cache";
+import { createClient, getAuthenticatedClient } from "@/lib/supabase";
+import { revalidateTag } from "next/cache";
 
 /**
  * Adds a new expense record to the database.
  * @param formData - The form data containing amount, category, date, and note.
  */
 export async function addExpense(formData: FormData) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
-    throw new Error("Unauthorized");
-  }
+  const { supabase, user } = await getAuthenticatedClient();
 
   const amount = parseFloat(formData.get("amount") as string);
   const category = formData.get("category") as string;
@@ -33,8 +28,7 @@ export async function addExpense(formData: FormData) {
     throw new Error("Failed to add expense");
   }
 
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/expenses");
+  revalidateTag("transactions", { expire: 0 });
 }
 
 /**
@@ -50,8 +44,7 @@ export async function deleteExpense(id: string) {
     throw new Error("Failed to delete expense");
   }
 
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/expenses");
+  revalidateTag("transactions", { expire: 0 });
 }
 
 /**
@@ -77,5 +70,5 @@ export async function updateExpense(id: string, formData: FormData) {
     throw new Error("Failed to update expense");
   }
 
-  revalidatePath("/dashboard");
+  revalidateTag("transactions", { expire: 0 });
 }

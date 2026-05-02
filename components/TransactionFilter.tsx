@@ -6,7 +6,7 @@ export function TransactionFilter({ defaultType }: { defaultType: string }) {
   const searchParams = useSearchParams();
 
   return (
-    <select 
+    <select
       className="bg-(--color-canvas-dark) text-(--color-on-dark) border border-(--color-hairline-on-dark) rounded px-2 py-1 text-body-sm"
       defaultValue={defaultType}
       onChange={(e) => {

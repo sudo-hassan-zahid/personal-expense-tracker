@@ -13,12 +13,12 @@ interface Category {
   type: string;
 }
 
-export function CategoryManager({ 
-  initialExpenses, 
-  initialIncomes 
-}: { 
-  initialExpenses: Category[], 
-  initialIncomes: Category[] 
+export function CategoryManager({
+  initialExpenses,
+  initialIncomes
+}: {
+  initialExpenses: Category[],
+  initialIncomes: Category[]
 }) {
   const [type, setType] = useState<"expense" | "income">("expense");
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -48,16 +48,16 @@ export function CategoryManager({
       {/* Type Toggle Slider */}
       <div className="flex justify-center">
         <div className="bg-(--color-canvas-dark) p-1 rounded-xl border border-(--color-hairline-on-dark) flex relative w-full max-w-[400px]">
-          <div 
+          <div
             className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-(--color-primary) rounded-lg transition-all duration-300 ease-out z-0 ${type === 'income' ? 'translate-x-[calc(100%+4px)]' : 'translate-x-0'}`}
           />
-          <button 
+          <button
             onClick={() => setType("expense")}
             className={`flex-1 py-2 text-button relative z-10 transition-colors duration-200 ${type === 'expense' ? 'text-(--color-on-primary)' : 'text-(--color-muted) hover:text-(--color-on-dark)'}`}
           >
             Expenses
           </button>
-          <button 
+          <button
             onClick={() => setType("income")}
             className={`flex-1 py-2 text-button relative z-10 transition-colors duration-200 ${type === 'income' ? 'text-(--color-on-primary)' : 'text-(--color-muted) hover:text-(--color-on-dark)'}`}
           >
@@ -87,7 +87,7 @@ export function CategoryManager({
                       </span>
                       {editingId === cat.id ? (
                         <div className="flex-1 flex items-center gap-2 mr-4">
-                          <input 
+                          <input
                             autoFocus
                             value={editName}
                             onChange={(e) => setEditName(e.target.value)}
@@ -108,15 +108,21 @@ export function CategoryManager({
                         <>
                           <span className="text-body-md text-(--color-on-dark) font-medium">{cat.name}</span>
                           <div className="flex items-center gap-2">
-                            <button 
+                            <button
                               onClick={() => handleEdit(cat)}
                               className="p-2 text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-primary)/10 rounded-md transition-all"
                             >
                               <Edit2 size={16} />
                             </button>
-                            <DeleteButton 
-                              action={async () => await deleteCategory(cat.id)}
-                              successMessage="Category deleted successfully"
+                            <DeleteButton
+                              onClick={async () => {
+                                try {
+                                  await deleteCategory(cat.id);
+                                  toast.success("Category deleted successfully");
+                                } catch (error: any) {
+                                  toast.error(error.message || "Failed to delete category");
+                                }
+                              }}
                               className="p-2 text-(--color-muted) hover:text-(--color-trading-down) hover:bg-(--color-trading-down)/10 rounded-md transition-all"
                             >
                               <Trash2 size={16} />
@@ -139,23 +145,23 @@ export function CategoryManager({
               <Plus size={20} className="text-(--color-primary)" />
               Add {type === 'expense' ? 'Expense' : 'Income'} Category
             </h3>
-            <ActionForm 
-              action={addCategory} 
+            <ActionForm
+              action={addCategory}
               successMessage="Category added successfully"
               className="flex flex-col gap-4"
             >
               <input type="hidden" name="type" value={type} />
               <div>
                 <label className="block text-body-sm mb-1.5 text-(--color-muted)">Category Name</label>
-                <input 
-                  required 
-                  name="name" 
+                <input
+                  required
+                  name="name"
                   placeholder="e.g. Food, Rent, Salary"
                   className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-lg px-4 py-2.5 text-body-md focus:border-(--color-primary) focus:outline-none transition-all"
                 />
               </div>
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-lg py-3 hover:bg-(--color-primary-active) transition-all shadow-lg shadow-blue-500/10"
               >
                 Create Category

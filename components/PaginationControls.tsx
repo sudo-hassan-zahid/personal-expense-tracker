@@ -26,7 +26,7 @@ export function PaginationControls({
     const params = new URLSearchParams(searchParams.toString());
     params.set(name, value);
     if (name === 'limit') {
-       params.set('page', '1'); // reset to page 1 on limit change
+      params.set('page', '1'); // reset to page 1 on limit change
     }
     return params.toString();
   };
@@ -38,22 +38,22 @@ export function PaginationControls({
       </div>
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
-           <span className="text-caption text-(--color-muted)">Per page:</span>
-           <select 
-             value={itemsPerPage}
-             onChange={(e) => {
-               const val = parseInt(e.target.value);
-               if (onLimitChange) onLimitChange(val);
-               else router.push(pathname + "?" + createQueryString("limit", String(val)), { scroll: false });
-             }}
-             className="bg-transparent border border-(--color-hairline-on-dark) rounded-md px-2 py-1 text-body-sm text-(--color-on-dark) focus:border-(--color-primary) focus:outline-none"
-           >
-             <option value="5" className="bg-(--color-surface-elevated-dark)">5</option>
-             <option value="10" className="bg-(--color-surface-elevated-dark)">10</option>
-             <option value="20" className="bg-(--color-surface-elevated-dark)">20</option>
-             <option value="50" className="bg-(--color-surface-elevated-dark)">50</option>
-             <option value="100" className="bg-(--color-surface-elevated-dark)">100</option>
-           </select>
+          <span className="text-caption text-(--color-muted)">Per page:</span>
+          <select
+            value={itemsPerPage}
+            onChange={(e) => {
+              const val = parseInt(e.target.value);
+              if (onLimitChange) onLimitChange(val);
+              else router.push(pathname + "?" + createQueryString("limit", String(val)), { scroll: false });
+            }}
+            className="bg-transparent border border-(--color-hairline-on-dark) rounded-md px-2 py-1 text-body-sm text-(--color-on-dark) focus:border-(--color-primary) focus:outline-none"
+          >
+            <option value="5" className="bg-(--color-surface-elevated-dark)">5</option>
+            <option value="10" className="bg-(--color-surface-elevated-dark)">10</option>
+            <option value="20" className="bg-(--color-surface-elevated-dark)">20</option>
+            <option value="50" className="bg-(--color-surface-elevated-dark)">50</option>
+            <option value="100" className="bg-(--color-surface-elevated-dark)">100</option>
+          </select>
         </div>
         <div className="flex items-center gap-2">
           <button

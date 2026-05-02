@@ -42,11 +42,11 @@ export function EditTransactionModal({
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300" 
-        onClick={onClose} 
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300"
+        onClick={onClose}
       />
-      
+
       {/* Modal */}
       <div className="relative w-full max-w-lg bg-(--color-surface-card-dark)/80 backdrop-blur-2xl border border-(--color-hairline-on-dark) rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
         <div className="flex items-center justify-between p-6 border-b border-(--color-hairline-on-dark)">
@@ -57,7 +57,7 @@ export function EditTransactionModal({
         </div>
 
         <div className="p-6">
-          <ActionForm 
+          <ActionForm
             action={async (formData) => {
               // If type changed, we need to delete from old table and insert into new
               if (type !== transaction.type) {
@@ -78,8 +78,8 @@ export function EditTransactionModal({
                 }
               }
               onClose();
-            }} 
-            successMessage="Transaction updated successfully!" 
+            }}
+            successMessage="Transaction updated successfully!"
             className="flex flex-col gap-5"
           >
             {/* Type Switcher */}
@@ -106,19 +106,19 @@ export function EditTransactionModal({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-body-sm mb-1 text-(--color-muted)">Amount</label>
-                <input 
-                  required 
-                  type="number" 
-                  step="0.01" 
-                  name="amount" 
+                <input
+                  required
+                  type="number"
+                  step="0.01"
+                  name="amount"
                   defaultValue={transaction.amount}
-                  className="w-full bg-(--color-canvas-dark)/50 border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-number-md focus:border-(--color-primary) focus:outline-none" 
+                  className="w-full bg-(--color-canvas-dark)/50 border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-number-md focus:border-(--color-primary) focus:outline-none"
                 />
               </div>
-              
-              <DatePicker 
-                name="date" 
-                defaultValue={transaction.date.split('T')[0]} 
+
+              <DatePicker
+                name="date"
+                defaultValue={transaction.date.split('T')[0]}
                 label="Date"
               />
             </div>
@@ -133,11 +133,11 @@ export function EditTransactionModal({
 
             <div>
               <label className="block text-body-sm mb-1 text-(--color-muted)">Note</label>
-              <input 
-                type="text" 
-                name="note" 
+              <input
+                type="text"
+                name="note"
                 defaultValue={transaction.note}
-                className="w-full bg-(--color-canvas-dark)/50 border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" 
+                className="w-full bg-(--color-canvas-dark)/50 border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none"
               />
             </div>
 
@@ -164,8 +164,8 @@ export function EditTransactionModal({
               </div>
             )}
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-xl py-4 mt-2 flex items-center justify-center gap-2 hover:bg-(--color-primary-active) transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-(--color-primary)/20"
             >
               <Save size={18} />

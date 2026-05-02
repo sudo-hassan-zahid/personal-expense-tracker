@@ -3,18 +3,19 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { TopNav } from "@/components/TopNav";
 import { getProfile } from "@/actions/profile";
 import { Toaster } from "sonner";
-import { ParticleBackground } from "@/components/ui/ParticleBackground";
-import { CursorTrail } from "@/components/ui/CursorTrail";
+import { LazyParticleBackground, LazyCursorTrail } from "@/components/LazyEffects";
 import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-plex",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -42,13 +43,13 @@ export default async function RootLayout({
     >
       <body className={`min-h-full flex flex-col bg-(--color-canvas-dark) text-(--color-body) animate-liquid relative ${themeClass}`}>
         <div className="glow-mesh" />
-        <ParticleBackground />
-        {profile?.show_cursor_trail !== false && <CursorTrail />}
+        <LazyParticleBackground />
+        {profile?.show_cursor_trail !== false && <LazyCursorTrail />}
         <TopNav activeTheme={activeTheme as "light" | "dark"} />
         <main className="flex-1 flex flex-col relative z-10">{children}</main>
-        <Toaster 
-          richColors 
-          position="top-right" 
+        <Toaster
+          richColors
+          position="top-right"
           expand={true}
           visibleToasts={5}
           toastOptions={{

@@ -17,8 +17,8 @@ export function DeleteButton({
   className?: string;
 }) {
   return (
-    <button 
-      type="button" 
+    <button
+      type="button"
       onClick={onClick}
       className={className}
     >

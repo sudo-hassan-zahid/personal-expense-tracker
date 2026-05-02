@@ -5,12 +5,12 @@ import { format } from "date-fns";
 import { Calendar as CalendarIcon, X } from "lucide-react";
 import { Calendar } from "./Calendar";
 
-export function DatePicker({ 
-  name, 
+export function DatePicker({
+  name,
   defaultValue,
-  label 
-}: { 
-  name: string, 
+  label
+}: {
+  name: string,
   defaultValue?: string,
   label?: string
 }) {
@@ -34,7 +34,7 @@ export function DatePicker({
     <div className="relative" ref={containerRef}>
       {label && <label className="block text-body-sm mb-1.5 text-(--color-muted)">{label}</label>}
       <input type="hidden" name={name} value={format(selectedDate, "yyyy-MM-dd")} />
-      
+
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -48,12 +48,12 @@ export function DatePicker({
 
       {isOpen && (
         <div className="absolute z-50 mt-2 left-0 animate-in fade-in zoom-in duration-200 origin-top-left">
-          <Calendar 
-            selected={selectedDate} 
+          <Calendar
+            selected={selectedDate}
             onSelect={(date) => {
               setSelectedDate(date);
               setIsOpen(false);
-            }} 
+            }}
           />
         </div>
       )}

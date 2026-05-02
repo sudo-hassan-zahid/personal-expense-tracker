@@ -1,81 +1,52 @@
-import { createClient } from "@/lib/supabase";
 import { addExpense } from "@/actions/expense";
 import { addIncome } from "@/actions/income";
-import { getCategories } from "@/actions/category";
-import { getProfile } from "@/actions/profile";
 import { formatCurrency } from "@/lib/currency";
-import { format, startOfMonth, endOfMonth, formatISO } from "date-fns";
-import { getTodayPKT, getCurrentPKTDate } from "@/lib/date-utils";
-import { ArrowUpRight, ArrowDownRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { getTodayPKT } from "@/lib/date-utils";
+import { getDashboardData } from "@/lib/dashboard-data";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { CategorySelect } from "@/components/CategorySelect";
-import { CurrencySelector } from "@/components/CurrencySelector";
 import { ActionForm } from "@/components/ActionForm";
-import { DeleteButton } from "@/components/DeleteButton";
 import { DashboardChart } from "@/components/DashboardChart";
 import { TransactionList } from "@/components/TransactionList";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { TransactionFilter } from "@/components/TransactionFilter";
 
+import { cookies } from "next/headers";
+
 export default async function DashboardPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  // searchParams is dynamic — must be outside of 'use cache'
   const searchParams = await props.searchParams;
   const filterType = searchParams?.type as string | undefined;
-  const filterCategory = searchParams?.category as string | undefined;
 
-  const supabase = await createClient();
+  // Get cookies outside of 'use cache' scope
+  const cookieStore = await cookies();
+  const allCookies = cookieStore.getAll();
 
-  // Date filtering for current month in PKT
-  const todayPKT = getCurrentPKTDate();
-  const monthStart = format(startOfMonth(todayPKT), "yyyy-MM-dd");
-  const monthEnd = format(endOfMonth(todayPKT), "yyyy-MM-dd");
-
-  // Fetch data
-  const { data: expenses } = await supabase
-    .from("expenses")
-    .select("*")
-    .gte("date", monthStart)
-    .lte("date", monthEnd)
-    .order("date", { ascending: false })
-    .order("created_at", { ascending: false });
-
-  const { data: incomes } = await supabase
-    .from("incomes")
-    .select("*")
-    .gte("date", monthStart)
-    .lte("date", monthEnd)
-    .order("date", { ascending: false })
-    .order("created_at", { ascending: false });
-
-  const expensesList = expenses || [];
-  const incomesList = incomes || [];
-
-  // Fetch user categories and profile
-  const [expenseCategories, incomeCategories, profile] = await Promise.all([
-    getCategories("expense"),
-    getCategories("income"),
-    getProfile(),
-  ]);
+  // Cached data fetching — all 5 queries run in parallel, result is cached
+  // Pass cookies explicitly to avoid dynamic access error
+  const { expenses, incomes, expenseCategories, incomeCategories, profile } = await getDashboardData(allCookies);
 
   const currency = profile?.currency || "USD";
   const paginationEnabled = profile?.pagination_enabled ?? true;
 
   // Calculate totals (only "done" if tracking is enabled)
   const isStatusTrackingEnabled = profile?.enable_status_tracking ?? false;
-  
-  const totalExpenses = expensesList
-    .filter(e => !isStatusTrackingEnabled || e.status === 'done')
-    .reduce((acc, curr) => acc + Number(curr.amount), 0);
-    
-  const totalIncome = incomesList
-    .filter(i => !isStatusTrackingEnabled || i.status === 'done')
-    .reduce((acc, curr) => acc + Number(curr.amount), 0);
-    
+
+  const totalExpenses = expenses
+    .filter((e: any) => !isStatusTrackingEnabled || e.status === 'done')
+    .reduce((acc: number, curr: any) => acc + Number(curr.amount), 0);
+
+  const totalIncome = incomes
+    .filter((i: any) => !isStatusTrackingEnabled || i.status === 'done')
+    .reduce((acc: number, curr: any) => acc + Number(curr.amount), 0);
+
   const netBalance = totalIncome - totalExpenses;
 
   // Combine transactions
   const allTransactions = [
-    ...expensesList.map((e) => ({ ...e, type: "expense" as const })),
-    ...incomesList.map((i) => ({ ...i, type: "income" as const })),
+    ...expenses.map((e: any) => ({ ...e, type: "expense" as const })),
+    ...incomes.map((i: any) => ({ ...i, type: "income" as const })),
   ].sort((a, b) => {
     const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
     if (dateDiff !== 0) return dateDiff;
@@ -110,10 +81,10 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
       </div>
 
       {/* Chart Section */}
-      <DashboardChart 
-        transactions={allTransactions} 
-        currency={currency} 
-        enableStatusTracking={profile?.enable_status_tracking} 
+      <DashboardChart
+        transactions={allTransactions}
+        currency={currency}
+        enableStatusTracking={profile?.enable_status_tracking}
       />
 
       {/* 8/4 or 12 Split Layout */}
@@ -123,7 +94,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div className="flex items-center gap-4">
               <h2 className="text-title-lg text-(--color-on-dark)">Recent Transactions</h2>
-              <Link 
+              <Link
                 href={`/dashboard?${new URLSearchParams({ ...Object.fromEntries(Object.entries(searchParams || {})), view: isWideView ? 'standard' : 'wide' }).toString()}`}
                 className="p-2 hover:bg-(--color-canvas-dark) rounded-lg transition-colors text-(--color-muted) hover:text-(--color-on-dark) border border-transparent hover:border-(--color-hairline-on-dark)"
                 title={isWideView ? "Standard View" : "Expand Table"}
@@ -143,9 +114,9 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
             </div>
             <TransactionFilter defaultType={filterType || "all"} />
           </div>
-          
-          <TransactionList 
-            initialTransactions={allTransactions} 
+
+          <TransactionList
+            initialTransactions={allTransactions}
             currency={currency}
             paginationEnabled={paginationEnabled}
             itemsPerPage={ITEMS_PER_PAGE}
@@ -172,9 +143,9 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                 name="category"
                 label="Category"
               />
-              <DatePicker 
-                name="date" 
-                defaultValue={getTodayPKT()} 
+              <DatePicker
+                name="date"
+                defaultValue={getTodayPKT()}
                 label="Date"
               />
               <div>
@@ -201,9 +172,9 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                 name="source"
                 label="Source"
               />
-              <DatePicker 
-                name="date" 
-                defaultValue={getTodayPKT()} 
+              <DatePicker
+                name="date"
+                defaultValue={getTodayPKT()}
                 label="Date"
               />
               <div>

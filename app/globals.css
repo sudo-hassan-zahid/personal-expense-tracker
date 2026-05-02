@@ -4,39 +4,41 @@
   --color-primary: #fcd535;
   --color-primary-active: #f0b90b;
   --color-primary-disabled: #3a3a1f;
-  
+
   --color-ink: #181a20;
   --color-body: #eaecef;
   --color-body-on-light: #181a20;
-  
+
   --color-muted: #707a8a;
   --color-muted-strong: #929aa5;
-  
+
   --color-hairline-on-light: #eaecef;
   --color-hairline-on-dark: #2b3139;
   --color-border-strong: #cdd1d6;
-  
+
   --color-canvas-light: #ffffff;
   --color-canvas-dark: #0b0e11;
-  
+
   --color-surface-card-dark: #1e2329;
   --color-surface-elevated-dark: #2b3139;
   --color-surface-soft-light: #fafafa;
   --color-surface-strong-light: #f5f5f5;
-  
+
   --color-on-primary: #181a20;
   --color-on-dark: #ffffff;
-  
+
   --color-trading-up: #0ecb81;
   --color-trading-down: #f6465d;
-  
+
   --color-accent-turquoise: #2dbdb6;
-  
+
   --color-info: #3b82f6;
   --color-info-ring: #3b82f6;
 
   --font-nova: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-plex: var(--font-plex), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-plex:
+    var(--font-plex), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
 
   /* Custom breakpoints */
   --breakpoint-md: 768px;
@@ -54,7 +56,12 @@
     color-scheme: dark;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     color: var(--color-on-dark);
   }
 
@@ -181,7 +188,7 @@
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.05);
   }
-  
+
   .glass-dark {
     background: rgba(11, 14, 17, 0.7);
     backdrop-filter: blur(16px);
@@ -189,8 +196,13 @@
   }
 
   @keyframes pulse-border {
-    0%, 100% { border-color: rgba(252, 213, 53, 0.2); }
-    50% { border-color: rgba(252, 213, 53, 1); }
+    0%,
+    100% {
+      border-color: rgba(252, 213, 53, 0.2);
+    }
+    50% {
+      border-color: rgba(252, 213, 53, 1);
+    }
   }
 
   .animate-pulse-border {
@@ -202,8 +214,14 @@
   }
 
   @keyframes animate-in {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   /* Premium Toast Refinements */
   .premium-toast {
@@ -228,37 +246,43 @@
   }
 
   /* Success Vibrant Colors */
-  [data-sonner-toast][data-type='success'] {
+  [data-sonner-toast][data-type="success"] {
     border-color: rgba(14, 203, 129, 0.4) !important;
     box-shadow: 0 8px 32px rgba(14, 203, 129, 0.15) !important;
   }
-  
-  [data-sonner-toast][data-type='success'] [data-icon] {
+
+  [data-sonner-toast][data-type="success"] [data-icon] {
     color: var(--color-trading-up) !important;
   }
 
-  [data-sonner-toast][data-type='success'] [data-title] {
+  [data-sonner-toast][data-type="success"] [data-title] {
     color: var(--color-trading-up) !important;
   }
 
   /* Error Vibrant Colors */
-  [data-sonner-toast][data-type='error'] {
+  [data-sonner-toast][data-type="error"] {
     border-color: rgba(246, 70, 93, 0.4) !important;
     box-shadow: 0 8px 32px rgba(246, 70, 93, 0.15) !important;
   }
 
-  [data-sonner-toast][data-type='error'] [data-icon] {
+  [data-sonner-toast][data-type="error"] [data-icon] {
     color: var(--color-trading-down) !important;
   }
 
-  [data-sonner-toast][data-type='error'] [data-title] {
+  [data-sonner-toast][data-type="error"] [data-title] {
     color: var(--color-trading-down) !important;
   }
 
   /* Animation Utilities */
   @keyframes slide-up {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .animate-slide-up {
@@ -266,17 +290,33 @@
     opacity: 0;
   }
 
-  .stagger-1 { animation-delay: 100ms; }
-  .stagger-2 { animation-delay: 200ms; }
-  .stagger-3 { animation-delay: 300ms; }
-  .stagger-4 { animation-delay: 400ms; }
-  .stagger-5 { animation-delay: 500ms; }
+  .stagger-1 {
+    animation-delay: 100ms;
+  }
+  .stagger-2 {
+    animation-delay: 200ms;
+  }
+  .stagger-3 {
+    animation-delay: 300ms;
+  }
+  .stagger-4 {
+    animation-delay: 400ms;
+  }
+  .stagger-5 {
+    animation-delay: 500ms;
+  }
 
   /* Crazy Liquid Glow Animation */
   @keyframes liquid-glow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
 
   .animate-liquid {
@@ -291,10 +331,10 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: 
-      radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
-      radial-gradient(at 50% 0%, hsla(225,39%,30%,0.1) 0, transparent 50%), 
-      radial-gradient(at 100% 0%, hsla(339,49%,30%,0.1) 0, transparent 50%);
+    background-image:
+      radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
+      radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.1) 0, transparent 50%),
+      radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.1) 0, transparent 50%);
     pointer-events: none;
     z-index: -1;
   }

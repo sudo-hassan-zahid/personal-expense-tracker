@@ -6,15 +6,15 @@ export function SortButton({ field }: { field: string }) {
   const searchParams = useSearchParams();
   const currentSort = searchParams.get("sort");
   const isDesc = currentSort === `${field}_desc`;
-  
+
   return (
-    <button 
+    <button
       onClick={() => {
         const params = new URLSearchParams(searchParams.toString());
         if (isDesc) params.set("sort", `${field}_asc`);
         else params.set("sort", `${field}_desc`);
         router.push(`?${params.toString()}`, { scroll: false });
-      }} 
+      }}
       className={`text-xs ml-1 hover:text-(--color-on-dark) px-1 rounded ${currentSort?.startsWith(field) ? 'text-(--color-primary)' : 'text-(--color-muted)'}`}
       title="Sort"
     >

@@ -111,7 +111,7 @@ export function TransactionList({
           />
         </div>
 
-        <button 
+        <button
           onClick={() => setShowFilters(!showFilters)}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all ${showFilters ? 'bg-(--color-primary) text-white border-(--color-primary)' : 'bg-(--color-canvas-dark)/50 border-(--color-hairline-on-dark) text-(--color-muted) hover:text-(--color-on-dark)'}`}
         >
@@ -130,17 +130,17 @@ export function TransactionList({
             <div className="flex flex-col gap-1.5">
               <label className="text-caption text-(--color-muted) font-medium">Amount Range</label>
               <div className="flex items-center gap-2">
-                <input 
-                  type="number" 
-                  placeholder="Min" 
+                <input
+                  type="number"
+                  placeholder="Min"
                   value={minAmount}
                   onChange={(e) => setMinAmount(e.target.value)}
                   className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-lg px-3 py-1.5 text-body-sm focus:border-(--color-primary) outline-none"
                 />
                 <span className="text-(--color-muted)">-</span>
-                <input 
-                  type="number" 
-                  placeholder="Max" 
+                <input
+                  type="number"
+                  placeholder="Max"
                   value={maxAmount}
                   onChange={(e) => setMaxAmount(e.target.value)}
                   className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-lg px-3 py-1.5 text-body-sm focus:border-(--color-primary) outline-none"
@@ -150,16 +150,16 @@ export function TransactionList({
 
             <div className="flex flex-col gap-1.5">
               <label className="text-caption text-(--color-muted) font-medium">Date Range</label>
-              <DateRangePicker 
+              <DateRangePicker
                 onRangeChange={(start, end) => {
                   setStartDate(start);
                   setEndDate(end);
-                }} 
+                }}
               />
             </div>
 
             <div className="flex items-end justify-end">
-              <button 
+              <button
                 onClick={() => {
                   setMinAmount("");
                   setMaxAmount("");
@@ -193,8 +193,8 @@ export function TransactionList({
             Amount <ArrowUpDown size={12} className={sortField === "amount" ? "text-(--color-primary)" : ""} />
           </div>
           {enableStatusTracking && (
-            <div 
-              className="text-center cursor-pointer hover:text-(--color-on-dark) flex items-center justify-center gap-1 transition-colors" 
+            <div
+              className="text-center cursor-pointer hover:text-(--color-on-dark) flex items-center justify-center gap-1 transition-colors"
               onClick={() => toggleSort("status")}
             >
               Status <ArrowUpDown size={12} className={sortField === "status" ? "text-(--color-primary)" : ""} />
@@ -210,8 +210,8 @@ export function TransactionList({
         )}
 
         {displayedTransactions.map((t, i) => (
-          <div 
-            key={t.id + t.type} 
+          <div
+            key={t.id + t.type}
             className={`grid ${enableStatusTracking ? 'grid-cols-[48px_1fr_140px_100px_120px_100px_80px]' : 'grid-cols-[48px_1fr_140px_100px_120px_80px]'} gap-4 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-500 px-2 -mx-2 rounded-lg animate-slide-up ${i < 5 ? `stagger-${i + 1}` : 'opacity-100'} ${newlyAddedId === t.id ? 'bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse' : ''}`}
           >
             <div className="text-number-sm text-(--color-muted) pl-2">
@@ -283,7 +283,7 @@ export function TransactionList({
       )}
 
       {editingTransaction && (
-        <EditTransactionModal 
+        <EditTransactionModal
           transaction={editingTransaction}
           expenseCategories={expenseCategories}
           incomeCategories={incomeCategories}
