@@ -37,7 +37,10 @@ export default async function LoginPage(props: {
           )}
           <form className="space-y-6" action={login}>
             <div>
-              <label htmlFor="email" className="block text-body-sm font-medium text-(--color-on-dark) mb-1.5">
+              <label
+                htmlFor="email"
+                className="block text-body-sm font-medium text-(--color-on-dark) mb-1.5"
+              >
                 Email address
               </label>
               <div className="mt-1">
@@ -54,7 +57,10 @@ export default async function LoginPage(props: {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-body-sm font-medium text-(--color-on-dark) mb-1.5">
+              <label
+                htmlFor="password"
+                className="block text-body-sm font-medium text-(--color-on-dark) mb-1.5"
+              >
                 Password
               </label>
               <div className="mt-1">
@@ -92,7 +98,10 @@ export default async function LoginPage(props: {
 
             <div className="mt-6 text-center text-body-md text-(--color-muted)">
               Don&apos;t have an account?{" "}
-              <Link href="/signup" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+              <Link
+                href="/signup"
+                className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+              >
                 Sign up
               </Link>
             </div>
@@ -102,4 +111,3 @@ export default async function LoginPage(props: {
     </div>
   );
 }
-
