@@ -1,77 +1,24 @@
-import { createClient } from "@/lib/supabase";
 import { addExpense } from "@/actions/expense";
 import { addIncome } from "@/actions/income";
 import { formatCurrency } from "@/lib/currency";
-import { format, startOfMonth, endOfMonth } from "date-fns";
-import { getTodayPKT, getCurrentPKTDate } from "@/lib/date-utils";
-import { ArrowUpRight, ArrowDownRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { getTodayPKT } from "@/lib/date-utils";
+import { getDashboardData } from "@/lib/dashboard-data";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { CategorySelect } from "@/components/CategorySelect";
-import { CurrencySelector } from "@/components/CurrencySelector";
 import { ActionForm } from "@/components/ActionForm";
-import { DeleteButton } from "@/components/DeleteButton";
 import { DashboardChart } from "@/components/DashboardChart";
 import { TransactionList } from "@/components/TransactionList";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { TransactionFilter } from "@/components/TransactionFilter";
-import { unstable_cacheTag as cacheTag } from "next/cache";
 
 export default async function DashboardPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
-  "use cache";
-  cacheTag("transactions", "categories", "profile");
-
+  // searchParams is dynamic — must be outside of 'use cache'
   const searchParams = await props.searchParams;
   const filterType = searchParams?.type as string | undefined;
-  const filterCategory = searchParams?.category as string | undefined;
 
-  // Single client for ALL queries — no waterfall
-  const supabase = await createClient();
-
-  // Date filtering for current month in PKT
-  const todayPKT = getCurrentPKTDate();
-  const monthStart = format(startOfMonth(todayPKT), "yyyy-MM-dd");
-  const monthEnd = format(endOfMonth(todayPKT), "yyyy-MM-dd");
-
-  // Run ALL queries in parallel — this is the #1 optimization
-  // Previously: 5 sequential calls each creating their own client = ~1500ms
-  // Now: 1 client, 5 parallel queries = ~300ms
-  const [expensesRes, incomesRes, expCatsRes, incCatsRes, profileRes] = await Promise.all([
-    supabase
-      .from("expenses")
-      .select("id, amount, category, date, note, status, created_at")
-      .gte("date", monthStart)
-      .lte("date", monthEnd)
-      .order("date", { ascending: false })
-      .order("created_at", { ascending: false }),
-    supabase
-      .from("incomes")
-      .select("id, amount, source, date, note, status, created_at")
-      .gte("date", monthStart)
-      .lte("date", monthEnd)
-      .order("date", { ascending: false })
-      .order("created_at", { ascending: false }),
-    supabase
-      .from("categories")
-      .select("id, name, type, parent_id")
-      .eq("type", "expense")
-      .order("name", { ascending: true }),
-    supabase
-      .from("categories")
-      .select("id, name, type, parent_id")
-      .eq("type", "income")
-      .order("name", { ascending: true }),
-    supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", (await supabase.auth.getUser()).data.user?.id ?? "")
-      .maybeSingle(),
-  ]);
-
-  const expensesList = expensesRes.data || [];
-  const incomesList = incomesRes.data || [];
-  const expenseCategories = expCatsRes.data || [];
-  const incomeCategories = incCatsRes.data || [];
-  const profile = profileRes.data;
+  // Cached data fetching — all 5 queries run in parallel, result is cached
+  const { expenses, incomes, expenseCategories, incomeCategories, profile } = await getDashboardData();
 
   const currency = profile?.currency || "USD";
   const paginationEnabled = profile?.pagination_enabled ?? true;
@@ -79,11 +26,11 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
   // Calculate totals (only "done" if tracking is enabled)
   const isStatusTrackingEnabled = profile?.enable_status_tracking ?? false;
   
-  const totalExpenses = expensesList
+  const totalExpenses = expenses
     .filter((e: any) => !isStatusTrackingEnabled || e.status === 'done')
     .reduce((acc: number, curr: any) => acc + Number(curr.amount), 0);
     
-  const totalIncome = incomesList
+  const totalIncome = incomes
     .filter((i: any) => !isStatusTrackingEnabled || i.status === 'done')
     .reduce((acc: number, curr: any) => acc + Number(curr.amount), 0);
     
@@ -91,8 +38,8 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
 
   // Combine transactions
   const allTransactions = [
-    ...expensesList.map((e: any) => ({ ...e, type: "expense" as const })),
-    ...incomesList.map((i: any) => ({ ...i, type: "income" as const })),
+    ...expenses.map((e: any) => ({ ...e, type: "expense" as const })),
+    ...incomes.map((i: any) => ({ ...i, type: "income" as const })),
   ].sort((a, b) => {
     const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
     if (dateDiff !== 0) return dateDiff;

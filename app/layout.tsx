@@ -3,20 +3,8 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { TopNav } from "@/components/TopNav";
 import { getProfile } from "@/actions/profile";
 import { Toaster } from "sonner";
-import dynamic from "next/dynamic";
+import { LazyParticleBackground, LazyCursorTrail } from "@/components/LazyEffects";
 import "./globals.css";
-
-// Lazy load heavy canvas-based components — they don't need SSR
-// and shouldn't block first paint or increase initial JS bundle
-const ParticleBackground = dynamic(
-  () => import("@/components/ui/ParticleBackground").then(m => ({ default: m.ParticleBackground })),
-  { ssr: false }
-);
-
-const CursorTrail = dynamic(
-  () => import("@/components/ui/CursorTrail").then(m => ({ default: m.CursorTrail })),
-  { ssr: false }
-);
 
 const inter = Inter({
   variable: "--font-inter",
@@ -55,8 +43,8 @@ export default async function RootLayout({
     >
       <body className={`min-h-full flex flex-col bg-(--color-canvas-dark) text-(--color-body) animate-liquid relative ${themeClass}`}>
         <div className="glow-mesh" />
-        <ParticleBackground />
-        {profile?.show_cursor_trail !== false && <CursorTrail />}
+        <LazyParticleBackground />
+        {profile?.show_cursor_trail !== false && <LazyCursorTrail />}
         <TopNav activeTheme={activeTheme as "light" | "dark"} />
         <main className="flex-1 flex flex-col relative z-10">{children}</main>
         <Toaster 

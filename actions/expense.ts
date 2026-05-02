@@ -28,7 +28,7 @@ export async function addExpense(formData: FormData) {
     throw new Error("Failed to add expense");
   }
 
-  revalidateTag("transactions");
+  revalidateTag("transactions", { expire: 0 });
 }
 
 /**
@@ -44,7 +44,7 @@ export async function deleteExpense(id: string) {
     throw new Error("Failed to delete expense");
   }
 
-  revalidateTag("transactions");
+  revalidateTag("transactions", { expire: 0 });
 }
 
 /**
@@ -70,5 +70,5 @@ export async function updateExpense(id: string, formData: FormData) {
     throw new Error("Failed to update expense");
   }
 
-  revalidateTag("transactions");
+  revalidateTag("transactions", { expire: 0 });
 }

@@ -28,7 +28,7 @@ export async function addIncome(formData: FormData) {
     throw new Error("Failed to add income");
   }
 
-  revalidateTag("transactions");
+  revalidateTag("transactions", { expire: 0 });
 }
 
 /**
@@ -44,7 +44,7 @@ export async function deleteIncome(id: string) {
     throw new Error("Failed to delete income");
   }
 
-  revalidateTag("transactions");
+  revalidateTag("transactions", { expire: 0 });
 }
 
 /**
@@ -70,5 +70,5 @@ export async function updateIncome(id: string, formData: FormData) {
     throw new Error("Failed to update income");
   }
 
-  revalidateTag("transactions");
+  revalidateTag("transactions", { expire: 0 });
 }

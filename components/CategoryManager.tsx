@@ -115,8 +115,14 @@ export function CategoryManager({
                               <Edit2 size={16} />
                             </button>
                             <DeleteButton 
-                              action={async () => await deleteCategory(cat.id)}
-                              successMessage="Category deleted successfully"
+                              onClick={async () => {
+                                try {
+                                  await deleteCategory(cat.id);
+                                  toast.success("Category deleted successfully");
+                                } catch (error: any) {
+                                  toast.error(error.message || "Failed to delete category");
+                                }
+                              }}
                               className="p-2 text-(--color-muted) hover:text-(--color-trading-down) hover:bg-(--color-trading-down)/10 rounded-md transition-all"
                             >
                               <Trash2 size={16} />

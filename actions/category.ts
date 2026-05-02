@@ -52,7 +52,7 @@ export async function addCategory(formData: FormData) {
     throw new Error("Failed to add category");
   }
 
-  revalidateTag("categories");
+  revalidateTag("categories", { expire: 0 });
 }
 
 export async function updateCategory(id: string, name: string) {
@@ -101,8 +101,8 @@ export async function updateCategory(id: string, name: string) {
     }
   }
 
-  revalidateTag("categories");
-  revalidateTag("transactions");
+  revalidateTag("categories", { expire: 0 });
+  revalidateTag("transactions", { expire: 0 });
 }
 
 export async function deleteCategory(id: string) {
@@ -149,5 +149,5 @@ export async function deleteCategory(id: string) {
     throw new Error("Failed to delete category");
   }
 
-  revalidateTag("categories");
+  revalidateTag("categories", { expire: 0 });
 }

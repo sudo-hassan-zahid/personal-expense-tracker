@@ -9,9 +9,6 @@ const nextConfig: NextConfig = {
     formats: ['image/avif', 'image/webp'],
   },
 
-  // Tree-shake heavy dependencies — only import what's used
-  optimizePackageImports: ['recharts', 'lucide-react', 'date-fns'],
-
   // Vercel-optimized standalone output
   output: 'standalone',
 

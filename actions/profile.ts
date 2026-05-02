@@ -48,8 +48,8 @@ export async function updateCurrency(formData: FormData) {
     throw new Error("Failed to update currency");
   }
 
-  revalidateTag("profile");
-  revalidateTag("transactions");
+  revalidateTag("profile", { expire: 0 });
+  revalidateTag("transactions", { expire: 0 });
 }
 
 /**
@@ -99,6 +99,6 @@ export async function updateProfile(formData: FormData) {
     }
   }
 
-  revalidateTag("profile");
-  revalidateTag("transactions");
+  revalidateTag("profile", { expire: 0 });
+  revalidateTag("transactions", { expire: 0 });
 }
