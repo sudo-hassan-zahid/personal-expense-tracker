@@ -49,3 +49,11 @@ Open your Supabase project dashboard, navigate to the SQL Editor, and copy-paste
 ```bash
 pnpm run dev
 ```
+
+### 5. Test the Application
+Open http://localhost:3000 in your browser.
+
+1. Click Sign Up to create an account.
+2. Observe how the Next.js middleware.ts automatically redirects you to the /dashboard.
+3. Quick-add an Income and Expense using the forms on the right.
+4. Try filtering transactions using the dropdown in the Recent Transactions table.
