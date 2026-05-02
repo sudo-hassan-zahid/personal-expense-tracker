@@ -3,18 +3,31 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import { TopNav } from "@/components/TopNav";
 import { getProfile } from "@/actions/profile";
 import { Toaster } from "sonner";
-import { ParticleBackground } from "@/components/ui/ParticleBackground";
-import { CursorTrail } from "@/components/ui/CursorTrail";
+import dynamic from "next/dynamic";
 import "./globals.css";
+
+// Lazy load heavy canvas-based components — they don't need SSR
+// and shouldn't block first paint or increase initial JS bundle
+const ParticleBackground = dynamic(
+  () => import("@/components/ui/ParticleBackground").then(m => ({ default: m.ParticleBackground })),
+  { ssr: false }
+);
+
+const CursorTrail = dynamic(
+  () => import("@/components/ui/CursorTrail").then(m => ({ default: m.CursorTrail })),
+  { ssr: false }
+);
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-plex",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
