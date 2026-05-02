@@ -58,7 +58,7 @@ export function CategorySelect({
 
   return (
     <div>
-      <label className="block text-body-sm mb-1 text-(--color-body-on-light)">
+      <label className="block text-body-sm mb-1 text-(--color-muted)">
         {label}
       </label>
 
@@ -67,10 +67,10 @@ export function CategorySelect({
           <select
             required
             name={name}
-            className="flex-1 bg-transparent border border-(--color-hairline-on-light) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none"
+            className="flex-1 bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)"
           >
             {localCategories.map((cat) => (
-              <option key={cat.id} value={cat.name}>
+              <option key={cat.id} value={cat.name} className="bg-(--color-surface-card-dark) text-(--color-on-dark)">
                 {cat.parent_id ? `  └ ${cat.name}` : cat.name}
               </option>
             ))}
@@ -78,7 +78,7 @@ export function CategorySelect({
           <button
             type="button"
             onClick={() => setIsAdding(true)}
-            className="px-3 py-2 border border-(--color-hairline-on-light) rounded-md text-body-md text-(--color-primary) hover:bg-(--color-surface-soft-light) transition-colors shrink-0"
+            className="px-3 py-2 border border-(--color-hairline-on-dark) rounded-md text-body-md text-(--color-primary) hover:bg-(--color-surface-elevated-dark) transition-colors shrink-0"
             title="Add new category"
           >
             +
@@ -92,7 +92,7 @@ export function CategorySelect({
               value={newCategoryName}
               onChange={(e) => setNewCategoryName(e.target.value)}
               placeholder="New category name"
-              className="flex-1 bg-transparent border border-(--color-primary) rounded-md px-3 py-2 text-body-md focus:outline-none"
+              className="flex-1 bg-transparent border border-(--color-primary) rounded-md px-3 py-2 text-body-md text-(--color-on-dark) focus:outline-none"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
@@ -119,7 +119,7 @@ export function CategorySelect({
                 setIsAdding(false);
                 setNewCategoryName("");
               }}
-              className="px-3 py-2 border border-(--color-hairline-on-light) rounded-md text-body-md text-(--color-muted) hover:text-(--color-ink) transition-colors shrink-0"
+              className="px-3 py-2 border border-(--color-hairline-on-dark) rounded-md text-body-md text-(--color-muted) hover:text-(--color-on-dark) transition-colors shrink-0"
             >
               ✕
             </button>
