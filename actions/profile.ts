@@ -1,14 +1,17 @@
 "use server";
 
-import { createClient } from "@/lib/supabase";
-import { revalidatePath } from "next/cache";
+import { createClient, getAuthenticatedClient } from "@/lib/supabase";
+import { revalidateTag } from "next/cache";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
  * Fetches the current user's profile from the database.
+ * Accepts an optional pre-created supabase client to avoid redundant client creation
+ * when called alongside other queries (e.g. in dashboard Promise.all).
  * @returns The profile object or null if not found.
  */
-export async function getProfile() {
-  const supabase = await createClient();
+export async function getProfile(client?: SupabaseClient) {
+  const supabase = client || await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) return null;
@@ -32,12 +35,7 @@ export async function getProfile() {
  * @param formData - The form data containing the new currency code.
  */
 export async function updateCurrency(formData: FormData) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
-    throw new Error("Unauthorized");
-  }
+  const { supabase, user } = await getAuthenticatedClient();
 
   const currency = formData.get("currency") as string;
 
@@ -50,7 +48,8 @@ export async function updateCurrency(formData: FormData) {
     throw new Error("Failed to update currency");
   }
 
-  revalidatePath("/dashboard");
+  revalidateTag("profile");
+  revalidateTag("transactions");
 }
 
 /**
@@ -58,10 +57,7 @@ export async function updateCurrency(formData: FormData) {
  * @param formData - The form data containing name, email, password, currency, theme, and feature toggles.
  */
 export async function updateProfile(formData: FormData) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) throw new Error("Unauthorized");
+  const { supabase, user } = await getAuthenticatedClient();
 
   const name = formData.get("name") as string;
   const email = formData.get("email") as string;
@@ -103,6 +99,6 @@ export async function updateProfile(formData: FormData) {
     }
   }
 
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/profile");
+  revalidateTag("profile");
+  revalidateTag("transactions");
 }

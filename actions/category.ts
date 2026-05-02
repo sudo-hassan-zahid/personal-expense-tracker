@@ -1,14 +1,20 @@
 "use server";
 
-import { createClient } from "@/lib/supabase";
-import { revalidatePath } from "next/cache";
+import { createClient, getAuthenticatedClient } from "@/lib/supabase";
+import { revalidateTag } from "next/cache";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
-export async function getCategories(type: "expense" | "income") {
-  const supabase = await createClient();
+/**
+ * Fetches categories for a given type.
+ * Accepts an optional pre-created supabase client to avoid redundant client creation
+ * when called alongside other queries (e.g. in dashboard Promise.all).
+ */
+export async function getCategories(type: "expense" | "income", client?: SupabaseClient) {
+  const supabase = client || await createClient();
 
   const { data, error } = await supabase
     .from("categories")
-    .select("*")
+    .select("id, name, type, parent_id")
     .eq("type", type)
     .order("name", { ascending: true });
 
@@ -21,12 +27,7 @@ export async function getCategories(type: "expense" | "income") {
 }
 
 export async function addCategory(formData: FormData) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
-    throw new Error("Unauthorized");
-  }
+  const { supabase, user } = await getAuthenticatedClient();
 
   const name = (formData.get("name") as string).trim();
   const type = formData.get("type") as "expense" | "income";
@@ -51,7 +52,7 @@ export async function addCategory(formData: FormData) {
     throw new Error("Failed to add category");
   }
 
-  revalidatePath("/dashboard");
+  revalidateTag("categories");
 }
 
 export async function updateCategory(id: string, name: string) {
@@ -100,8 +101,8 @@ export async function updateCategory(id: string, name: string) {
     }
   }
 
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/categories");
+  revalidateTag("categories");
+  revalidateTag("transactions");
 }
 
 export async function deleteCategory(id: string) {
@@ -148,6 +149,5 @@ export async function deleteCategory(id: string) {
     throw new Error("Failed to delete category");
   }
 
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/categories");
+  revalidateTag("categories");
 }

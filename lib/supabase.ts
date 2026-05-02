@@ -27,3 +27,17 @@ export async function createClient() {
     }
   );
 }
+
+/**
+ * Returns an authenticated Supabase client and the current user in a single call.
+ * Avoids the pattern of creating a client + calling getUser() separately in every action.
+ * Throws if no user is authenticated.
+ */
+export async function getAuthenticatedClient() {
+  const supabase = await createClient();
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) {
+    throw new Error("Unauthorized");
+  }
+  return { supabase, user };
+}

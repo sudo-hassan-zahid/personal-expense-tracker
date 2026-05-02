@@ -1,19 +1,14 @@
 "use server";
 
-import { createClient } from "@/lib/supabase";
-import { revalidatePath } from "next/cache";
+import { createClient, getAuthenticatedClient } from "@/lib/supabase";
+import { revalidateTag } from "next/cache";
 
 /**
  * Adds a new income record to the database.
  * @param formData - The form data containing amount, source, date, and note.
  */
 export async function addIncome(formData: FormData) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
-    throw new Error("Unauthorized");
-  }
+  const { supabase, user } = await getAuthenticatedClient();
 
   const amount = parseFloat(formData.get("amount") as string);
   const source = formData.get("source") as string;
@@ -33,8 +28,7 @@ export async function addIncome(formData: FormData) {
     throw new Error("Failed to add income");
   }
 
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/income");
+  revalidateTag("transactions");
 }
 
 /**
@@ -50,8 +44,7 @@ export async function deleteIncome(id: string) {
     throw new Error("Failed to delete income");
   }
 
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/income");
+  revalidateTag("transactions");
 }
 
 /**
@@ -77,5 +70,5 @@ export async function updateIncome(id: string, formData: FormData) {
     throw new Error("Failed to update income");
   }
 
-  revalidatePath("/dashboard");
+  revalidateTag("transactions");
 }
