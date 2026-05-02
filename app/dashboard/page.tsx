@@ -13,6 +13,9 @@ import { CategorySelect } from "@/components/CategorySelect";
 import { CurrencySelector } from "@/components/CurrencySelector";
 import { ActionForm } from "@/components/ActionForm";
 import { DeleteButton } from "@/components/DeleteButton";
+import { DashboardChart } from "@/components/DashboardChart";
+import { TransactionFilter } from "@/components/TransactionFilter";
+import { SortButton } from "@/components/SortButton";
 
 export default async function DashboardPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const searchParams = await props.searchParams;
@@ -63,7 +66,29 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
   let allTransactions = [
     ...expensesList.map((e) => ({ ...e, type: "expense" as const })),
     ...incomesList.map((i) => ({ ...i, type: "income" as const })),
-  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  ];
+
+  const sort = searchParams?.sort as string | undefined;
+  if (sort === 'date_asc') {
+    allTransactions.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  } else if (sort === 'amount_desc') {
+    allTransactions.sort((a, b) => Number(b.amount) - Number(a.amount));
+  } else if (sort === 'amount_asc') {
+    allTransactions.sort((a, b) => Number(a.amount) - Number(b.amount));
+  } else {
+    allTransactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }
+
+  // Chart data
+  const chartDataMap = new Map();
+  [...expensesList.map((e) => ({ ...e, type: "expense" })), ...incomesList.map((i) => ({ ...i, type: "income" }))].forEach(t => {
+    const d = new Date(t.date).toISOString().split('T')[0];
+    if (!chartDataMap.has(d)) chartDataMap.set(d, { date: d, income: 0, expense: 0 });
+    const entry = chartDataMap.get(d);
+    if (t.type === 'income') entry.income += Number(t.amount);
+    else entry.expense += Number(t.amount);
+  });
+  const chartData = Array.from(chartDataMap.values()).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   if (filterType && filterType !== "all") {
     allTransactions = allTransactions.filter((t) => t.type === filterType);
@@ -115,27 +140,23 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
         </div>
       </div>
 
+      {/* Chart Section */}
+      <DashboardChart data={chartData} />
+
       {/* 8/4 Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Col - 8 - Transactions Table */}
         <div className="lg:col-span-8 bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <h2 className="text-title-lg text-(--color-on-dark)">Recent Transactions</h2>
-            <form className="flex gap-2 text-body-sm">
-              <select name="type" className="bg-(--color-canvas-dark) text-(--color-on-dark) border border-(--color-hairline-on-dark) rounded px-2 py-1" defaultValue={filterType || "all"}>
-                <option value="all">All Types</option>
-                <option value="expense">Expenses</option>
-                <option value="income">Income</option>
-              </select>
-              <button type="submit" className="bg-(--color-surface-elevated-dark) text-(--color-on-dark) px-3 py-1 rounded hover:bg-(--color-primary) hover:text-(--color-on-primary) transition-colors">Apply</button>
-            </form>
+            <TransactionFilter defaultType={filterType || "all"} />
           </div>
           <div className="flex flex-col gap-2">
             <div className="grid grid-cols-6 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark)">
               <div className="col-span-2">Type / Note</div>
-              <div>Date</div>
+              <div className="flex items-center">Date <SortButton field="date" /></div>
               <div>Kind</div>
-              <div className="text-right">Amount</div>
+              <div className="text-right flex items-center justify-end">Amount <SortButton field="amount" /></div>
               <div className="text-right">Action</div>
             </div>
             {displayedTransactions.length === 0 && (
