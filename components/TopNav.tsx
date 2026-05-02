@@ -20,6 +20,7 @@ export async function TopNav({ activeTheme }: { activeTheme: "light" | "dark" })
         {user && (
           <nav className="hidden md:flex items-center gap-6">
             <Link href="/dashboard" className="text-nav-link text-(--color-body) hover:text-(--color-primary) transition-colors">Dashboard</Link>
+            <Link href="/dashboard/categories" className="text-nav-link text-(--color-body) hover:text-(--color-primary) transition-colors">Categories</Link>
             <Link href="/dashboard/profile" className="text-nav-link text-(--color-body) hover:text-(--color-primary) transition-colors">Profile</Link>
           </nav>
         )}
