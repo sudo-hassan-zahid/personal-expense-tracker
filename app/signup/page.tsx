@@ -37,6 +37,23 @@ export default async function SignupPage(props: {
           )}
           <form className="space-y-6" action={signup}>
             <div>
+              <label htmlFor="name" className="block text-body-sm font-medium text-(--color-on-dark) mb-1.5">
+                Full Name
+              </label>
+              <div className="mt-1">
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  required
+                  className="block w-full appearance-none rounded-xl border border-(--color-hairline-on-dark) bg-(--color-canvas-dark)/50 px-4 py-3 text-(--color-on-dark) placeholder-(--color-muted) focus:border-(--color-primary) focus:outline-none focus:ring-1 focus:ring-(--color-primary) sm:text-body-md transition-all"
+                  placeholder="John Doe"
+                />
+              </div>
+            </div>
+
+            <div>
               <label htmlFor="email" className="block text-body-sm font-medium text-(--color-on-dark) mb-1.5">
                 Email address
               </label>
