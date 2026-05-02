@@ -13,7 +13,7 @@ export async function getProfile() {
     .from("profiles")
     .select("*")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error("Error fetching profile:", error);
@@ -35,8 +35,7 @@ export async function updateCurrency(formData: FormData) {
 
   const { error } = await supabase
     .from("profiles")
-    .update({ currency, updated_at: new Date().toISOString() })
-    .eq("id", user.id);
+    .upsert({ id: user.id, currency, updated_at: new Date().toISOString() });
 
   if (error) {
     console.error("Error updating currency:", error);
@@ -69,8 +68,7 @@ export async function updateProfile(formData: FormData) {
 
   const { error: profileError } = await supabase
     .from("profiles")
-    .update(updates)
-    .eq("id", user.id);
+    .upsert({ id: user.id, ...updates });
 
   if (profileError) {
     console.error("Error updating profile:", profileError);
