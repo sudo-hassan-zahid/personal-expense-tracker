@@ -18,6 +18,10 @@ type Transaction = {
 
 import { DateRangePicker } from "./ui/DateRangePicker";
 
+/**
+ * Component for rendering the transaction history chart and summary statistics.
+ * Supports date range filtering and optional status-based filtering.
+ */
 export function DashboardChart({ transactions, currency, enableStatusTracking }: { 
   transactions: Transaction[], 
   currency: string,
