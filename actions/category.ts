@@ -53,3 +53,16 @@ export async function addCategory(formData: FormData) {
 
   revalidatePath("/dashboard");
 }
+
+export async function deleteCategory(id: string) {
+  const supabase = await createClient();
+
+  const { error } = await supabase.from("categories").delete().match({ id });
+
+  if (error) {
+    console.error("Error deleting category:", error);
+    throw new Error("Failed to delete category");
+  }
+
+  revalidatePath("/dashboard");
+}
