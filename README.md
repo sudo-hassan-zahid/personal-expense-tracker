@@ -2,7 +2,7 @@
 
 A high-performance personal finance tracking application featuring a Binance-inspired professional trading interface. Built for speed and granular data control.
 
-Live Demo: [https://expense-tracker-by-hassan.vercel.app](https://expense-tracker-by-hassan.vercel.app)
+Deployed Application: [https://expense-tracker-by-hassan.vercel.app](https://expense-tracker-by-hassan.vercel.app)
 
 ## Tech Stack
 
