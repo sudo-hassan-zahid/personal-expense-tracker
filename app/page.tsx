@@ -18,7 +18,8 @@ export default async function Home() {
           Take Control of Your <span className="text-(--color-primary)">Finances</span>
         </h1>
         <p className="text-title-lg text-(--color-body) max-w-[800px]">
-          Track your income, monitor your expenses, and grow your net worth with the most powerful personal expense tracker.
+          Track your income, monitor your expenses, and grow your net worth with the most powerful
+          personal expense tracker.
         </p>
         <div className="flex items-center gap-4 mt-4">
           <Link
@@ -38,9 +39,7 @@ export default async function Home() {
 
       {/* Stats Section */}
       <section className="bg-(--color-canvas-dark) py-[80px] flex flex-col items-center">
-        <h2 className="text-display-lg text-(--color-primary) mb-12">
-          RECORDS ARE SECURE
-        </h2>
+        <h2 className="text-display-lg text-(--color-primary) mb-12">RECORDS ARE SECURE</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-16 text-center">
           <div>
             <div className="text-number-display text-(--color-primary)">256-bit</div>
@@ -60,9 +59,7 @@ export default async function Home() {
       {/* CTA Band */}
       <section className="bg-(--color-surface-card-dark) rounded-xl p-[48px] flex flex-col md:flex-row items-center justify-between mt-[40px]">
         <div>
-          <h2 className="text-display-sm text-(--color-on-dark)">
-            Start tracking for free today.
-          </h2>
+          <h2 className="text-display-sm text-(--color-on-dark)">Start tracking for free today.</h2>
           <p className="text-body-md text-(--color-muted) mt-2">
             No credit card required. Join thousands of users managing their wealth.
           </p>
