@@ -12,6 +12,9 @@ Deployed Application: [https://expense-tracker-by-hassan.vercel.app](https://exp
 - Security and Privacy: Row Level Security (RLS) and secure authentication via Supabase.
 - User Personalization: Theme toggles, currency selection, and UI preferences stored in user profiles.
 
+## Preview
+Coming soon.
+
 ## Tech Stack
 
 - Framework: Next.js 15 (App Router)
