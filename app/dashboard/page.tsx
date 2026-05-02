@@ -35,14 +35,16 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
     .select("*")
     .gte("date", monthStart)
     .lte("date", monthEnd)
-    .order("date", { ascending: false });
+    .order("date", { ascending: false })
+    .order("created_at", { ascending: false });
 
   const { data: incomes } = await supabase
     .from("incomes")
     .select("*")
     .gte("date", monthStart)
     .lte("date", monthEnd)
-    .order("date", { ascending: false });
+    .order("date", { ascending: false })
+    .order("created_at", { ascending: false });
 
   const expensesList = expenses || [];
   const incomesList = incomes || [];
@@ -74,7 +76,11 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
   const allTransactions = [
     ...expensesList.map((e) => ({ ...e, type: "expense" as const })),
     ...incomesList.map((i) => ({ ...i, type: "income" as const })),
-  ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  ].sort((a, b) => {
+    const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
+    if (dateDiff !== 0) return dateDiff;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
 
   const ITEMS_PER_PAGE = parseInt((searchParams?.limit as string) || "10");
 
