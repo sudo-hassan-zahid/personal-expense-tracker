@@ -1,25 +1,207 @@
 "use client";
 
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from "recharts";
+import { useState, useMemo } from "react";
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from "recharts";
+import { format, subDays, parseISO } from "date-fns";
+import { formatCurrency } from "@/lib/currency";
 
-export function DashboardChart({ data }: { data: { date: string; income: number; expense: number }[] }) {
+type Transaction = {
+  id: string;
+  amount: number | string;
+  date: string;
+  type: "income" | "expense";
+  note?: string;
+  category?: string;
+  source?: string;
+};
+
+export function DashboardChart({ transactions, currency }: { transactions: Transaction[], currency: string }) {
+  const [timeRange, setTimeRange] = useState<"7d" | "30d" | "all">("all");
+  const [filterType, setFilterType] = useState<"all" | "income" | "expense">("all");
+  const [filterCategory, setFilterCategory] = useState<string>("all");
+
+  const categories = useMemo(() => {
+    const cats = new Set<string>();
+    transactions.forEach(t => {
+      const c = t.type === 'income' ? t.source : t.category;
+      if (c) cats.add(c.toLowerCase());
+    });
+    return Array.from(cats);
+  }, [transactions]);
+
+  const chartData = useMemo(() => {
+    let filtered = transactions;
+    
+    // Time filter
+    if (timeRange !== "all") {
+      const today = new Date();
+      const startDate = timeRange === "7d" ? subDays(today, 7) : subDays(today, 30);
+      filtered = filtered.filter(t => new Date(t.date) >= startDate);
+    }
+
+    // Type filter
+    if (filterType !== "all") {
+      filtered = filtered.filter(t => t.type === filterType);
+    }
+
+    // Category filter
+    if (filterCategory !== "all") {
+       filtered = filtered.filter(t => {
+          const c = t.type === 'income' ? t.source : t.category;
+          return c?.toLowerCase() === filterCategory.toLowerCase();
+       });
+    }
+
+    const chartDataMap = new Map();
+    filtered.forEach(t => {
+      const d = new Date(t.date).toISOString().split('T')[0];
+      if (!chartDataMap.has(d)) chartDataMap.set(d, { date: d, income: 0, expense: 0 });
+      const entry = chartDataMap.get(d);
+      if (t.type === 'income') entry.income += Number(t.amount);
+      else entry.expense += Number(t.amount);
+    });
+
+    return Array.from(chartDataMap.values()).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).map(d => ({
+        ...d,
+        displayDate: format(parseISO(d.date), "MMM dd")
+    }));
+  }, [transactions, timeRange, filterType, filterCategory]);
+
   return (
-    <div className="h-[300px] w-full bg-(--color-surface-card-dark) p-6 rounded-xl border border-(--color-hairline-on-dark)">
-      <h2 className="text-title-md text-(--color-on-dark) mb-4">Income vs Expense</h2>
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 20 }}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--color-hairline-on-dark)" />
-          <XAxis dataKey="date" stroke="var(--color-muted)" fontSize={12} tickLine={false} axisLine={false} />
-          <YAxis stroke="var(--color-muted)" fontSize={12} tickLine={false} axisLine={false} />
-          <Tooltip 
-            cursor={{ fill: 'var(--color-surface-elevated-dark)' }}
-            contentStyle={{ backgroundColor: 'var(--color-canvas-dark)', border: '1px solid var(--color-hairline-on-dark)', borderRadius: '8px' }}
-          />
-          <Legend wrapperStyle={{ fontSize: '12px', bottom: 0 }} />
-          <Bar dataKey="income" fill="var(--color-trading-up)" radius={[4, 4, 0, 0]} name="Income" />
-          <Bar dataKey="expense" fill="var(--color-trading-down)" radius={[4, 4, 0, 0]} name="Expense" />
-        </BarChart>
-      </ResponsiveContainer>
+    <div className="w-full bg-(--color-surface-card-dark) p-6 md:p-8 rounded-2xl border border-(--color-hairline-on-dark) flex flex-col gap-8 shadow-2xl relative overflow-hidden">
+      {/* Background glow effects */}
+      <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-purple-500/10 rounded-full blur-[80px] pointer-events-none" />
+
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
+        <div>
+          <h2 className="text-[24px] tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 font-bold mb-1">
+            Dynamic Cashflow Analytics
+          </h2>
+          <p className="text-caption text-(--color-muted)">Interactive visualization of your financial trends</p>
+        </div>
+        
+        <div className="flex flex-wrap items-center gap-3 p-1.5 bg-(--color-canvas-dark)/50 backdrop-blur-md border border-(--color-hairline-on-dark) rounded-xl">
+          <select 
+            value={timeRange} 
+            onChange={(e) => setTimeRange(e.target.value as any)}
+            className="bg-transparent hover:bg-(--color-surface-elevated-dark) transition-colors rounded-lg px-3 py-2 text-body-sm text-(--color-on-dark) focus:outline-none cursor-pointer border-none"
+          >
+            <option value="7d" className="bg-(--color-surface-elevated-dark)">Last 7 Days</option>
+            <option value="30d" className="bg-(--color-surface-elevated-dark)">Last 30 Days</option>
+            <option value="all" className="bg-(--color-surface-elevated-dark)">This Month</option>
+          </select>
+
+          <div className="w-px h-6 bg-(--color-hairline-on-dark)" />
+
+          <select 
+            value={filterType} 
+            onChange={(e) => setFilterType(e.target.value as any)}
+            className="bg-transparent hover:bg-(--color-surface-elevated-dark) transition-colors rounded-lg px-3 py-2 text-body-sm text-(--color-on-dark) focus:outline-none cursor-pointer border-none"
+          >
+            <option value="all" className="bg-(--color-surface-elevated-dark)">All Types</option>
+            <option value="income" className="bg-(--color-surface-elevated-dark)">Income Only</option>
+            <option value="expense" className="bg-(--color-surface-elevated-dark)">Expense Only</option>
+          </select>
+
+          <div className="w-px h-6 bg-(--color-hairline-on-dark)" />
+
+          <select 
+            value={filterCategory} 
+            onChange={(e) => setFilterCategory(e.target.value)}
+            className="bg-transparent hover:bg-(--color-surface-elevated-dark) transition-colors rounded-lg px-3 py-2 text-body-sm text-(--color-on-dark) focus:outline-none cursor-pointer capitalize border-none"
+          >
+            <option value="all" className="bg-(--color-surface-elevated-dark)">All Categories</option>
+            {categories.map(c => (
+              <option key={c} value={c} className="bg-(--color-surface-elevated-dark)">{c}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div className="h-[380px] w-full relative z-10">
+        {chartData.length === 0 ? (
+          <div className="h-full w-full flex flex-col items-center justify-center text-(--color-muted) text-body-md border border-dashed border-(--color-hairline-on-dark) rounded-xl bg-(--color-canvas-dark)/20">
+             <div className="text-4xl mb-2 opacity-50">📊</div>
+            No data for selected filters.
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.5}/>
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                </linearGradient>
+                <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.5}/>
+                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="var(--color-hairline-on-dark)" opacity={0.4} />
+              <XAxis 
+                dataKey="displayDate" 
+                stroke="var(--color-muted)" 
+                fontSize={12} 
+                tickLine={false} 
+                axisLine={false} 
+                dy={15} 
+                tick={{ fill: 'var(--color-muted)' }}
+              />
+              <YAxis 
+                stroke="var(--color-muted)" 
+                fontSize={12} 
+                tickLine={false} 
+                axisLine={false} 
+                tickFormatter={(val) => Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(val)} 
+                dx={-10}
+                tick={{ fill: 'var(--color-muted)' }}
+              />
+              <Tooltip 
+                cursor={{ stroke: 'var(--color-primary)', strokeWidth: 1, strokeDasharray: '4 4', fill: 'transparent' }}
+                contentStyle={{ 
+                  backgroundColor: 'rgba(23, 23, 23, 0.85)', 
+                  border: '1px solid var(--color-hairline-on-dark)', 
+                  borderRadius: '12px', 
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.5)', 
+                  backdropFilter: 'blur(12px)' 
+                }}
+                itemStyle={{ fontWeight: 600 }}
+                labelStyle={{ color: 'var(--color-muted)', marginBottom: '4px' }}
+                formatter={(value: any) => [formatCurrency(Number(value) || 0, currency), undefined]}
+              />
+              <Legend 
+                wrapperStyle={{ fontSize: '13px', paddingTop: '20px' }} 
+                iconType="circle" 
+              />
+              {(filterType === 'all' || filterType === 'income') && (
+                 <Area 
+                   type="monotone" 
+                   dataKey="income" 
+                   stroke="#10b981" 
+                   strokeWidth={3} 
+                   fillOpacity={1} 
+                   fill="url(#colorIncome)" 
+                   name="Income" 
+                   activeDot={{ r: 6, strokeWidth: 2, stroke: '#10b981', fill: "var(--color-canvas-dark)" }} 
+                 />
+              )}
+              {(filterType === 'all' || filterType === 'expense') && (
+                 <Area 
+                   type="monotone" 
+                   dataKey="expense" 
+                   stroke="#ef4444" 
+                   strokeWidth={3} 
+                   fillOpacity={1} 
+                   fill="url(#colorExpense)" 
+                   name="Expense" 
+                   activeDot={{ r: 6, strokeWidth: 2, stroke: '#ef4444', fill: "var(--color-canvas-dark)" }} 
+                 />
+              )}
+            </AreaChart>
+          </ResponsiveContainer>
+        )}
+      </div>
     </div>
   );
 }

@@ -16,6 +16,7 @@ import { DeleteButton } from "@/components/DeleteButton";
 import { DashboardChart } from "@/components/DashboardChart";
 import { TransactionFilter } from "@/components/TransactionFilter";
 import { SortButton } from "@/components/SortButton";
+import { PaginationControls } from "@/components/PaginationControls";
 
 export default async function DashboardPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const searchParams = await props.searchParams;
@@ -79,16 +80,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
     allTransactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }
 
-  // Chart data
-  const chartDataMap = new Map();
-  [...expensesList.map((e) => ({ ...e, type: "expense" })), ...incomesList.map((i) => ({ ...i, type: "income" }))].forEach(t => {
-    const d = new Date(t.date).toISOString().split('T')[0];
-    if (!chartDataMap.has(d)) chartDataMap.set(d, { date: d, income: 0, expense: 0 });
-    const entry = chartDataMap.get(d);
-    if (t.type === 'income') entry.income += Number(t.amount);
-    else entry.expense += Number(t.amount);
-  });
-  const chartData = Array.from(chartDataMap.values()).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  // Map chart data is no longer needed here as it's handled by DashboardChart client component
 
   if (filterType && filterType !== "all") {
     allTransactions = allTransactions.filter((t) => t.type === filterType);
@@ -100,7 +92,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
     );
   }
 
-  const ITEMS_PER_PAGE = 10;
+  const ITEMS_PER_PAGE = parseInt((searchParams?.limit as string) || "10");
   const currentPage = parseInt((searchParams?.page as string) || "1");
   const totalPages = Math.max(1, Math.ceil(allTransactions.length / ITEMS_PER_PAGE));
 
@@ -135,7 +127,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
       </div>
 
       {/* Chart Section */}
-      <DashboardChart data={chartData} />
+      <DashboardChart transactions={allTransactions} currency={currency} />
 
       {/* 8/4 Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -212,29 +204,13 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
           </div>
 
           {/* Pagination Controls */}
-          {paginationEnabled && totalPages > 1 && (
-            <div className="flex items-center justify-between mt-6 pt-4 border-t border-(--color-hairline-on-dark)">
-              <div className="text-caption text-(--color-muted)">
-                Showing {((currentPage - 1) * ITEMS_PER_PAGE) + 1} to {Math.min(currentPage * ITEMS_PER_PAGE, allTransactions.length)} of {allTransactions.length} entries
-              </div>
-              <div className="flex items-center gap-2">
-                <Link
-                  href={`/dashboard?page=${Math.max(1, currentPage - 1)}${filterType ? `&type=${filterType}` : ''}${filterCategory ? `&category=${filterCategory}` : ''}`}
-                  className={`p-2 rounded border border-(--color-hairline-on-dark) ${currentPage === 1 ? 'opacity-50 pointer-events-none' : 'hover:bg-(--color-surface-elevated-dark) text-(--color-on-dark)'}`}
-                >
-                  <ChevronLeft size={16} />
-                </Link>
-                <div className="text-body-sm text-(--color-on-dark) px-4">
-                  Page {currentPage} of {totalPages}
-                </div>
-                <Link
-                  href={`/dashboard?page=${Math.min(totalPages, currentPage + 1)}${filterType ? `&type=${filterType}` : ''}${filterCategory ? `&category=${filterCategory}` : ''}`}
-                  className={`p-2 rounded border border-(--color-hairline-on-dark) ${currentPage === totalPages ? 'opacity-50 pointer-events-none' : 'hover:bg-(--color-surface-elevated-dark) text-(--color-on-dark)'}`}
-                >
-                  <ChevronRight size={16} />
-                </Link>
-              </div>
-            </div>
+          {paginationEnabled && (
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={allTransactions.length}
+              itemsPerPage={ITEMS_PER_PAGE}
+            />
           )}
         </div>
 
