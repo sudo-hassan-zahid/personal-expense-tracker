@@ -290,7 +290,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                 <label className="block text-body-sm mb-1 text-(--color-muted)">Note</label>
                 <input type="text" name="note" className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none" placeholder="Optional note" />
               </div>
-              <button type="submit" className="w-full bg-(--color-surface-card-dark) text-(--color-on-dark) text-button rounded-md py-3 mt-2 hover:bg-(--color-surface-elevated-dark) transition-colors">
+              <button type="submit" className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-md py-3 mt-2 hover:bg-(--color-primary-active) transition-colors">
                 Add Income
               </button>
             </ActionForm>
