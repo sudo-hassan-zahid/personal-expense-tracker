@@ -15,11 +15,14 @@ const CURRENCY_SYMBOL_OVERRIDES: Record<string, string> = {
  * with custom symbol overrides for currencies like PKR → Rs.
  */
 export function formatCurrency(amount: number, currencyCode: string = "USD"): string {
+  const zeroDecimalCurrencies = ["PKR", "INR", "JPY", "KRW", "VND", "BDT"];
+  const isZeroDecimal = zeroDecimalCurrencies.includes(currencyCode);
+
   const formatted = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: currencyCode,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    minimumFractionDigits: isZeroDecimal ? 0 : 2,
+    maximumFractionDigits: isZeroDecimal ? 0 : 2,
   }).format(amount);
 
   const override = CURRENCY_SYMBOL_OVERRIDES[currencyCode];
