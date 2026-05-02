@@ -23,7 +23,7 @@ export default async function LoginPage(props: {
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10 animate-slide-up stagger-1">
         <div className="bg-(--color-surface-card-dark)/80 backdrop-blur-xl py-8 px-4 border border-(--color-hairline-on-dark) sm:rounded-2xl sm:px-10 shadow-2xl">
           {error && (
             <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-body-sm backdrop-blur-sm">
@@ -73,7 +73,7 @@ export default async function LoginPage(props: {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-xl border border-transparent bg-gradient-to-r from-blue-500 to-indigo-600 py-3 px-4 text-button text-white shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-(--color-canvas-dark) transition-all duration-200"
+                className="flex w-full justify-center rounded-xl border border-transparent bg-gradient-to-r from-blue-500 to-indigo-600 py-3 px-4 text-button text-white shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-(--color-canvas-dark) transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
               >
                 Log in
               </button>
