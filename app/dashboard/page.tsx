@@ -2,11 +2,14 @@ import { createClient } from "@/lib/supabase";
 import { addExpense } from "@/actions/expense";
 import { addIncome } from "@/actions/income";
 import { getCategories } from "@/actions/category";
+import { getProfile } from "@/actions/profile";
+import { formatCurrency } from "@/lib/currency";
 import { format } from "date-fns";
 import { ArrowUpRight, ArrowDownRight, Trash2 } from "lucide-react";
 import { deleteExpense } from "@/actions/expense";
 import { deleteIncome } from "@/actions/income";
 import { CategorySelect } from "@/components/CategorySelect";
+import { CurrencySelector } from "@/components/CurrencySelector";
 
 export default async function DashboardPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const searchParams = await props.searchParams;
@@ -29,11 +32,14 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
   const expensesList = expenses || [];
   const incomesList = incomes || [];
 
-  // Fetch user categories
-  const [expenseCategories, incomeCategories] = await Promise.all([
+  // Fetch user categories and profile
+  const [expenseCategories, incomeCategories, profile] = await Promise.all([
     getCategories("expense"),
     getCategories("income"),
+    getProfile(),
   ]);
+
+  const currency = profile?.currency || "USD";
 
   // Calculate totals
   const totalExpenses = expensesList.reduce((acc, curr) => acc + Number(curr.amount), 0);
@@ -58,24 +64,30 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-6 py-[40px] flex flex-col gap-8 flex-1">
+      {/* Currency Selector */}
+      <div className="flex items-center justify-end gap-3">
+        <span className="text-body-sm text-(--color-muted)">Currency:</span>
+        <CurrencySelector currentCurrency={currency} />
+      </div>
+
       {/* Top Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-(--color-surface-card-dark) p-6 rounded-xl border border-(--color-hairline-on-dark)">
           <div className="text-body-md text-(--color-muted) mb-2">Net Balance</div>
           <div className="text-number-display text-(--color-on-dark)">
-            ${netBalance.toFixed(2)}
+            {formatCurrency(netBalance, currency)}
           </div>
         </div>
         <div className="bg-(--color-surface-card-dark) p-6 rounded-xl border border-(--color-hairline-on-dark)">
           <div className="text-body-md text-(--color-muted) mb-2">Total Income</div>
           <div className="text-number-display text-(--color-trading-up)">
-            ${totalIncome.toFixed(2)}
+            {formatCurrency(totalIncome, currency)}
           </div>
         </div>
         <div className="bg-(--color-surface-card-dark) p-6 rounded-xl border border-(--color-hairline-on-dark)">
           <div className="text-body-md text-(--color-muted) mb-2">Total Expenses</div>
           <div className="text-number-display text-(--color-trading-down)">
-            ${totalExpenses.toFixed(2)}
+            {formatCurrency(totalExpenses, currency)}
           </div>
         </div>
       </div>
@@ -132,7 +144,7 @@ export default async function DashboardPage(props: { searchParams?: Promise<{ [k
                   {format(new Date(t.date), "MMM d, yyyy")}
                 </div>
                 <div className={`text-number-md text-right ${t.type === 'income' ? 'text-(--color-trading-up)' : 'text-(--color-trading-down)'}`}>
-                  {t.type === "income" ? "+" : "-"}${Number(t.amount).toFixed(2)}
+                  {t.type === "income" ? "+" : "-"}{formatCurrency(Number(t.amount), currency).replace(/^[^\d]*/, '')}
                 </div>
                 <div className="text-right flex justify-end">
                   <form action={async () => {
