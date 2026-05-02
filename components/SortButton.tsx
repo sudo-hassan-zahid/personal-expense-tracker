@@ -13,7 +13,7 @@ export function SortButton({ field }: { field: string }) {
         const params = new URLSearchParams(searchParams.toString());
         if (isDesc) params.set("sort", `${field}_asc`);
         else params.set("sort", `${field}_desc`);
-        router.push(`?${params.toString()}`);
+        router.push(`?${params.toString()}`, { scroll: false });
       }} 
       className={`text-xs ml-1 hover:text-(--color-on-dark) px-1 rounded ${currentSort?.startsWith(field) ? 'text-(--color-primary)' : 'text-(--color-muted)'}`}
       title="Sort"

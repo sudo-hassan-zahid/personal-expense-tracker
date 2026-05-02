@@ -13,7 +13,7 @@ export function TransactionFilter({ defaultType }: { defaultType: string }) {
         const params = new URLSearchParams(searchParams.toString());
         if (e.target.value === "all") params.delete("type");
         else params.set("type", e.target.value);
-        router.push(`?${params.toString()}`);
+        router.push(`?${params.toString()}`, { scroll: false });
       }}
     >
       <option value="all">All Types</option>
