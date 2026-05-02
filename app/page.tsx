@@ -1,65 +1,79 @@
-import Image from "next/image";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+
+  if (data?.user) {
+    redirect("/dashboard");
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="w-full max-w-[1280px] mx-auto px-6 py-[80px] flex flex-col gap-[80px]">
+      {/* Hero Section */}
+      <section className="flex flex-col items-center text-center gap-8 pt-[40px]">
+        <h1 className="text-hero-display text-(--color-on-dark)">
+          Take Control of Your <span className="text-(--color-primary)">Finances</span>
+        </h1>
+        <p className="text-title-lg text-(--color-body) max-w-[800px]">
+          Track your income, monitor your expenses, and grow your net worth with the most powerful personal expense tracker.
+        </p>
+        <div className="flex items-center gap-4 mt-4">
+          <Link
+            href="/signup"
+            className="bg-(--color-primary) text-(--color-on-primary) text-button px-[32px] py-[14px] rounded-full hover:bg-(--color-primary-active) transition-colors"
+          >
+            Get Started Now
+          </Link>
+          <Link
+            href="/login"
+            className="bg-(--color-surface-card-dark) text-(--color-on-dark) text-button px-[24px] py-[12px] rounded-md hover:bg-(--color-surface-elevated-dark) transition-colors"
+          >
+            Log In
+          </Link>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="bg-(--color-canvas-dark) py-[80px] flex flex-col items-center">
+        <h2 className="text-display-lg text-(--color-primary) mb-12">
+          RECORDS ARE SECURE
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-16 text-center">
+          <div>
+            <div className="text-number-display text-(--color-primary)">256-bit</div>
+            <div className="text-title-sm text-(--color-muted) mt-2">Encryption standard</div>
+          </div>
+          <div>
+            <div className="text-number-display text-(--color-primary)">100%</div>
+            <div className="text-title-sm text-(--color-muted) mt-2">Data ownership</div>
+          </div>
+          <div>
+            <div className="text-number-display text-(--color-primary)">24/7</div>
+            <div className="text-title-sm text-(--color-muted) mt-2">Uptime reliability</div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Band */}
+      <section className="bg-(--color-surface-card-dark) rounded-xl p-[48px] flex flex-col md:flex-row items-center justify-between mt-[40px]">
+        <div>
+          <h2 className="text-display-sm text-(--color-on-dark)">
+            Start tracking for free today.
+          </h2>
+          <p className="text-body-md text-(--color-muted) mt-2">
+            No credit card required. Join thousands of users managing their wealth.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+        <Link
+          href="/signup"
+          className="bg-(--color-primary) text-(--color-on-primary) text-button px-[24px] h-[40px] rounded-md flex items-center justify-center hover:bg-(--color-primary-active) transition-colors mt-6 md:mt-0 whitespace-nowrap"
+        >
+          Sign Up Now
+        </Link>
+      </section>
     </div>
   );
 }
