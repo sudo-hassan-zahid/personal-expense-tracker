@@ -15,4 +15,9 @@ Live Demo: [https://expense-tracker-by-hassan.vercel.app](https://expense-tracke
 
 ## Setup Steps
 
+1. Install dependencies:
+   ```bash
+   pnpm install
+   ```
+
 
