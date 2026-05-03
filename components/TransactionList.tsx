@@ -3,7 +3,7 @@
  */
 "use client";
 
-import { useState, useEffect, useMemo, memo } from "react";
+import { useState, useEffect, useMemo, memo, useOptimistic, useTransition, startTransition } from "react";
 import {
   ArrowUpRight,
   ArrowDownRight,
@@ -14,6 +14,7 @@ import {
   X as CloseIcon,
   Pencil,
   AlertCircle,
+  Loader2,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
 import { format } from "date-fns";
@@ -182,6 +183,12 @@ export function TransactionList({
   enableStatusTracking: boolean;
   isWideView?: boolean;
 }) {
+  const [isPending, startTransition] = useTransition();
+  const [optimisticTransactions, removeOptimisticTransaction] = useOptimistic(
+    initialTransactions,
+    (state, id: string) => state.filter((t) => t.id !== id)
+  );
+
   const {
     search,
     setSearch,
@@ -202,7 +209,7 @@ export function TransactionList({
     totalItems,
     totalPages,
     displayedTransactions,
-  } = useTransactions(initialTransactions, paginationEnabled ? itemsPerPage : 0);
+  } = useTransactions(optimisticTransactions, paginationEnabled ? itemsPerPage : 0);
 
   const [newlyAddedId, setNewlyAddedId] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
@@ -232,20 +239,32 @@ export function TransactionList({
     }
   };
 
+  const handleSearchChange = (val: string) => {
+    setSearch(val);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-2">
-        <div className="relative w-full md:max-w-sm">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-(--color-muted)">
+        <div className="relative w-full md:max-w-sm group">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-(--color-muted) group-focus-within:text-(--color-primary) transition-colors">
             <Search size={18} />
           </div>
           <input
             type="text"
             placeholder="Search transactions..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="block w-full pl-10 pr-3 py-2.5 bg-(--color-canvas-dark)/50 border border-(--color-hairline-on-dark) rounded-xl text-body-md text-(--color-on-dark) focus:border-(--color-primary) focus:ring-1 focus:ring-(--color-primary) focus:outline-none transition-all"
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="block w-full pl-10 pr-10 py-2.5 bg-(--color-canvas-dark)/50 border border-(--color-hairline-on-dark) rounded-xl text-body-md text-(--color-on-dark) focus:border-(--color-primary) focus:ring-1 focus:ring-(--color-primary) focus:outline-none transition-all group-hover:border-(--color-hairline-on-dark)/80"
           />
+          {search && (
+            <button 
+              onClick={() => handleSearchChange("")}
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-(--color-muted) hover:text-(--color-on-dark) transition-colors"
+            >
+              <CloseIcon size={16} />
+            </button>
+          )}
         </div>
 
         <button
@@ -312,7 +331,8 @@ export function TransactionList({
         </div>
       )}
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2 relative">
+        {/* Sorting header */}
         <div
           className={`hidden md:grid ${enableStatusTracking ? "grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}
         >
@@ -382,21 +402,23 @@ export function TransactionList({
           </div>
         )}
 
-        {displayedTransactions.map((t, i) => (
-          <TransactionRow
-            key={t.id + t.type}
-            t={t}
-            index={i}
-            currentPage={currentPage}
-            itemsPerPage={itemsPerPage}
-            currency={currency}
-            enableStatusTracking={enableStatusTracking}
-            isWideView={isWideView}
-            newlyAddedId={newlyAddedId}
-            onEdit={setEditingTransaction}
-            onDelete={setTransactionToDelete}
-          />
-        ))}
+        <div className={isPending ? "opacity-50 pointer-events-none transition-opacity duration-300" : "transition-opacity duration-300"}>
+          {displayedTransactions.map((t, i) => (
+            <TransactionRow
+              key={t.id + t.type}
+              t={t}
+              index={i}
+              currentPage={currentPage}
+              itemsPerPage={itemsPerPage}
+              currency={currency}
+              enableStatusTracking={enableStatusTracking}
+              isWideView={isWideView}
+              newlyAddedId={newlyAddedId}
+              onEdit={setEditingTransaction}
+              onDelete={setTransactionToDelete}
+            />
+          ))}
+        </div>
       </div>
 
       {paginationEnabled && totalPages > 1 && (
@@ -445,11 +467,18 @@ export function TransactionList({
                 <button
                   type="button"
                   onClick={async () => {
+                    const idToRemove = transactionToDelete.id;
                     setIsDeleting(true);
+                    
+                    // Optimistic UI removal
+                    startTransition(() => {
+                      removeOptimisticTransaction(idToRemove);
+                    });
+
                     try {
                       if (transactionToDelete.type === "income")
-                        await deleteIncome(transactionToDelete.id);
-                      else await deleteExpense(transactionToDelete.id);
+                        await deleteIncome(idToRemove);
+                      else await deleteExpense(idToRemove);
                       toast.success("Transaction deleted successfully");
                       setTransactionToDelete(null);
                     } catch (error: any) {
@@ -461,7 +490,7 @@ export function TransactionList({
                   disabled={isDeleting}
                   className="flex-1 px-4 py-2 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20 disabled:opacity-50 flex items-center justify-center"
                 >
-                  {isDeleting ? "Deleting..." : "Delete"}
+                  {isDeleting ? <Loader2 className="animate-spin" size={18} /> : "Delete"}
                 </button>
               </div>
             </div>
