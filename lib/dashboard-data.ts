@@ -8,7 +8,7 @@ import { cacheTag } from "next/cache";
 
 /**
  * Cached data fetcher for the dashboard.
- * Runs all 5 queries in parallel with a single Supabase client.
+ * Runs dashboard queries in parallel with a single Supabase client.
  * Cache is invalidated via revalidateTag("transactions"/"categories"/"profile").
  */
 export async function getDashboardData(userId: string, cookieStore?: unknown) {
@@ -22,10 +22,8 @@ export async function getDashboardData(userId: string, cookieStore?: unknown) {
   const monthStart = format(startOfMonth(todayPKT), "yyyy-MM-dd");
   const monthEnd = format(endOfMonth(todayPKT), "yyyy-MM-dd");
 
-  // Run ALL queries in parallel — this is the #1 optimization
-  // Previously: 5 sequential calls each creating their own client = ~1500ms
-  // Now: 1 client, 5 parallel queries = ~300ms
-  const [expensesRes, incomesRes, expCatsRes, incCatsRes, profileRes] = await Promise.all([
+  // Keep independent dashboard reads parallel while avoiding duplicate category round trips.
+  const [expensesRes, incomesRes, categoriesRes, profileRes] = await Promise.all([
     supabase
       .from("expenses")
       .select("id, amount, category, date, note, status, created_at")
@@ -43,12 +41,8 @@ export async function getDashboardData(userId: string, cookieStore?: unknown) {
     supabase
       .from("categories")
       .select("id, name, type, parent_id")
-      .eq("type", "expense")
-      .order("name", { ascending: true }),
-    supabase
-      .from("categories")
-      .select("id, name, type, parent_id")
-      .eq("type", "income")
+      .in("type", ["expense", "income"])
+      .order("type", { ascending: true })
       .order("name", { ascending: true }),
     supabase
       .from("profiles")
@@ -57,11 +51,13 @@ export async function getDashboardData(userId: string, cookieStore?: unknown) {
       .maybeSingle(),
   ]);
 
+  const categories = categoriesRes.data || [];
+
   return {
     expenses: expensesRes.data || [],
     incomes: incomesRes.data || [],
-    expenseCategories: expCatsRes.data || [],
-    incomeCategories: incCatsRes.data || [],
+    expenseCategories: categories.filter((category) => category.type === "expense"),
+    incomeCategories: categories.filter((category) => category.type === "income"),
     profile: profileRes.data,
   };
 }
