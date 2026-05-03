@@ -1,6 +1,7 @@
 import { getDashboardData } from "@/lib/dashboard-data";
 import { DashboardContent } from "@/components/DashboardContent";
 import { getRequestAuth } from "@/lib/request-data";
+import { parseDashboardFilters } from "@/lib/dashboard-filters";
 
 export default async function DashboardPage(props: {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -12,11 +13,12 @@ export default async function DashboardPage(props: {
 
   const { allCookies, user } = await getRequestAuth();
   const userId = user?.id ?? "";
+  const dashboardFilters = parseDashboardFilters(searchParams);
 
   // Cached data fetching — all 5 queries run in parallel, result is cached
   // Pass cookies explicitly to avoid dynamic access error
   const { expenses, incomes, expenseCategories, incomeCategories, profile } =
-    await getDashboardData(userId, allCookies);
+    await getDashboardData(userId, allCookies, dashboardFilters);
 
   const currency = profile?.currency || "USD";
   const paginationEnabled = profile?.pagination_enabled ?? true;
@@ -39,6 +41,7 @@ export default async function DashboardPage(props: {
       filterStatus={filterStatus}
       isWideView={isWideView}
       searchParams={searchParams ?? {}}
+      dashboardFilters={dashboardFilters}
     />
   );
 }

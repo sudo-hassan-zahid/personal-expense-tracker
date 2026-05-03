@@ -14,6 +14,8 @@ import { TransactionList } from "./TransactionList";
 import { DatePicker } from "./ui/DatePicker";
 import { TransactionFilter } from "./TransactionFilter";
 import { Expense, Income, Category } from "@/types";
+import type { DashboardFilters } from "@/lib/dashboard-filters";
+import { DashboardPeriodControls } from "./DashboardPeriodControls";
 
 const DashboardChart = dynamic(
   () => import("./DashboardChart").then((module) => ({ default: module.DashboardChart })),
@@ -38,6 +40,7 @@ interface DashboardContentProps {
   filterStatus?: string;
   isWideView: boolean;
   searchParams: Record<string, string | string[] | undefined>;
+  dashboardFilters: DashboardFilters;
 }
 
 type DashboardProfile = {
@@ -67,6 +70,7 @@ export function DashboardContent({
   filterStatus,
   isWideView,
   searchParams,
+  dashboardFilters,
 }: DashboardContentProps) {
   const initialTransactions = useMemo(
     () => [
@@ -128,6 +132,8 @@ export function DashboardContent({
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 py-6 md:py-[40px] flex flex-col gap-6 md:gap-8 flex-1">
       {/* Top Stats */}
+      <DashboardPeriodControls filters={dashboardFilters} />
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-(--color-surface-card-dark) p-4 md:p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-1">
           <div className="text-body-sm md:text-body-md text-(--color-muted) mb-2">Net Balance</div>
