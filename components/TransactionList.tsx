@@ -31,6 +31,7 @@ import { toast } from "sonner";
 import { useTransactions } from "@/hooks/useTransactions";
 import { EditTransactionModal } from "./EditTransactionModal";
 import { Transaction, Category } from "@/types";
+import { HelpLabel, HelpTip } from "./HelpTip";
 
 
 // Memoized Row Component for maximum performance
@@ -322,8 +323,13 @@ export function TransactionList({
             placeholder="Search transactions..."
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
-            className="form-control block w-full rounded-xl py-2.5 pl-10 pr-10 text-body-md"
+            className="form-control block w-full rounded-xl py-2.5 pl-10 pr-16 text-body-md"
           />
+          <div className="absolute inset-y-0 right-9 hidden items-center sm:flex">
+            <HelpTip label="Search transactions help">
+              Searches notes, categories, sources, dates, and amounts in the currently loaded list.
+            </HelpTip>
+          </div>
           {search && (
             <button 
               onClick={() => handleSearchChange("")}
@@ -334,23 +340,30 @@ export function TransactionList({
           )}
         </div>
 
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all ${showFilters ? "bg-(--color-primary) text-white border-(--color-primary)" : "bg-(--color-canvas-dark)/50 border-(--color-hairline-on-dark) text-(--color-muted) hover:text-(--color-on-dark)"}`}
-        >
-          <Filter size={18} />
-          <span className="text-body-sm font-medium">Advanced Filters</span>
-          {(minAmount || maxAmount || (startDate && endDate)) && (
-            <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-          )}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all ${showFilters ? "bg-(--color-primary) text-white border-(--color-primary)" : "bg-(--color-canvas-dark)/50 border-(--color-hairline-on-dark) text-(--color-muted) hover:text-(--color-on-dark)"}`}
+          >
+            <Filter size={18} />
+            <span className="text-body-sm font-medium">Advanced Filters</span>
+            {(minAmount || maxAmount || (startDate && endDate)) && (
+              <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+            )}
+          </button>
+          <HelpTip label="Advanced filters help">
+            Open amount and date filters for a more precise transaction view.
+          </HelpTip>
+        </div>
       </div>
 
       {showFilters && (
         <div className="bg-(--color-canvas-dark)/30 border border-(--color-hairline-on-dark) rounded-xl p-4 animate-in slide-in-from-top-4 duration-300">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-caption text-(--color-muted) font-medium">Amount Range</label>
+              <HelpLabel help="Show only transactions between the minimum and maximum amount." className="text-caption font-medium">
+                Amount Range
+              </HelpLabel>
               <div className="flex items-center gap-2">
                 <input
                   type="number"
@@ -371,7 +384,9 @@ export function TransactionList({
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-caption text-(--color-muted) font-medium">Date Range</label>
+              <HelpLabel help="Show only transactions between the selected start and end dates." className="text-caption font-medium">
+                Date Range
+              </HelpLabel>
               <DateRangePicker
                 onRangeChange={(start, end) => {
                   setStartDate(start);
@@ -401,6 +416,9 @@ export function TransactionList({
       {selectedTransactions.length > 0 && (
         <div className="bg-(--color-surface-elevated-dark) border border-(--color-hairline-on-dark) rounded-xl p-3 flex flex-col lg:flex-row gap-3 lg:items-center">
           <span className="text-body-sm text-(--color-on-dark)">{selectedTransactions.length} selected</span>
+          <HelpTip label="Bulk actions help">
+            Apply the entered date, category, source, or status to selected rows, or delete them together.
+          </HelpTip>
           <input type="date" value={bulkDate} onChange={(e) => setBulkDate(e.target.value)} className="form-control" />
           <select value={bulkCategory} onChange={(e) => setBulkCategory(e.target.value)} className="form-control">
             <option value="">Category/source</option>
