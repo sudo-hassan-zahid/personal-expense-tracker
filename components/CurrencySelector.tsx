@@ -25,7 +25,8 @@ export function CurrencySelector({ currentCurrency }: { currentCurrency: string 
       value={currentCurrency}
       onChange={handleChange}
       disabled={isSubmitting}
-      className="bg-(--color-canvas-dark) text-(--color-body) border border-(--color-hairline-on-dark) rounded-md px-2 py-1 text-body-sm focus:border-(--color-primary) focus:outline-none disabled:opacity-50"
+      className="bg-(--color-canvas-dark) text-(--color-body) border border-(--color-hairline-on-dark) rounded-md px-3 md:px-2 py-2 md:py-1 text-body-md md:text-body-sm focus:border-(--color-primary) focus:outline-none disabled:opacity-50"
+
     >
       {SUPPORTED_CURRENCIES.map((c) => (
         <option key={c.code} value={c.code}>
