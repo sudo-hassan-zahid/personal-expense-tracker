@@ -1,3 +1,6 @@
+/**
+ * Component: CategoryManager.tsx
+ */
 "use client";
 
 import { useState } from "react";
@@ -234,3 +237,4 @@ export function CategoryManager({
     </div>
   );
 }
+
