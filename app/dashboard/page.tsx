@@ -41,7 +41,6 @@ export default async function DashboardPage(props: {
       filterStatus={filterStatus}
       isWideView={isWideView}
       searchParams={searchParams ?? {}}
-      dashboardFilters={dashboardFilters}
     />
   );
 }
