@@ -44,6 +44,15 @@
   --breakpoint-md: 768px;
   --breakpoint-lg: 1024px;
   --breakpoint-xl: 1440px;
+
+  /* Theme variables for backgrounds */
+  --bg-liquid-1: #0b0e11;
+  --bg-liquid-2: #1e2329;
+  --bg-liquid-3: #161a1e;
+
+  --bg-glow-1: hsla(253, 16%, 7%, 1);
+  --bg-glow-2: hsla(225, 39%, 30%, 0.1);
+  --bg-glow-3: hsla(339, 49%, 30%, 0.1);
 }
 
 @layer base {
@@ -66,12 +75,21 @@
   }
 
   .theme-light {
-    --color-canvas-dark: #ffffff;
-    --color-body: #181a20;
-    --color-on-dark: #181a20;
-    --color-surface-card-dark: #f5f5f5;
-    --color-surface-elevated-dark: #eaecef;
-    --color-hairline-on-dark: #cdd1d6;
+    --color-canvas-dark: #fbfbfd;
+    --color-body: #1d1d1f;
+    --color-on-dark: #1d1d1f;
+    --color-surface-card-dark: #ffffff;
+    --color-surface-elevated-dark: #f5f5f7;
+    --color-hairline-on-dark: #d2d2d7;
+
+    --bg-liquid-1: #fbfbfd;
+    --bg-liquid-2: #f5f5f7;
+    --bg-liquid-3: #ffffff;
+
+    --bg-glow-1: rgba(252, 213, 53, 0.05);
+    --bg-glow-2: rgba(59, 130, 246, 0.05);
+    --bg-glow-3: rgba(246, 70, 93, 0.05);
+
     color-scheme: light;
   }
 }
@@ -322,7 +340,7 @@
   }
 
   .animate-liquid {
-    background: linear-gradient(-45deg, #0b0e11, #1e2329, #0b0e11, #161a1e);
+    background: linear-gradient(-45deg, var(--bg-liquid-1), var(--bg-liquid-2), var(--bg-liquid-1), var(--bg-liquid-3));
     background-size: 400% 400%;
     animation: liquid-glow 15s ease infinite;
   }
@@ -334,9 +352,9 @@
     right: 0;
     bottom: 0;
     background-image:
-      radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%),
-      radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 0.1) 0, transparent 50%),
-      radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 0.1) 0, transparent 50%);
+      radial-gradient(at 0% 0%, var(--bg-glow-1) 0, transparent 50%),
+      radial-gradient(at 50% 0%, var(--bg-glow-2) 0, transparent 50%),
+      radial-gradient(at 100% 0%, var(--bg-glow-3) 0, transparent 50%);
     pointer-events: none;
     z-index: -1;
   }
