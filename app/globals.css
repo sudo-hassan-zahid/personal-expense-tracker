@@ -309,23 +309,23 @@
   }
 
   .animate-slide-up {
-    animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: slide-up 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     opacity: 0;
     will-change: transform, opacity;
     transform: translateZ(0);
   }
 
   .stagger-1 {
-    animation-delay: 50ms;
+    animation-delay: 10ms;
   }
   .stagger-2 {
-    animation-delay: 100ms;
+    animation-delay: 20ms;
   }
   .stagger-3 {
-    animation-delay: 150ms;
+    animation-delay: 30ms;
   }
   .stagger-4 {
-    animation-delay: 200ms;
+    animation-delay: 40ms;
   }
   @keyframes fade-in {
     from {
@@ -337,11 +337,11 @@
   }
 
   .animate-fade-in {
-    animation: fade-in 0.5s ease-out forwards;
+    animation: fade-in 0.15s ease-out forwards;
   }
 
   .stagger-5 {
-    animation-delay: 250ms;
+    animation-delay: 50ms;
   }
 
   /* Crazy Liquid Glow Animation */
