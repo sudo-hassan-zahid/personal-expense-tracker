@@ -28,6 +28,9 @@ export function DemoAccountCard() {
             Try Demo Account
           </span>
         </div>
+        <p className="mt-3 text-center text-body-sm text-(--color-muted) max-w-[280px] mx-auto">
+          Explore the dashboard and features with our pre-configured demo account.
+        </p>
       </div>
       <div className="mt-6 grid grid-cols-1 gap-4">
         <div className="glass-dark rounded-xl p-4 border border-(--color-hairline-on-dark) flex flex-col gap-1">
