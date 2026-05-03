@@ -5,6 +5,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { Loader2 } from "lucide-react";
+import { HelpTip } from "./HelpTip";
 
 export function TransactionFilter({
   defaultType,
@@ -32,6 +33,9 @@ export function TransactionFilter({
   return (
     <div className="flex flex-wrap items-center gap-2">
       <span className="text-caption text-(--color-muted) mr-1">Filter by:</span>
+      <HelpTip label="Transaction filters help">
+        Narrow the table by transaction type or status without changing the saved data.
+      </HelpTip>
       {isPending && <Loader2 size={16} className="animate-spin text-(--color-primary)" />}
 
       <select
