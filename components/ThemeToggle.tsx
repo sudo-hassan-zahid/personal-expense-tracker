@@ -32,7 +32,7 @@ export function ThemeToggle({ initialTheme }: { initialTheme: "light" | "dark" }
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-full border border-(--color-hairline-on-dark) text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-surface-elevated-dark) transition-colors flex items-center justify-center"
+      className="p-2 rounded-full border border-(--color-hairline-on-dark) text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-surface-elevated-dark) transition-all active:scale-95 flex items-center justify-center"
       title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
     >
       {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
