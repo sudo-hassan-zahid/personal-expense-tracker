@@ -7,15 +7,18 @@ import { useState, useRef, useEffect } from "react";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { Calendar } from "./Calendar";
+import { HelpLabel } from "@/components/HelpTip";
 
 export function DatePicker({
   name,
   defaultValue,
   label,
+  help,
 }: {
   name: string;
   defaultValue?: string;
   label?: string;
+  help?: string;
 }) {
   const [selectedDate, setSelectedDate] = useState<Date>(
     defaultValue ? new Date(defaultValue) : new Date()
@@ -35,7 +38,14 @@ export function DatePicker({
 
   return (
     <div className="relative" ref={containerRef}>
-      {label && <label className="block text-body-sm mb-1.5 text-(--color-muted)">{label}</label>}
+      {label && help && (
+        <HelpLabel help={help} className="mb-1.5">
+          {label}
+        </HelpLabel>
+      )}
+      {label && !help && (
+        <label className="block text-body-sm mb-1.5 text-(--color-muted)">{label}</label>
+      )}
       <input type="hidden" name={name} value={format(selectedDate, "yyyy-MM-dd")} />
 
       <button
