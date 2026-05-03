@@ -1,5 +1,6 @@
 import { BarChart3, Gauge, Landmark, Trophy } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
+import { HelpTip } from "./HelpTip";
 import {
   getAverageDailySpend,
   getCompletedTransactions,
@@ -30,7 +31,12 @@ export function AnalyticsSummary({
     <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-slide-up stagger-4">
       <div className="bg-(--color-surface-card-dark) p-5 rounded-xl border border-(--color-hairline-on-dark)">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-title-sm text-(--color-on-dark)">Cash Flow</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-title-sm text-(--color-on-dark)">Cash Flow</h2>
+            <HelpTip label="Cash flow help">
+              Shows inflow, outflow, opening balance, and closing balance from completed transactions.
+            </HelpTip>
+          </div>
           <Landmark size={18} className="text-(--color-primary)" />
         </div>
         <div className="grid grid-cols-2 gap-3">
@@ -63,7 +69,12 @@ export function AnalyticsSummary({
 
       <div className="bg-(--color-surface-card-dark) p-5 rounded-xl border border-(--color-hairline-on-dark)">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-title-sm text-(--color-on-dark)">Top Spending</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-title-sm text-(--color-on-dark)">Top Spending</h2>
+            <HelpTip label="Top spending help">
+              Ranks expense categories by total spend in the current transaction set.
+            </HelpTip>
+          </div>
           <Trophy size={18} className="text-(--color-primary)" />
         </div>
         <div className="flex flex-col gap-3">
@@ -84,7 +95,12 @@ export function AnalyticsSummary({
 
       <div className="bg-(--color-surface-card-dark) p-5 rounded-xl border border-(--color-hairline-on-dark)">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-title-sm text-(--color-on-dark)">Daily Pace</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-title-sm text-(--color-on-dark)">Daily Pace</h2>
+            <HelpTip label="Daily pace help">
+              Estimates average daily expense, monthly forecast, and current yearly net.
+            </HelpTip>
+          </div>
           <Gauge size={18} className="text-(--color-primary)" />
         </div>
         <div className="text-number-display text-(--color-on-dark)">
