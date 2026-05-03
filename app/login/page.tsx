@@ -1,3 +1,6 @@
+/**
+ * Page/Route: page.tsx
+ */
 import Link from "next/link";
 import { login } from "./actions";
 import { DemoAccountCard } from "@/components/DemoAccountCard";
@@ -115,3 +118,4 @@ export default async function LoginPage(props: {
     </div>
   );
 }
+
