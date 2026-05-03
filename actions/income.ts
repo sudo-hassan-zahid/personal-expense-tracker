@@ -5,6 +5,7 @@
 
 import { createClient, getAuthenticatedClient } from "@/lib/supabase";
 import { revalidateTag, revalidatePath } from "next/cache";
+import { revalidateAll } from "@/lib/revalidate";
 
 /**
  * Adds a new income record to the database.
@@ -33,8 +34,7 @@ export async function addIncome(formData: FormData) {
     throw new Error("Failed to add income");
   }
 
-  revalidateTag("transactions", { expire: 0 });
-  revalidatePath("/", "layout");
+  revalidateAll();
 }
 
 /**
@@ -50,8 +50,7 @@ export async function deleteIncome(id: string) {
     throw new Error("Failed to delete income");
   }
 
-  revalidateTag("transactions", { expire: 0 });
-  revalidatePath("/", "layout");
+  revalidateAll();
 }
 
 /**
@@ -77,7 +76,6 @@ export async function updateIncome(id: string, formData: FormData) {
     throw new Error("Failed to update income");
   }
 
-  revalidateTag("transactions", { expire: 0 });
-  revalidatePath("/", "layout");
+  revalidateAll();
 }
 
