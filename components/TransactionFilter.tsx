@@ -28,6 +28,7 @@ export function TransactionFilter({
 
   return (
     <div className="flex flex-wrap items-center gap-2">
+      <span className="text-caption text-(--color-muted) mr-1">Filter by:</span>
       {isPending && <Loader2 size={16} className="animate-spin text-(--color-primary)" />}
 
       <select
