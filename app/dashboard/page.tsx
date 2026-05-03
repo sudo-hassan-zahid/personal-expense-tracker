@@ -76,24 +76,25 @@ export default async function DashboardPage(props: {
     <div className="w-full max-w-[1440px] mx-auto px-6 py-[40px] flex flex-col gap-8 flex-1">
       {/* Top Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-(--color-surface-card-dark) p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-1">
-          <div className="text-body-md text-(--color-muted) mb-2">Net Balance</div>
-          <div className="text-number-display text-(--color-on-dark) text-center">
+        <div className="bg-(--color-surface-card-dark) p-4 md:p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-1">
+          <div className="text-body-sm md:text-body-md text-(--color-muted) mb-2">Net Balance</div>
+          <div className="text-display-sm md:text-number-display text-(--color-on-dark) text-center">
             {formatCurrency(netBalance, currency)}
           </div>
         </div>
-        <div className="bg-(--color-surface-card-dark) p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-2">
-          <div className="text-body-md text-(--color-muted) mb-2">Total Income</div>
-          <div className="text-number-display text-(--color-trading-up) text-center">
+        <div className="bg-(--color-surface-card-dark) p-4 md:p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-2">
+          <div className="text-body-sm md:text-body-md text-(--color-muted) mb-2">Total Income</div>
+          <div className="text-display-sm md:text-number-display text-(--color-trading-up) text-center">
             {formatCurrency(totalIncome, currency)}
           </div>
         </div>
-        <div className="bg-(--color-surface-card-dark) p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-3">
-          <div className="text-body-md text-(--color-muted) mb-2">Total Expenses</div>
-          <div className="text-number-display text-(--color-trading-down) text-center">
+        <div className="bg-(--color-surface-card-dark) p-4 md:p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-3">
+          <div className="text-body-sm md:text-body-md text-(--color-muted) mb-2">Total Expenses</div>
+          <div className="text-display-sm md:text-number-display text-(--color-trading-down) text-center">
             {formatCurrency(totalExpenses, currency)}
           </div>
         </div>
+
       </div>
 
       {/* Chart Section */}
