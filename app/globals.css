@@ -340,7 +340,13 @@
   }
 
   .animate-liquid {
-    background: linear-gradient(-45deg, var(--bg-liquid-1), var(--bg-liquid-2), var(--bg-liquid-1), var(--bg-liquid-3));
+    background: linear-gradient(
+      -45deg,
+      var(--bg-liquid-1),
+      var(--bg-liquid-2),
+      var(--bg-liquid-1),
+      var(--bg-liquid-3)
+    );
     background-size: 400% 400%;
     animation: liquid-glow 15s ease infinite;
   }
