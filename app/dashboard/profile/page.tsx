@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase";
 import { getProfile, updateProfile } from "@/actions/profile";
 import { ActionForm, SubmitButton } from "@/components/ActionForm";
 import { deleteAccountData } from "@/actions/account";
+import { HelpLabel, HelpTip } from "@/components/HelpTip";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -30,7 +31,9 @@ export default async function ProfilePage() {
           className="flex flex-col gap-6"
         >
           <div>
-            <label className="block text-body-sm mb-1 text-(--color-muted)">Name</label>
+            <HelpLabel help="The display name shown around your account." className="mb-1">
+              Name
+            </HelpLabel>
             <input
               type="text"
               name="name"
@@ -41,7 +44,9 @@ export default async function ProfilePage() {
           </div>
 
           <div>
-            <label className="block text-body-sm mb-1 text-(--color-muted)">Email Address</label>
+            <HelpLabel help="The email used for sign in and account recovery." className="mb-1">
+              Email Address
+            </HelpLabel>
             <input
               type="email"
               name="email"
@@ -52,9 +57,9 @@ export default async function ProfilePage() {
           </div>
 
           <div>
-            <label className="block text-body-sm mb-1 text-(--color-muted)">
+            <HelpLabel help="Fill this only when you want to change your password." className="mb-1">
               New Password (leave blank to keep current)
-            </label>
+            </HelpLabel>
             <input
               type="password"
               name="password"
@@ -65,7 +70,9 @@ export default async function ProfilePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-body-sm mb-1 text-(--color-muted)">Currency</label>
+              <HelpLabel help="Controls how amounts are formatted across the app." className="mb-1">
+                Currency
+              </HelpLabel>
               <select
                 name="currency"
                 defaultValue={profile?.currency || "USD"}
@@ -81,7 +88,9 @@ export default async function ProfilePage() {
             </div>
 
             <div>
-              <label className="block text-body-sm mb-1 text-(--color-muted)">Theme</label>
+              <HelpLabel help="Choose dark, light, or follow your device setting." className="mb-1">
+                Theme
+              </HelpLabel>
               <select
                 name="theme"
                 defaultValue={profile?.theme || "dark"}
@@ -95,11 +104,21 @@ export default async function ProfilePage() {
           </div>
 
           <div className="flex flex-col gap-4 border-t border-(--color-hairline-on-dark) pt-6">
-            <h3 className="text-body-md font-semibold text-(--color-on-dark)">Preferences</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-body-md font-semibold text-(--color-on-dark)">Preferences</h3>
+              <HelpTip label="Preferences help">
+                These settings adjust dashboard behavior without changing existing transactions.
+              </HelpTip>
+            </div>
 
             <div className="flex items-center justify-between p-4 bg-(--color-canvas-dark)/50 rounded-xl border border-(--color-hairline-on-dark)">
               <div className="flex flex-col">
-                <span className="text-body-md text-(--color-on-dark)">Enable Status Tracking</span>
+                <span className="flex items-center gap-2 text-body-md text-(--color-on-dark)">
+                  Enable Status Tracking
+                  <HelpTip label="Status tracking help">
+                    Adds Done and Pending states. Pending transactions stay visible but are excluded from summaries.
+                  </HelpTip>
+                </span>
                 <span className="text-caption text-(--color-muted)">
                   Transactions marked as &quot;Pending&quot; will be excluded from chart totals and
                   summaries.
@@ -118,7 +137,12 @@ export default async function ProfilePage() {
 
             <div className="flex items-center justify-between p-4 bg-(--color-canvas-dark)/50 rounded-xl border border-(--color-hairline-on-dark)">
               <div className="flex flex-col">
-                <span className="text-body-md text-(--color-on-dark)">Show Cursor Trail</span>
+                <span className="flex items-center gap-2 text-body-md text-(--color-on-dark)">
+                  Show Cursor Trail
+                  <HelpTip label="Cursor trail help">
+                    Toggles the visual cursor effect only. It does not affect your data.
+                  </HelpTip>
+                </span>
                 <span className="text-caption text-(--color-muted)">
                   Enable the glowing magic trail follow your cursor.
                 </span>
@@ -136,7 +160,12 @@ export default async function ProfilePage() {
 
             <div className="flex items-center justify-between p-4 bg-(--color-canvas-dark)/50 rounded-xl border border-(--color-hairline-on-dark)">
               <div className="flex flex-col">
-                <span className="text-body-md text-(--color-on-dark)">Enable Pagination</span>
+                <span className="flex items-center gap-2 text-body-md text-(--color-on-dark)">
+                  Enable Pagination
+                  <HelpTip label="Pagination help">
+                    Splits long transaction lists into pages for easier browsing.
+                  </HelpTip>
+                </span>
                 <span className="text-caption text-(--color-muted)">
                   Split the transaction list into multiple pages.
                 </span>
@@ -163,7 +192,12 @@ export default async function ProfilePage() {
       </div>
 
       <div className="bg-(--color-surface-card-dark) rounded-xl border border-red-500/30 p-6">
-        <h2 className="text-title-md text-(--color-trading-down) mb-2">Delete Account Data</h2>
+        <div className="mb-2 flex items-center gap-2">
+          <h2 className="text-title-md text-(--color-trading-down)">Delete Account Data</h2>
+          <HelpTip label="Delete account data help">
+            This clears finance data after confirmation. It does not delete your login account.
+          </HelpTip>
+        </div>
         <p className="text-body-sm text-(--color-muted) mb-4">
           Permanently removes transactions, categories, budgets, savings goals, and recurring rules.
         </p>
