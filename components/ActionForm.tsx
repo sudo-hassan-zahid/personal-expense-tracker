@@ -5,11 +5,7 @@ import { useFormStatus } from "react-dom";
 
 function SubmitButton({ children }: { children: ReactNode }) {
   const { pending } = useFormStatus();
-  return (
-    <div className={pending ? "opacity-50 pointer-events-none" : ""}>
-      {children}
-    </div>
-  );
+  return <div className={pending ? "opacity-50 pointer-events-none" : ""}>{children}</div>;
 }
 
 export function ActionForm({
