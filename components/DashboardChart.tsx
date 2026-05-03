@@ -184,14 +184,14 @@ export function DashboardChart({
         </div>
       </div>
 
-      <div className="h-[380px] w-full relative z-10 animate-slide-up stagger-2">
+      <div className="h-[380px] w-full relative z-10 animate-slide-up stagger-2 min-h-0 min-w-0">
         {chartData.length === 0 ? (
           <div className="h-full w-full flex flex-col items-center justify-center text-(--color-muted) text-body-md border border-dashed border-(--color-hairline-on-dark) rounded-xl bg-(--color-canvas-dark)/20">
             <div className="text-4xl mb-2 opacity-50">📊</div>
             No data for selected filters.
           </div>
         ) : isMounted ? (
-          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0} debounce={100}>
+          <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
             <AreaChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
