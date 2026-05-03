@@ -9,7 +9,7 @@ import { LoadingSpinner } from "./ui/LoadingSpinner";
 
 import { useRouter } from "next/navigation";
 
-type ActionResult = void | { error?: string };
+type ActionResult = void | { error?: string; success?: boolean; imported?: number };
 
 export function SubmitButton({
   children,

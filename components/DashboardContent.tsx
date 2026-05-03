@@ -6,7 +6,7 @@ import { formatCurrency } from "@/lib/currency";
 import { getTodayPKT } from "@/lib/date-utils";
 import { addExpense } from "@/actions/expense";
 import { addIncome } from "@/actions/income";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Download } from "lucide-react";
 import Link from "next/link";
 import { CategorySelect } from "./CategorySelect";
 import { ActionForm, SubmitButton } from "./ActionForm";
@@ -14,6 +14,10 @@ import { TransactionList } from "./TransactionList";
 import { DatePicker } from "./ui/DatePicker";
 import { TransactionFilter } from "./TransactionFilter";
 import { Expense, Income, Category } from "@/types";
+import { AnalyticsSummary } from "./AnalyticsSummary";
+import { BudgetProgress } from "./BudgetProgress";
+import type { MonthlyBudget } from "@/types";
+import { SplitExpenseForm } from "./SplitExpenseForm";
 
 const DashboardChart = dynamic(
   () => import("./DashboardChart").then((module) => ({ default: module.DashboardChart })),
@@ -30,6 +34,7 @@ interface DashboardContentProps {
   expenseCategories: Category[];
   incomeCategories: Category[];
   profile: DashboardProfile | null;
+  budgets: MonthlyBudget[];
   currency: string;
   paginationEnabled: boolean;
   isStatusTrackingEnabled: boolean;
@@ -59,6 +64,7 @@ export function DashboardContent({
   expenseCategories,
   incomeCategories,
   profile,
+  budgets,
   currency,
   paginationEnabled,
   isStatusTrackingEnabled,
@@ -158,6 +164,14 @@ export function DashboardContent({
         enableStatusTracking={profile?.enable_status_tracking ?? false}
       />
 
+      <AnalyticsSummary
+        transactions={allTransactions}
+        currency={currency}
+        enableStatusTracking={isStatusTrackingEnabled}
+      />
+
+      <BudgetProgress budgets={budgets} expenses={initialExpenses} currency={currency} />
+
       {/* 8/4 or 12 Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Col - 8 or 12 - Transactions Table */}
@@ -167,6 +181,21 @@ export function DashboardContent({
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div className="flex items-center gap-4">
               <h2 className="text-title-lg text-(--color-on-dark)">Recent Transactions</h2>
+              <Link
+                href={`/dashboard/export?${(() => {
+                  const params = new URLSearchParams();
+                  if (searchParams) {
+                    Object.entries(searchParams).forEach(([key, value]) => {
+                      if (value) params.set(key, Array.isArray(value) ? value[0] : value);
+                    });
+                  }
+                  return params.toString();
+                })()}`}
+                className="p-2 hover:bg-(--color-canvas-dark) rounded-lg transition-colors text-(--color-muted) hover:text-(--color-on-dark) border border-transparent hover:border-(--color-hairline-on-dark)"
+                title="Export CSV"
+              >
+                <Download size={16} />
+              </Link>
               <Link
                 href={`/dashboard?${(() => {
                   const params = new URLSearchParams();
@@ -373,6 +402,8 @@ export function DashboardContent({
               </SubmitButton>
             </ActionForm>
           </div>
+
+          <SplitExpenseForm categories={expenseCategories} currency={currency} />
         </div>
       </div>
     </div>

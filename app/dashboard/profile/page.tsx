@@ -4,6 +4,7 @@
 import { createClient } from "@/lib/supabase";
 import { getProfile, updateProfile } from "@/actions/profile";
 import { ActionForm, SubmitButton } from "@/components/ActionForm";
+import { deleteAccountData } from "@/actions/account";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -157,6 +158,30 @@ export default async function ProfilePage() {
             loadingText="Saving Changes..."
           >
             Save Changes
+          </SubmitButton>
+        </ActionForm>
+      </div>
+
+      <div className="bg-(--color-surface-card-dark) rounded-xl border border-red-500/30 p-6">
+        <h2 className="text-title-md text-(--color-trading-down) mb-2">Delete Account Data</h2>
+        <p className="text-body-sm text-(--color-muted) mb-4">
+          Permanently removes transactions, categories, budgets, savings goals, and recurring rules.
+        </p>
+        <ActionForm
+          action={deleteAccountData}
+          successMessage="Account data deleted"
+          className="flex flex-col md:flex-row gap-3"
+        >
+          <input
+            name="confirmation"
+            placeholder="Type DELETE"
+            className="flex-1 bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-trading-down) focus:outline-none text-(--color-on-dark)"
+          />
+          <SubmitButton
+            className="bg-(--color-trading-down) text-white text-button rounded-md px-5 py-3 hover:opacity-90 transition-colors"
+            loadingText="Deleting..."
+          >
+            Delete Data
           </SubmitButton>
         </ActionForm>
       </div>
