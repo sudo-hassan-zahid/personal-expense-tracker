@@ -383,5 +383,6 @@
       radial-gradient(at 100% 0%, var(--bg-glow-3) 0, transparent 50%);
     pointer-events: none;
     z-index: -1;
+    contain: strict;
   }
 }
