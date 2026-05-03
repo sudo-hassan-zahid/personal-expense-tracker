@@ -42,22 +42,24 @@ export async function getProfile(client?: SupabaseClient) {
  * @param formData - The form data containing the new currency code.
  */
 export async function updateCurrency(formData: FormData) {
-  const { supabase, user } = await getAuthenticatedClient();
+  try {
+    const { supabase, user } = await getAuthenticatedClient();
+    const currency = formData.get("currency") as string;
 
-  const currency = formData.get("currency") as string;
+    const { error } = await supabase
+      .from("profiles")
+      .upsert({ id: user.id, currency, updated_at: new Date().toISOString() });
 
-  const { error } = await supabase
-    .from("profiles")
-    .upsert({ id: user.id, currency, updated_at: new Date().toISOString() });
+    if (error) throw error;
 
-  if (error) {
+    revalidateTag("profile");
+    revalidateTag("transactions");
+    revalidatePath("/", "layout");
+    return { success: true };
+  } catch (error: any) {
     console.error("Error updating currency:", error);
-    throw new Error("Failed to update currency");
+    return { success: false, error: error.message || "Failed to update currency" };
   }
-
-  revalidateTag("profile");
-  revalidateTag("transactions");
-  revalidatePath("/", "layout");
 }
 
 /**
@@ -65,50 +67,50 @@ export async function updateCurrency(formData: FormData) {
  * @param formData - The form data containing name, email, password, currency, theme, and feature toggles.
  */
 export async function updateProfile(formData: FormData) {
-  const { supabase, user } = await getAuthenticatedClient();
+  try {
+    const { supabase, user } = await getAuthenticatedClient();
 
-  const name = formData.get("name") as string;
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const currency = formData.get("currency") as string;
-  const theme = formData.get("theme") as string;
-  const paginationEnabled = formData.get("pagination") === "on";
-  const statusTrackingEnabled = formData.get("enable_status_tracking") === "on";
-  const showCursorTrail = formData.get("show_cursor_trail") === "on";
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const currency = formData.get("currency") as string;
+    const theme = formData.get("theme") as string;
+    const paginationEnabled = formData.get("pagination") === "on";
+    const statusTrackingEnabled = formData.get("enable_status_tracking") === "on";
+    const showCursorTrail = formData.get("show_cursor_trail") === "on";
 
-  const updates: any = {
-    name,
-    currency,
-    theme,
-    pagination_enabled: paginationEnabled,
-    enable_status_tracking: statusTrackingEnabled,
-    show_cursor_trail: showCursorTrail,
-    updated_at: new Date().toISOString(),
-  };
+    const updates: any = {
+      name,
+      currency,
+      theme,
+      pagination_enabled: paginationEnabled,
+      enable_status_tracking: statusTrackingEnabled,
+      show_cursor_trail: showCursorTrail,
+      updated_at: new Date().toISOString(),
+    };
 
-  const { error: profileError } = await supabase
-    .from("profiles")
-    .upsert({ id: user.id, ...updates });
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .upsert({ id: user.id, ...updates });
 
-  if (profileError) {
-    console.error("Error updating profile:", profileError);
-    throw new Error("Failed to update profile");
-  }
+    if (profileError) throw profileError;
 
-  const authUpdates: any = {};
-  if (email && email !== user.email) authUpdates.email = email;
-  if (password) authUpdates.password = password;
+    const authUpdates: any = {};
+    if (email && email !== user.email) authUpdates.email = email;
+    if (password) authUpdates.password = password;
 
-  if (Object.keys(authUpdates).length > 0) {
-    const { error: authError } = await supabase.auth.updateUser(authUpdates);
-    if (authError) {
-      console.error("Error updating auth:", authError);
-      throw new Error("Failed to update credentials");
+    if (Object.keys(authUpdates).length > 0) {
+      const { error: authError } = await supabase.auth.updateUser(authUpdates);
+      if (authError) throw authError;
     }
-  }
 
-  revalidateTag("profile");
-  revalidateTag("transactions");
-  revalidatePath("/", "layout");
+    revalidateTag("profile");
+    revalidateTag("transactions");
+    revalidatePath("/", "layout");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Error updating profile:", error);
+    return { success: false, error: error.message || "Failed to update profile" };
+  }
 }
 

@@ -17,7 +17,7 @@ export function ActionForm({
   children,
   className,
 }: {
-  action: (formData: FormData) => Promise<void>;
+  action: (formData: FormData) => Promise<any>;
   successMessage: string;
   children: ReactNode;
   className?: string;
@@ -26,8 +26,12 @@ export function ActionForm({
     <form
       action={async (formData) => {
         try {
-          await action(formData);
-          toast.success(successMessage);
+          const result = await action(formData);
+          if (result && (result as any).error) {
+            toast.error((result as any).error);
+          } else {
+            toast.success(successMessage);
+          }
         } catch (error: any) {
           toast.error(error.message || "An error occurred");
         }
