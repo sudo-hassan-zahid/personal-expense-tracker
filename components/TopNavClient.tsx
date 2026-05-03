@@ -14,7 +14,7 @@ export function TopNavClient({ user, activeTheme }: { user: any; activeTheme: "l
         <div className="flex items-center gap-8">
           <Link
             href="/"
-            className="flex items-center gap-2 text-primary font-bold text-xl tracking-tight hover:text-primary-active transition-colors"
+            className="group flex items-center gap-2 text-primary font-bold text-xl tracking-tight hover:text-primary-active transition-colors"
             onClick={() => setIsOpen(false)}
           >
             <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 transition-transform duration-500 group-hover:rotate-180">
