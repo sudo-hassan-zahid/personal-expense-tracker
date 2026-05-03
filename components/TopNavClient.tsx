@@ -8,13 +8,21 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import type { User } from "@supabase/supabase-js";
+import type { Category } from "@/types";
+import { QuickAddModal } from "./QuickAddModal";
 
 export function TopNavClient({
   user,
   activeTheme,
+  expenseCategories,
+  incomeCategories,
+  currency,
 }: {
   user: User | null;
   activeTheme: "light" | "dark";
+  expenseCategories: Category[];
+  incomeCategories: Category[];
+  currency: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -69,6 +77,13 @@ export function TopNavClient({
 
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-4">
+            {user && (
+              <QuickAddModal
+                expenseCategories={expenseCategories}
+                incomeCategories={incomeCategories}
+                currency={currency}
+              />
+            )}
             <ThemeToggle initialTheme={activeTheme} />
             {user ? (
               <form action="/auth/signout" method="post">
@@ -156,6 +171,12 @@ export function TopNavClient({
                 >
                   Profile
                 </Link>
+
+                <QuickAddModal
+                  expenseCategories={expenseCategories}
+                  incomeCategories={incomeCategories}
+                  currency={currency}
+                />
 
                 <form action="/auth/signout" method="post" className="mt-4">
                   <button className="w-full text-button text-white bg-red-600 hover:bg-red-700 px-4 py-3 rounded-md transition-colors">

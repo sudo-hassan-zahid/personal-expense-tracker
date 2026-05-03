@@ -7,6 +7,7 @@ import { ActionForm, SubmitButton } from "@/components/ActionForm";
 import { deleteBudget, deleteRecurringTransaction, deleteSavingsGoal, postDueRecurringTransactions, saveBudget, saveRecurringTransaction, saveSavingsGoal } from "@/actions/planning";
 import { importTransactions } from "@/actions/import";
 import { formatCurrency } from "@/lib/currency";
+import { DatePicker } from "@/components/ui/DatePicker";
 import type { Category, MonthlyBudget, RecurringTransaction, SavingsGoal } from "@/types";
 
 export function PlanningPanel({
@@ -73,7 +74,7 @@ export function PlanningPanel({
           <input required name="name" placeholder="Goal name" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
           <input required name="target_amount" type="number" min="0" step="0.01" placeholder="Target amount" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
           <input name="current_amount" type="number" min="0" step="0.01" placeholder="Current amount" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
-          <input name="target_date" type="date" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
+          <DatePicker name="target_date" label="Target date" />
           <SubmitButton className="bg-(--color-primary) text-(--color-on-primary) rounded-lg py-2 text-button">Save Goal</SubmitButton>
         </ActionForm>
         <div className="mt-5 grid gap-2">
@@ -119,7 +120,7 @@ export function PlanningPanel({
             {allCategoryNames.map((name) => <option key={name} value={name}>{name}</option>)}
           </select>
           <select name="frequency" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm"><option value="weekly">Weekly</option><option value="monthly">Monthly</option><option value="yearly">Yearly</option></select>
-          <input required name="next_date" type="date" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
+          <DatePicker name="next_date" label="Next date" />
           <input name="note" placeholder="Note" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
           <SubmitButton className="bg-(--color-primary) text-(--color-on-primary) rounded-lg py-2 text-button">Save Recurring</SubmitButton>
         </ActionForm>
