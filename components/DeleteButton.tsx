@@ -1,3 +1,6 @@
+/**
+ * Component: DeleteButton.tsx
+ */
 "use client";
 
 import { ReactNode } from "react";
@@ -22,3 +25,4 @@ export function DeleteButton({
     </button>
   );
 }
+
