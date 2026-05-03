@@ -68,6 +68,9 @@ export const DashboardChart = memo(
     const chartData = useMemo(() => {
       let filtered = transactions;
       const { start: startDate, end: endDate } = dateRange;
+      if (!startDate || !endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        return [];
+      }
 
       // Generate all days in range
       const allDays = eachDayOfInterval({ start: startDate, end: endDate });
