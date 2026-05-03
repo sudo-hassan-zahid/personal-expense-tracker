@@ -26,19 +26,8 @@ import { DateRangePicker } from "./ui/DateRangePicker";
 import { toast } from "sonner";
 import { useTransactions } from "@/hooks/useTransactions";
 import { EditTransactionModal } from "./EditTransactionModal";
-import { Category } from "./CategorySelect";
+import { Transaction, Category } from "@/types";
 
-interface Transaction {
-  id: string;
-  amount: number | string;
-  category?: string;
-  source?: string;
-  date: string;
-  note: string;
-  type: "expense" | "income";
-  status?: string;
-  created_at: string;
-}
 
 // Memoized Row Component for maximum performance
 const TransactionRow = memo(
@@ -173,6 +162,7 @@ export function TransactionList({
   incomeCategories,
   enableStatusTracking,
   isWideView = false,
+  onOptimisticDelete,
 }: {
   initialTransactions: Transaction[];
   currency: string;
@@ -182,12 +172,10 @@ export function TransactionList({
   incomeCategories: Category[];
   enableStatusTracking: boolean;
   isWideView?: boolean;
+  onOptimisticDelete?: (id: string) => void;
 }) {
   const [isPending, startTransition] = useTransition();
-  const [optimisticTransactions, removeOptimisticTransaction] = useOptimistic(
-    initialTransactions,
-    (state, id: string) => state.filter((t) => t.id !== id)
-  );
+  const optimisticTransactions = initialTransactions;
 
   const {
     search,
@@ -471,9 +459,11 @@ export function TransactionList({
                     setIsDeleting(true);
                     
                     // Optimistic UI removal
-                    startTransition(() => {
-                      removeOptimisticTransaction(idToRemove);
-                    });
+                    if (onOptimisticDelete) {
+                      startTransition(() => {
+                        onOptimisticDelete(idToRemove);
+                      });
+                    }
 
                     try {
                       if (transactionToDelete.type === "income")

@@ -5,13 +5,7 @@
 
 import { useState } from "react";
 import { addCategory } from "@/actions/category";
-
-export type Category = {
-  id: string;
-  name: string;
-  type: string;
-  parent_id: string | null;
-};
+import { Category } from "@/types";
 
 export function CategorySelect({
   categories,

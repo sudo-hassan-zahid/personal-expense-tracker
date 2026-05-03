@@ -7,6 +7,8 @@ import { ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 import { LoadingSpinner } from "./ui/LoadingSpinner";
 
+import { useRouter } from "next/navigation";
+
 export function SubmitButton({
   children,
   className = "",
@@ -47,8 +49,10 @@ export function ActionForm({
   successMessage: string;
   children: ReactNode;
   className?: string;
-  onSuccess?: () => void;
+  onSuccess?: (formData: FormData) => void;
 }) {
+  const router = useRouter();
+
   return (
     <form
       action={async (formData) => {
@@ -58,7 +62,8 @@ export function ActionForm({
             toast.error((result as any).error);
           } else {
             toast.success(successMessage);
-            if (onSuccess) onSuccess();
+            router.refresh();
+            if (onSuccess) onSuccess(formData);
           }
         } catch (error: any) {
           toast.error(error.message || "An error occurred");

@@ -3,18 +3,7 @@
  */
 import { useState, useMemo, useDeferredValue } from "react";
 import { format, isWithinInterval, startOfDay, endOfDay } from "date-fns";
-
-interface Transaction {
-  id: string;
-  amount: number | string;
-  category?: string;
-  source?: string;
-  date: string;
-  note: string;
-  type: "expense" | "income";
-  status?: string;
-  created_at: string;
-}
+import { Transaction } from "@/types";
 
 export function useTransactions(initialTransactions: Transaction[], initialItemsPerPage: number) {
   const [search, setSearch] = useState("");
