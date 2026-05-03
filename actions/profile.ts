@@ -52,8 +52,8 @@ export async function updateCurrency(formData: FormData) {
 
     if (error) throw error;
 
-    revalidateTag("profile");
-    revalidateTag("transactions");
+    revalidateTag("profile", { expire: 0 });
+    revalidateTag("transactions", { expire: 0 });
     revalidatePath("/", "layout");
     return { success: true };
   } catch (error: any) {
@@ -104,8 +104,8 @@ export async function updateProfile(formData: FormData) {
       if (authError) throw authError;
     }
 
-    revalidateTag("profile");
-    revalidateTag("transactions");
+    revalidateTag("profile", { expire: 0 });
+    revalidateTag("transactions", { expire: 0 });
     revalidatePath("/", "layout");
     return { success: true };
   } catch (error: any) {
