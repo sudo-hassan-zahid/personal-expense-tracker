@@ -1,3 +1,6 @@
+/**
+ * Component: ThemeToggle.tsx
+ */
 "use client";
 
 import { Moon, Sun } from "lucide-react";
@@ -39,3 +42,4 @@ export function ThemeToggle({ initialTheme }: { initialTheme: "light" | "dark" }
     </button>
   );
 }
+
