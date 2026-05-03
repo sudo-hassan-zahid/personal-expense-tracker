@@ -57,12 +57,12 @@ export const DashboardChart = memo(
     }, []);
 
     const categories = useMemo(() => {
-      const cats = new Set<string>();
-      transactions.forEach((t) => {
+      const cats = transactions.reduce((acc, t) => {
         const c = t.type === "income" ? t.source : t.category;
-        if (c) cats.add(c.toLowerCase());
-      });
-      return Array.from(cats);
+        if (c) acc.add(c.toLowerCase());
+        return acc;
+      }, new Set<string>());
+      return Array.from(cats).sort();
     }, [transactions]);
 
     const chartData = useMemo(() => {
