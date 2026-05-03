@@ -5,6 +5,8 @@ import { login } from "@/app/login/actions";
 
 export function DemoAccountCard() {
   const [isPending, setIsPending] = useState(false);
+  const [copiedEmail, setCopiedEmail] = useState(false);
+  const [copiedPassword, setCopiedPassword] = useState(false);
   return (
     <div className="mt-8">
       <div className="relative">
