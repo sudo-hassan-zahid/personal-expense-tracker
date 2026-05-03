@@ -265,8 +265,9 @@ export function TransactionList({
         {displayedTransactions.map((t, i) => (
           <div
             key={t.id + t.type}
-            className={`grid ${enableStatusTracking ? "grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-4 items-center py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-200 px-2 -mx-2 rounded-lg animate-slide-up ${i < 5 ? `stagger-${i + 1}` : "opacity-100"} ${newlyAddedId === t.id ? "bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse" : ""}`}
+            className={`flex flex-col md:grid ${enableStatusTracking ? "md:grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "md:grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-2 md:gap-4 items-start md:items-center py-4 md:py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-200 px-3 md:px-2 -mx-3 md:-mx-2 rounded-xl md:rounded-lg animate-slide-up ${i < 5 ? `stagger-${i + 1}` : "opacity-100"} ${newlyAddedId === t.id ? "bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse" : ""}`}
           >
+
             <div className="text-number-sm text-(--color-muted) pl-2">
               {(currentPage - 1) * itemsPerPage + i + 1}
             </div>
