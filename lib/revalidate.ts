@@ -1,19 +1,35 @@
 import { revalidateTag, revalidatePath } from "next/cache";
 
 /**
- * Utility to perform a full revalidation of all transaction and profile related data.
- * This ensures consistency across the dashboard, charts, and transaction lists.
+ * Cache invalidation helpers scoped by data domain.
+ * Keeping these narrow avoids purging layouts and unrelated pages after every mutation.
  */
-export function revalidateAll() {
-  // Purge data cache tags - standard Next.js 15+ API (with mandatory options in this env)
+export function revalidateTransactions() {
   revalidateTag("transactions", { expire: 0 });
-  revalidateTag("profile", { expire: 0 });
-  revalidateTag("categories", { expire: 0 });
+  revalidatePath("/dashboard", "page");
+}
 
-  // Purge router cache for the entire application aggressively
+export function revalidateCategories() {
+  revalidateTag("categories", { expire: 0 });
+  revalidatePath("/dashboard", "page");
+  revalidatePath("/dashboard/categories", "page");
+}
+
+export function revalidateProfile(userId?: string) {
+  revalidateTag("profile", { expire: 0 });
+  if (userId) {
+    revalidateTag(`profile-${userId}`, { expire: 0 });
+    revalidateTag(userId, { expire: 0 });
+  }
+
   revalidatePath("/", "layout");
   revalidatePath("/dashboard", "page");
-  revalidatePath("/dashboard", "layout");
   revalidatePath("/dashboard/profile", "page");
   revalidatePath("/dashboard/profile", "layout");
+}
+
+export function revalidateAll() {
+  revalidateTransactions();
+  revalidateCategories();
+  revalidateProfile();
 }
