@@ -4,7 +4,7 @@
 "use server";
 
 import { createClient, getAuthenticatedClient } from "@/lib/supabase";
-import { revalidateTag } from "next/cache";
+import { revalidateTag, revalidatePath } from "next/cache";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
@@ -57,6 +57,7 @@ export async function updateCurrency(formData: FormData) {
 
   revalidateTag("profile");
   revalidateTag("transactions");
+  revalidatePath("/", "layout");
 }
 
 /**
@@ -108,5 +109,6 @@ export async function updateProfile(formData: FormData) {
 
   revalidateTag("profile");
   revalidateTag("transactions");
+  revalidatePath("/", "layout");
 }
 
