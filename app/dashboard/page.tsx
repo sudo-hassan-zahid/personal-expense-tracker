@@ -3,6 +3,7 @@
  */
 import { addExpense } from "@/actions/expense";
 import { addIncome } from "@/actions/income";
+import { createClient } from "@/lib/supabase";
 import { formatCurrency } from "@/lib/currency";
 import { getTodayPKT } from "@/lib/date-utils";
 import { getDashboardData } from "@/lib/dashboard-data";
@@ -31,10 +32,14 @@ export default async function DashboardPage(props: {
   const cookieStore = await cookies();
   const allCookies = cookieStore.getAll();
 
+  const supabase = await createClient(allCookies);
+  const { data: { user } } = await supabase.auth.getUser();
+  const userId = user?.id ?? "";
+
   // Cached data fetching — all 5 queries run in parallel, result is cached
   // Pass cookies explicitly to avoid dynamic access error
   const { expenses, incomes, expenseCategories, incomeCategories, profile } =
-    await getDashboardData(allCookies);
+    await getDashboardData(userId, allCookies);
 
   const currency = profile?.currency || "USD";
   const paginationEnabled = profile?.pagination_enabled ?? true;

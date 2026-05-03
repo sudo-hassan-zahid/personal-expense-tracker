@@ -26,17 +26,13 @@ export async function getProfile(client?: SupabaseClient) {
 
   if (!user) return null;
 
-  return getCachedProfile(user.id, allCookies);
+  return fetchProfile(user.id, allCookies);
 }
 
 /**
- * Inner cached function to fetch profile data.
- * Keyed by userId to prevent cross-user data leakage.
+ * Inner function to fetch profile data directly from DB.
  */
-async function getCachedProfile(userId: string, cookieStore?: any) {
-  "use cache";
-  cacheTag("profile");
-
+async function fetchProfile(userId: string, cookieStore?: any) {
   const supabase = await createClient(cookieStore);
   const { data, error } = await supabase
     .from("profiles")
@@ -108,11 +104,20 @@ export async function updateProfile(formData: FormData) {
       .from("profiles")
       .upsert({ id: user.id, ...updates });
 
-    if (profileError) throw profileError;
+    if (profileError) {
+      console.error("Profile update error:", profileError);
+      return { success: false, error: `Database error: ${profileError.message}` };
+    }
 
+    // Update Auth Email/Password if provided
     const authUpdates: any = {};
     if (email && email !== user.email) authUpdates.email = email;
     if (password) authUpdates.password = password;
+
+    if (Object.keys(authUpdates).length > 0) {
+      const { error: authError } = await supabase.auth.updateUser(authUpdates);
+      if (authError) throw authError;
+    }
 
     // Update theme cookie to ensure layout reflects change immediately
     if (theme) {
@@ -121,6 +126,12 @@ export async function updateProfile(formData: FormData) {
     }
 
     revalidateAll();
+    revalidateTag(`profile-${user.id}`, { expire: 0 });
+    revalidateTag(user.id, { expire: 0 });
+    revalidatePath("/", "layout");
+    revalidatePath("/dashboard", "layout");
+    revalidatePath("/dashboard/profile", "layout");
+    
     return { success: true };
   } catch (error: any) {
     console.error("Error updating profile:", error);

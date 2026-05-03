@@ -23,6 +23,7 @@ export default async function ProfilePage() {
 
       <div className="bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-6">
         <ActionForm
+          key={JSON.stringify(profile)}
           action={updateProfile}
           successMessage="Profile updated successfully!"
           className="flex flex-col gap-6"

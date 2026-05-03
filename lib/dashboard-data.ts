@@ -11,9 +11,9 @@ import { cacheTag } from "next/cache";
  * Runs all 5 queries in parallel with a single Supabase client.
  * Cache is invalidated via revalidateTag("transactions"/"categories"/"profile").
  */
-export async function getDashboardData(cookieStore?: unknown) {
+export async function getDashboardData(userId: string, cookieStore?: unknown) {
   "use cache";
-  cacheTag("transactions", "categories", "profile");
+  cacheTag("transactions", "categories", "profile", `profile-${userId}`, userId);
 
   const supabase = await createClient(cookieStore);
 
@@ -21,12 +21,6 @@ export async function getDashboardData(cookieStore?: unknown) {
   const todayPKT = getCurrentPKTDate();
   const monthStart = format(startOfMonth(todayPKT), "yyyy-MM-dd");
   const monthEnd = format(endOfMonth(todayPKT), "yyyy-MM-dd");
-
-  // Get user first (needed for profile query)
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const userId = user?.id ?? "";
 
   // Run ALL queries in parallel — this is the #1 optimization
   // Previously: 5 sequential calls each creating their own client = ~1500ms
