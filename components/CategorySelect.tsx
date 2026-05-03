@@ -6,6 +6,7 @@
 import { useState } from "react";
 import { addCategory } from "@/actions/category";
 import { Category } from "@/types";
+import { HelpLabel } from "./HelpTip";
 
 export function CategorySelect({
   categories,
@@ -14,6 +15,7 @@ export function CategorySelect({
   label,
   defaultValue,
   required = true,
+  help,
 }: {
   categories: Category[];
   type: "expense" | "income";
@@ -21,6 +23,7 @@ export function CategorySelect({
   label: string;
   defaultValue?: string;
   required?: boolean;
+  help?: string;
 }) {
   const [isAdding, setIsAdding] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
@@ -61,7 +64,13 @@ export function CategorySelect({
 
   return (
     <div>
-      <label className="block text-body-sm mb-1 text-(--color-muted)">{label}</label>
+      {help ? (
+        <HelpLabel help={help} className="mb-1">
+          {label}
+        </HelpLabel>
+      ) : (
+        <label className="block text-body-sm mb-1 text-(--color-muted)">{label}</label>
+      )}
 
       {!isAdding ? (
         <div className="flex gap-2">
