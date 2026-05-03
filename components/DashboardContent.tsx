@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useOptimistic } from "react";
+import dynamic from "next/dynamic";
 import { formatCurrency } from "@/lib/currency";
 import { getTodayPKT } from "@/lib/date-utils";
 import { addExpense } from "@/actions/expense";
@@ -9,11 +10,19 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { CategorySelect } from "./CategorySelect";
 import { ActionForm, SubmitButton } from "./ActionForm";
-import { DashboardChart } from "./DashboardChart";
 import { TransactionList } from "./TransactionList";
 import { DatePicker } from "./ui/DatePicker";
 import { TransactionFilter } from "./TransactionFilter";
 import { Transaction, Expense, Income, Category } from "@/types";
+
+const DashboardChart = dynamic(
+  () => import("./DashboardChart").then((module) => ({ default: module.DashboardChart })),
+  {
+    loading: () => (
+      <div className="w-full h-[380px] bg-(--color-surface-card-dark) rounded-2xl border border-(--color-hairline-on-dark) animate-pulse" />
+    ),
+  }
+);
 
 interface DashboardContentProps {
   expenses: Expense[];
