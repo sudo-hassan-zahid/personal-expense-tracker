@@ -15,7 +15,8 @@ export default async function ProfilePage() {
   const profile = await getProfile();
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-6 py-10 flex flex-col gap-8 flex-1">
+    <div className="w-full max-w-2xl mx-auto px-4 md:px-6 py-6 md:py-10 flex flex-col gap-6 md:gap-8 flex-1">
+
       <h1 className="text-title-lg text-(--color-on-dark)">Profile Settings</h1>
 
       <div className="bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-6">
