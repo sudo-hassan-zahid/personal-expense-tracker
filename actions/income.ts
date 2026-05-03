@@ -5,35 +5,41 @@
 
 import { getAuthenticatedClient } from "@/lib/supabase";
 import { revalidateTransactions } from "@/lib/revalidate";
+import { validateRequiredText, validateTransactionInput } from "@/lib/form-validation";
 
 /**
  * Adds a new income record to the database.
  * @param formData - The form data containing amount, source, date, and note.
  */
 export async function addIncome(formData: FormData) {
-  const { supabase, user } = await getAuthenticatedClient();
+  try {
+    const { supabase, user } = await getAuthenticatedClient();
+    const transaction = validateTransactionInput(formData);
+    const source = validateRequiredText(formData.get("source"), "Source");
 
-  const amount = parseFloat(formData.get("amount") as string);
-  const source = formData.get("source") as string;
-  const date = formData.get("date") as string;
-  const note = formData.get("note") as string;
+    if (!transaction.ok) return { error: transaction.error };
+    if (!source.ok) return { error: source.error };
 
-  const status = (formData.get("status") as string) || "done";
-  const { error } = await supabase.from("incomes").insert({
-    user_id: user.id,
-    amount,
-    source,
-    date,
-    note,
-    status,
-  });
+    const { error } = await supabase.from("incomes").insert({
+      user_id: user.id,
+      amount: transaction.value.amount,
+      source: source.value,
+      date: transaction.value.date,
+      note: transaction.value.note,
+      status: transaction.value.status,
+    });
 
-  if (error) {
+    if (error) {
+      console.error("Error adding income:", error);
+      return { error: "Failed to add income." };
+    }
+
+    revalidateTransactions();
+    return { success: true };
+  } catch (error) {
     console.error("Error adding income:", error);
-    throw new Error("Failed to add income");
+    return { error: error instanceof Error ? error.message : "Failed to add income." };
   }
-
-  revalidateTransactions();
 }
 
 /**
@@ -58,24 +64,36 @@ export async function deleteIncome(id: string) {
  * @param formData - The form data containing updated fields (amount, source, date, note, status).
  */
 export async function updateIncome(id: string, formData: FormData) {
-  const { supabase, user } = await getAuthenticatedClient();
-  const amount = parseFloat(formData.get("amount") as string);
-  const source = formData.get("source") as string;
-  const date = formData.get("date") as string;
-  const note = formData.get("note") as string;
-  const status = formData.get("status") as string;
+  try {
+    const { supabase, user } = await getAuthenticatedClient();
+    const transaction = validateTransactionInput(formData);
+    const source = validateRequiredText(formData.get("source"), "Source");
 
-  const { error } = await supabase
-    .from("incomes")
-    .update({ amount, source, date, note, status })
-    .eq("id", id)
-    .eq("user_id", user.id);
+    if (!transaction.ok) return { error: transaction.error };
+    if (!source.ok) return { error: source.error };
 
-  if (error) {
+    const { error } = await supabase
+      .from("incomes")
+      .update({
+        amount: transaction.value.amount,
+        source: source.value,
+        date: transaction.value.date,
+        note: transaction.value.note,
+        status: transaction.value.status,
+      })
+      .eq("id", id)
+      .eq("user_id", user.id);
+
+    if (error) {
+      console.error("Error updating income:", error);
+      return { error: "Failed to update income." };
+    }
+
+    revalidateTransactions();
+    return { success: true };
+  } catch (error) {
     console.error("Error updating income:", error);
-    throw new Error("Failed to update income");
+    return { error: error instanceof Error ? error.message : "Failed to update income." };
   }
-
-  revalidateTransactions();
 }
 
