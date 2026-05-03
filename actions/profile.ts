@@ -4,14 +4,15 @@
 "use server";
 
 import { createClient, getAuthenticatedClient } from "@/lib/supabase";
-import { revalidateTag, revalidatePath } from "next/cache";
+import { revalidateTag, revalidatePath, cacheTag } from "next/cache";
+import { cookies } from "next/headers";
 import { revalidateAll } from "@/lib/revalidate";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
  * Fetches the current user's profile from the database.
- * Accepts an optional pre-created supabase client to avoid redundant client creation
- * when called alongside other queries (e.g. in dashboard Promise.all).
+ * Accepts an optional pre-created supabase client to avoid redundant client creation.
+ * Uses a cached inner function to ensure user-specific data isolation.
  * @returns The profile object or null if not found.
  */
 export async function getProfile(client?: SupabaseClient) {
@@ -22,12 +23,24 @@ export async function getProfile(client?: SupabaseClient) {
 
   if (!user) return null;
 
+  return getCachedProfile(user.id);
+}
+
+/**
+ * Inner cached function to fetch profile data.
+ * Keyed by userId to prevent cross-user data leakage.
+ */
+async function getCachedProfile(userId: string) {
+  "use cache";
+  cacheTag("profile");
+
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("profiles")
     .select(
       "id, theme, show_cursor_trail, currency, pagination_enabled, enable_status_tracking, name"
     )
-    .eq("id", user.id)
+    .eq("id", userId)
     .maybeSingle();
 
   if (error) {
@@ -98,9 +111,10 @@ export async function updateProfile(formData: FormData) {
     if (email && email !== user.email) authUpdates.email = email;
     if (password) authUpdates.password = password;
 
-    if (Object.keys(authUpdates).length > 0) {
-      const { error: authError } = await supabase.auth.updateUser(authUpdates);
-      if (authError) throw authError;
+    // Update theme cookie to ensure layout reflects change immediately
+    if (theme) {
+      const cookieStore = await cookies();
+      cookieStore.set("theme", theme, { path: "/", maxAge: 31536000 });
     }
 
     revalidateAll();

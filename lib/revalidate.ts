@@ -9,7 +9,9 @@ export function revalidateAll() {
   revalidateTag("transactions", { expire: 0 });
   revalidateTag("profile", { expire: 0 });
   revalidateTag("categories", { expire: 0 });
-  
-  // Purge router cache for the entire dashboard layout
+
+  // Purge router cache for the entire application
   revalidatePath("/", "layout");
+  revalidatePath("/", "page");
+  revalidatePath("/dashboard", "layout");
 }
