@@ -8,6 +8,7 @@ import { deleteBudget, deleteRecurringTransaction, deleteSavingsGoal, postDueRec
 import { importTransactions } from "@/actions/import";
 import { formatCurrency } from "@/lib/currency";
 import { DatePicker } from "@/components/ui/DatePicker";
+import { HelpLabel, HelpTip } from "@/components/HelpTip";
 import type { Category, MonthlyBudget, RecurringTransaction, SavingsGoal } from "@/types";
 
 export function PlanningPanel({
@@ -38,15 +39,30 @@ export function PlanningPanel({
         <div className="flex items-center gap-2 mb-4">
           <WalletCards size={18} className="text-(--color-primary)" />
           <h2 className="text-title-md">Budgets</h2>
+          <HelpTip label="Budgets help">
+            Set monthly category limits and alert thresholds so overspending is visible early.
+          </HelpTip>
         </div>
         <ActionForm action={saveBudget} successMessage="Budget saved" className="grid gap-3">
           <input type="hidden" name="month" value={month} />
+          <HelpLabel help="The expense category this monthly budget watches." className="mb-[-0.25rem]">
+            Category
+          </HelpLabel>
           <select name="category" required className="form-control">
             <option value="">Category</option>
             {expenseCategories.map((category) => <option key={category.id} value={category.name}>{category.name}</option>)}
           </select>
+          <HelpLabel help="The maximum planned spend for this category before rollover." className="mb-[-0.25rem]">
+            Monthly limit
+          </HelpLabel>
           <input required name="limit_amount" type="number" min="0" step="0.01" placeholder="Monthly limit" className="form-control" />
+          <HelpLabel help="Extra unspent money carried into this month, if you track rollover manually." className="mb-[-0.25rem]">
+            Rollover amount
+          </HelpLabel>
           <input name="rollover_amount" type="number" min="0" step="0.01" placeholder="Rollover amount" className="form-control" />
+          <HelpLabel help="The percent of the available budget that turns the budget card into an alert state." className="mb-[-0.25rem]">
+            Alert %
+          </HelpLabel>
           <input name="alert_threshold" type="number" min="1" max="100" defaultValue="80" placeholder="Alert %" className="form-control" />
           <SubmitButton className="bg-(--color-primary) text-(--color-on-primary) rounded-lg py-2 text-button">Save Budget</SubmitButton>
         </ActionForm>
@@ -69,12 +85,28 @@ export function PlanningPanel({
         <div className="flex items-center gap-2 mb-4">
           <Target size={18} className="text-(--color-primary)" />
           <h2 className="text-title-md">Savings Goals</h2>
+          <HelpTip label="Savings goals help">
+            Track progress toward things you are saving for, separate from day-to-day spending.
+          </HelpTip>
         </div>
         <ActionForm action={saveSavingsGoal} successMessage="Goal saved" className="grid gap-3">
+          <HelpLabel help="A short name for the target, like Emergency fund or Laptop." className="mb-[-0.25rem]">
+            Goal name
+          </HelpLabel>
           <input required name="name" placeholder="Goal name" className="form-control" />
+          <HelpLabel help="The full amount you want to reach." className="mb-[-0.25rem]">
+            Target amount
+          </HelpLabel>
           <input required name="target_amount" type="number" min="0" step="0.01" placeholder="Target amount" className="form-control" />
+          <HelpLabel help="How much you have already saved toward this goal." className="mb-[-0.25rem]">
+            Current amount
+          </HelpLabel>
           <input name="current_amount" type="number" min="0" step="0.01" placeholder="Current amount" className="form-control" />
-          <DatePicker name="target_date" label="Target date" />
+          <DatePicker
+            name="target_date"
+            label="Target date"
+            help="The date you are aiming to finish this savings goal."
+          />
           <SubmitButton className="bg-(--color-primary) text-(--color-on-primary) rounded-lg py-2 text-button">Save Goal</SubmitButton>
         </ActionForm>
         <div className="mt-5 grid gap-2">
@@ -99,6 +131,9 @@ export function PlanningPanel({
           <div className="flex items-center gap-2">
             <Repeat size={18} className="text-(--color-primary)" />
             <h2 className="text-title-md">Recurring</h2>
+            <HelpTip label="Recurring transactions help">
+              Save repeating income or expenses, then post due items when they need to become real transactions.
+            </HelpTip>
           </div>
           <button
             onClick={async () => {
@@ -113,14 +148,33 @@ export function PlanningPanel({
           </button>
         </div>
         <ActionForm action={saveRecurringTransaction} successMessage="Recurring item saved" className="grid gap-3">
+          <HelpLabel help="Whether the repeating item adds money or spends money." className="mb-[-0.25rem]">
+            Type
+          </HelpLabel>
           <select name="type" className="form-control"><option value="expense">Expense</option><option value="income">Income</option></select>
+          <HelpLabel help="The amount to post each time this recurring item runs." className="mb-[-0.25rem]">
+            Amount
+          </HelpLabel>
           <input required name="amount" type="number" min="0" step="0.01" placeholder="Amount" className="form-control" />
+          <HelpLabel help="The category or income source used when this recurring item is posted." className="mb-[-0.25rem]">
+            Category or source
+          </HelpLabel>
           <select name="category_or_source" required className="form-control">
             <option value="">Category or source</option>
             {allCategoryNames.map((name) => <option key={name} value={name}>{name}</option>)}
           </select>
+          <HelpLabel help="How often this item should repeat after the next date." className="mb-[-0.25rem]">
+            Frequency
+          </HelpLabel>
           <select name="frequency" className="form-control"><option value="weekly">Weekly</option><option value="monthly">Monthly</option><option value="yearly">Yearly</option></select>
-          <DatePicker name="next_date" label="Next date" />
+          <DatePicker
+            name="next_date"
+            label="Next date"
+            help="The next date this recurring item should be posted."
+          />
+          <HelpLabel help="Optional text copied onto each posted transaction." className="mb-[-0.25rem]">
+            Note
+          </HelpLabel>
           <input name="note" placeholder="Note" className="form-control" />
           <SubmitButton className="bg-(--color-primary) text-(--color-on-primary) rounded-lg py-2 text-button">Save Recurring</SubmitButton>
         </ActionForm>
@@ -141,6 +195,9 @@ export function PlanningPanel({
         <div className="flex items-center gap-2 mb-4">
           <Upload size={18} className="text-(--color-primary)" />
           <h2 className="text-title-md">CSV and Bank Statement Import</h2>
+          <HelpTip label="CSV import help">
+            Upload a CSV export from your bank or spreadsheet to import transactions in bulk.
+          </HelpTip>
         </div>
         <ActionForm action={importTransactions} successMessage="Import completed" className="flex flex-col md:flex-row gap-3">
           <input required name="file" type="file" accept=".csv,text/csv" className="form-control flex-1" />
