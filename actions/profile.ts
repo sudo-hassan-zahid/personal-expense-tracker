@@ -5,6 +5,7 @@
 
 import { createClient, getAuthenticatedClient } from "@/lib/supabase";
 import { revalidateTag, revalidatePath } from "next/cache";
+import { revalidateAll } from "@/lib/revalidate";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
@@ -52,9 +53,7 @@ export async function updateCurrency(formData: FormData) {
 
     if (error) throw error;
 
-    revalidateTag("profile", { expire: 0 });
-    revalidateTag("transactions", { expire: 0 });
-    revalidatePath("/", "layout");
+    revalidateAll();
     return { success: true };
   } catch (error: any) {
     console.error("Error updating currency:", error);
@@ -104,9 +103,7 @@ export async function updateProfile(formData: FormData) {
       if (authError) throw authError;
     }
 
-    revalidateTag("profile", { expire: 0 });
-    revalidateTag("transactions", { expire: 0 });
-    revalidatePath("/", "layout");
+    revalidateAll();
     return { success: true };
   } catch (error: any) {
     console.error("Error updating profile:", error);
