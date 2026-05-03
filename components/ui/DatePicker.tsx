@@ -47,7 +47,8 @@ export function DatePicker({
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 mt-2 left-0 animate-in fade-in zoom-in duration-200 origin-top-left">
+        <div className="fixed md:absolute inset-x-4 md:inset-auto z-50 mt-2 md:left-0 flex justify-center md:block animate-in fade-in zoom-in duration-200 origin-top-left">
+
           <Calendar
             selected={selectedDate}
             onSelect={(date) => {
