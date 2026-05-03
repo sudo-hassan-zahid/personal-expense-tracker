@@ -309,10 +309,11 @@
   }
 
   .animate-slide-up {
-    animation: slide-up 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: slide-up 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     opacity: 0;
     will-change: transform, opacity;
     transform: translateZ(0);
+    backface-visibility: hidden;
   }
 
   .stagger-1 {
