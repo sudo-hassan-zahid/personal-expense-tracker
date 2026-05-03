@@ -39,7 +39,6 @@ export function PaginationControls({
       </div>
       <div className="flex flex-wrap items-center justify-center gap-4">
         <div className="flex items-center gap-2">
-
           <span className="text-caption text-(--color-muted)">Per page:</span>
           <select
             value={itemsPerPage}

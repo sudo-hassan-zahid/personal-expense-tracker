@@ -107,7 +107,6 @@ export function EditTransactionModal({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
               <div>
                 <label className="block text-body-sm mb-1 text-(--color-muted)">Amount</label>
                 <input

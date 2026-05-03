@@ -160,8 +160,6 @@ export function TopNavClient({ user, activeTheme }: { user: any; activeTheme: "l
           </nav>
         </div>
       </div>
-
     </>
   );
 }
-

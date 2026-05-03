@@ -42,7 +42,6 @@ export function formatCurrency(amount: number, currencyCode: string = "USD"): st
   return formatted;
 }
 
-
 /**
  * Common currencies for the currency selector.
  */

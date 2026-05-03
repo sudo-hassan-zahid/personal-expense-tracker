@@ -45,18 +45,16 @@ export function DatePicker({
           {format(selectedDate, "PPP")}
         </span>
       </button>
-      
+
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden animate-in fade-in"
           onClick={() => setIsOpen(false)}
         />
       )}
 
-
       {isOpen && (
         <div className="fixed md:absolute inset-x-4 md:inset-auto z-50 mt-2 md:left-0 flex justify-center md:block animate-in fade-in zoom-in duration-200 origin-top-left">
-
           <Calendar
             selected={selectedDate}
             onSelect={(date) => {

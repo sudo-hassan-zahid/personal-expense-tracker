@@ -58,7 +58,7 @@ export function DateRangePicker({
       </button>
 
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden animate-in fade-in"
           onClick={() => setIsOpen(false)}
         />
@@ -66,7 +66,6 @@ export function DateRangePicker({
 
       {isOpen && (
         <div className="fixed md:absolute inset-x-4 md:inset-auto z-50 mt-2 md:right-0 flex justify-center md:block animate-in fade-in zoom-in duration-200 origin-top-right">
-
           <Calendar selected={startDate} onSelect={handleSelect} />
           {/* Note: A true range picker would highlight days between, but for simplicity and elegance we'll start with this */}
         </div>

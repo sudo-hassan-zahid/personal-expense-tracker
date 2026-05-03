@@ -33,7 +33,6 @@ export function DeleteConfirmationModal({
             <p className="text-body-sm text-(--color-muted)">{description}</p>
           </div>
           <div className="flex flex-col sm:flex-row w-full gap-3 mt-4">
-
             <button
               type="button"
               onClick={onClose}

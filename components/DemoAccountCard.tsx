@@ -41,7 +41,6 @@ export function DemoAccountCard() {
       </div>
       <div className="mt-4 md:mt-6 grid grid-cols-1 gap-3 md:gap-5">
         <div className="glass-dark rounded-xl p-3 md:p-4 border border-(--color-hairline-on-dark) flex flex-col gap-1">
-
           <span className="text-[10px] uppercase tracking-wider text-(--color-muted) font-semibold">
             Email
           </span>
@@ -57,7 +56,9 @@ export function DemoAccountCard() {
               title="Copy email"
             >
               {copiedEmail ? (
-                <span className="text-[10px] text-green-400 font-medium animate-pulse">Copied!</span>
+                <span className="text-[10px] text-green-400 font-medium animate-pulse">
+                  Copied!
+                </span>
               ) : null}
               <svg
                 className={`w-3.5 h-3.5 ${copiedEmail ? "text-green-400" : ""}`}
@@ -86,7 +87,6 @@ export function DemoAccountCard() {
           </div>
         </div>
         <div className="glass-dark rounded-xl p-3 md:p-4 border border-(--color-hairline-on-dark) flex flex-col gap-1">
-
           <span className="text-[10px] uppercase tracking-wider text-(--color-muted) font-semibold">
             Password
           </span>
@@ -102,7 +102,9 @@ export function DemoAccountCard() {
               title="Copy password"
             >
               {copiedPassword ? (
-                <span className="text-[10px] text-green-400 font-medium animate-pulse">Copied!</span>
+                <span className="text-[10px] text-green-400 font-medium animate-pulse">
+                  Copied!
+                </span>
               ) : null}
               <svg
                 className={`w-3.5 h-3.5 ${copiedPassword ? "text-green-400" : ""}`}

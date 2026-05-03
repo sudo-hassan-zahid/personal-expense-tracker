@@ -107,7 +107,6 @@ export function CursorTrail() {
       ctx.globalAlpha = 1;
     };
 
-
     window.addEventListener("resize", resize);
     window.addEventListener("mousemove", onMouseMove, { passive: true });
     resize();

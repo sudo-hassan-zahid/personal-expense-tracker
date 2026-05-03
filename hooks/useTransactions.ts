@@ -101,7 +101,7 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
 
   const totalPages =
     initialItemsPerPage > 0 ? Math.ceil(sortedTransactions.length / initialItemsPerPage) : 1;
-  
+
   const displayedTransactions = useMemo(() => {
     if (initialItemsPerPage <= 0) return sortedTransactions;
     return sortedTransactions.slice(
@@ -134,4 +134,3 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
     displayedTransactions,
   };
 }
-
