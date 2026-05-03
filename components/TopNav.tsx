@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import { ThemeToggle } from "./ThemeToggle";
+import { Menu, X } from "lucide-react";
+
 
 export async function TopNav({ activeTheme }: { activeTheme: "light" | "dark" }) {
   const supabase = await createClient();
