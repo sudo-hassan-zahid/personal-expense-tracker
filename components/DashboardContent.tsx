@@ -16,6 +16,7 @@ import { TransactionFilter } from "./TransactionFilter";
 import { Expense, Income, Category } from "@/types";
 import type { DashboardFilters } from "@/lib/dashboard-filters";
 import { DashboardPeriodControls } from "./DashboardPeriodControls";
+import { AnalyticsSummary } from "./AnalyticsSummary";
 
 const DashboardChart = dynamic(
   () => import("./DashboardChart").then((module) => ({ default: module.DashboardChart })),
@@ -162,6 +163,12 @@ export function DashboardContent({
         transactions={allTransactions}
         currency={currency}
         enableStatusTracking={profile?.enable_status_tracking ?? false}
+      />
+
+      <AnalyticsSummary
+        transactions={allTransactions}
+        currency={currency}
+        enableStatusTracking={isStatusTrackingEnabled}
       />
 
       {/* 8/4 or 12 Split Layout */}
