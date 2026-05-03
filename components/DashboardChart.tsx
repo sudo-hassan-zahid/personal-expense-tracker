@@ -66,61 +66,66 @@ export const DashboardChart = memo(
     }, [transactions]);
 
     const chartData = useMemo(() => {
-      let filtered = transactions;
-      const { start: startDate, end: endDate } = dateRange;
-      if (!startDate || !endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      try {
+        let filtered = transactions;
+        const { start: startDate, end: endDate } = dateRange;
+        if (!startDate || !endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+          return [];
+        }
+
+        // Generate all days in range
+        const allDays = eachDayOfInterval({ start: startDate, end: endDate });
+        const chartDataMap = new Map();
+
+        allDays.forEach((day) => {
+          const d = format(day, "yyyy-MM-dd");
+          chartDataMap.set(d, { date: d, income: 0, expense: 0 });
+        });
+
+        // Pre-filter by our precise date range
+        filtered = filtered.filter((t) => {
+          const tDate = new Date(t.date);
+          return tDate >= startOfDay(startDate) && tDate <= endOfDay(endDate);
+        });
+
+        // Type filter
+        if (filterType !== "all") {
+          filtered = filtered.filter((t) => t.type === filterType);
+        }
+
+        // Category filter
+        if (filterCategory !== "all") {
+          filtered = filtered.filter((t) => {
+            const c = t.type === "income" ? t.source : t.category;
+            return c?.toLowerCase() === filterCategory.toLowerCase();
+          });
+        }
+
+        // Status filter: If enabled, only show completed transactions
+        const transactionsToProcess = enableStatusTracking
+          ? filtered.filter((t) => (t as any).status === "done")
+          : filtered;
+
+        transactionsToProcess.forEach((t) => {
+          const dateKey = t.date.includes("T") ? t.date.split("T")[0] : t.date;
+
+          if (chartDataMap.has(dateKey)) {
+            const entry = chartDataMap.get(dateKey);
+            if (t.type === "income") entry.income += Number(t.amount);
+            else entry.expense += Number(t.amount);
+          }
+        });
+
+        return Array.from(chartDataMap.values())
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+          .map((d) => ({
+            ...d,
+            displayDate: format(parseISO(d.date), "MMM dd"),
+          }));
+      } catch (error) {
+        console.error("Error processing chart data:", error);
         return [];
       }
-
-      // Generate all days in range
-      const allDays = eachDayOfInterval({ start: startDate, end: endDate });
-      const chartDataMap = new Map();
-
-      allDays.forEach((day) => {
-        const d = format(day, "yyyy-MM-dd");
-        chartDataMap.set(d, { date: d, income: 0, expense: 0 });
-      });
-
-      // Pre-filter by our precise date range
-      filtered = filtered.filter((t) => {
-        const tDate = new Date(t.date);
-        return tDate >= startOfDay(startDate) && tDate <= endOfDay(endDate);
-      });
-
-      // Type filter
-      if (filterType !== "all") {
-        filtered = filtered.filter((t) => t.type === filterType);
-      }
-
-      // Category filter
-      if (filterCategory !== "all") {
-        filtered = filtered.filter((t) => {
-          const c = t.type === "income" ? t.source : t.category;
-          return c?.toLowerCase() === filterCategory.toLowerCase();
-        });
-      }
-
-      // Status filter: If enabled, only show completed transactions
-      const transactionsToProcess = enableStatusTracking
-        ? filtered.filter((t) => (t as any).status === "done")
-        : filtered;
-
-      transactionsToProcess.forEach((t) => {
-        const dateKey = t.date.includes("T") ? t.date.split("T")[0] : t.date;
-
-        if (chartDataMap.has(dateKey)) {
-          const entry = chartDataMap.get(dateKey);
-          if (t.type === "income") entry.income += Number(t.amount);
-          else entry.expense += Number(t.amount);
-        }
-      });
-
-      return Array.from(chartDataMap.values())
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-        .map((d) => ({
-          ...d,
-          displayDate: format(parseISO(d.date), "MMM dd"),
-        }));
     }, [transactions, dateRange, filterType, filterCategory, enableStatusTracking]);
 
     return (
