@@ -1,3 +1,6 @@
+/**
+ * Page/Route: page.tsx
+ */
 import Link from "next/link";
 import { MailCheck } from "lucide-react";
 
@@ -42,3 +45,4 @@ export default function SignupSuccessPage() {
     </div>
   );
 }
+
