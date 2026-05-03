@@ -1,5 +1,6 @@
 import { AlertTriangle } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
+import { HelpTip } from "./HelpTip";
 import type { Expense, MonthlyBudget } from "@/types";
 
 export function BudgetProgress({
@@ -16,7 +17,12 @@ export function BudgetProgress({
   return (
     <section className="bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-5 animate-slide-up stagger-4">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-title-md">Budget Progress</h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-title-md">Budget Progress</h2>
+          <HelpTip label="Budget progress help">
+            Compares completed spending against each monthly budget, including rollover amounts.
+          </HelpTip>
+        </div>
         <AlertTriangle size={18} className="text-(--color-primary)" />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
