@@ -24,7 +24,7 @@ Formatting: Prettier
 
 ## Code Formatting
 
-This project uses Prettier to maintain a consistent code style. 
+This project uses Prettier to maintain a consistent code style.
 
 To format the entire codebase, run:
 
@@ -65,7 +65,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
 ### 3. Setup Database Schema & RLS
 
-Open your Supabase project dashboard, navigate to the SQL Editor, and copy-paste the contents of the database.sql file provided in this repository. Run the script to:
+Open your Supabase project dashboard, navigate to the SQL Editor, and copy-paste the contents of the `database.sql` file provided in this repository. Run the script to:
 
 - Generate the expenses and incomes tables.
 - Enforce strict Row Level Security (RLS) policies linking records to auth.users.
