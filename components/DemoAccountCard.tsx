@@ -44,23 +44,39 @@ export function DemoAccountCard() {
           <div className="flex justify-between items-center">
             <span className="text-body-sm text-(--color-on-dark)">demo@test.com</span>
             <button
-              onClick={() => navigator.clipboard.writeText("demo@test.com")}
-              className="text-(--color-muted) hover:text-(--color-primary) transition-colors"
+              onClick={() => {
+                navigator.clipboard.writeText("demo@test.com");
+                setCopiedEmail(true);
+                setTimeout(() => setCopiedEmail(false), 2000);
+              }}
+              className="text-(--color-muted) hover:text-(--color-primary) transition-colors flex items-center gap-1.5"
               title="Copy email"
             >
+              {copiedEmail ? (
+                <span className="text-[10px] text-green-400 font-medium">Copied!</span>
+              ) : null}
               <svg
-                className="w-3.5 h-3.5"
+                className={`w-3.5 h-3.5 ${copiedEmail ? "text-green-400" : ""}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
-                />
+                {copiedEmail ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
+                  />
+                )}
               </svg>
             </button>
           </div>
