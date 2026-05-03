@@ -1,3 +1,6 @@
+/**
+ * Component: PaginationControls.tsx
+ */
 "use client";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -106,3 +109,4 @@ export function PaginationControls({
     </div>
   );
 }
+
