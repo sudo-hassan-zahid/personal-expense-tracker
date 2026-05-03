@@ -1,3 +1,6 @@
+/**
+ * Component: TopNavClient.tsx
+ */
 "use client";
 
 import { useState } from "react";
@@ -163,3 +166,4 @@ export function TopNavClient({ user, activeTheme }: { user: any; activeTheme: "l
     </>
   );
 }
+
