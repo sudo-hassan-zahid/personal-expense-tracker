@@ -9,6 +9,7 @@ import { ActionForm, SubmitButton } from "./ActionForm";
 import { Trash2, Edit2, Check, X, Plus, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { DeleteButton } from "./DeleteButton";
+import { HelpLabel, HelpTip } from "./HelpTip";
 
 interface Category {
   id: string;
@@ -74,7 +75,12 @@ export function CategoryManager({
         <div className="lg:col-span-8 order-2 lg:order-1">
           <div className="bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) overflow-hidden">
             <div className="p-4 border-b border-(--color-hairline-on-dark) bg-(--color-canvas-dark)/30">
-              <h3 className="text-title-sm text-(--color-on-dark)">Existing Categories</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-title-sm text-(--color-on-dark)">Existing Categories</h3>
+                <HelpTip label="Existing categories help">
+                  Categories organize transactions and power filters, reports, and budgets.
+                </HelpTip>
+              </div>
             </div>
             <div className="divide-y divide-(--color-hairline-on-dark)">
               {categories.length === 0 ? (
@@ -154,6 +160,9 @@ export function CategoryManager({
             <h3 className="text-title-md mb-4 flex items-center gap-2">
               <Plus size={20} className="text-(--color-primary)" />
               Add {type === "expense" ? "Expense" : "Income"} Category
+              <HelpTip label="Add category help">
+                Create a reusable label for future transactions of the selected type.
+              </HelpTip>
             </h3>
             <ActionForm
               action={addCategory}
@@ -162,9 +171,9 @@ export function CategoryManager({
             >
               <input type="hidden" name="type" value={type} />
               <div>
-                <label className="block text-body-sm mb-1.5 text-(--color-muted)">
+                <HelpLabel help="Use a short, clear name like Groceries, Rent, Salary, or Freelance." className="mb-1.5">
                   Category Name
-                </label>
+                </HelpLabel>
                 <input
                   required
                   name="name"
