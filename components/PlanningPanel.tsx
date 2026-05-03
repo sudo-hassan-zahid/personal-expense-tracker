@@ -41,13 +41,13 @@ export function PlanningPanel({
         </div>
         <ActionForm action={saveBudget} successMessage="Budget saved" className="grid gap-3">
           <input type="hidden" name="month" value={month} />
-          <select name="category" required className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm">
+          <select name="category" required className="form-control">
             <option value="">Category</option>
             {expenseCategories.map((category) => <option key={category.id} value={category.name}>{category.name}</option>)}
           </select>
-          <input required name="limit_amount" type="number" min="0" step="0.01" placeholder="Monthly limit" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
-          <input name="rollover_amount" type="number" min="0" step="0.01" placeholder="Rollover amount" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
-          <input name="alert_threshold" type="number" min="1" max="100" defaultValue="80" placeholder="Alert %" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
+          <input required name="limit_amount" type="number" min="0" step="0.01" placeholder="Monthly limit" className="form-control" />
+          <input name="rollover_amount" type="number" min="0" step="0.01" placeholder="Rollover amount" className="form-control" />
+          <input name="alert_threshold" type="number" min="1" max="100" defaultValue="80" placeholder="Alert %" className="form-control" />
           <SubmitButton className="bg-(--color-primary) text-(--color-on-primary) rounded-lg py-2 text-button">Save Budget</SubmitButton>
         </ActionForm>
         <div className="mt-5 grid gap-2">
@@ -71,9 +71,9 @@ export function PlanningPanel({
           <h2 className="text-title-md">Savings Goals</h2>
         </div>
         <ActionForm action={saveSavingsGoal} successMessage="Goal saved" className="grid gap-3">
-          <input required name="name" placeholder="Goal name" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
-          <input required name="target_amount" type="number" min="0" step="0.01" placeholder="Target amount" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
-          <input name="current_amount" type="number" min="0" step="0.01" placeholder="Current amount" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
+          <input required name="name" placeholder="Goal name" className="form-control" />
+          <input required name="target_amount" type="number" min="0" step="0.01" placeholder="Target amount" className="form-control" />
+          <input name="current_amount" type="number" min="0" step="0.01" placeholder="Current amount" className="form-control" />
           <DatePicker name="target_date" label="Target date" />
           <SubmitButton className="bg-(--color-primary) text-(--color-on-primary) rounded-lg py-2 text-button">Save Goal</SubmitButton>
         </ActionForm>
@@ -113,15 +113,15 @@ export function PlanningPanel({
           </button>
         </div>
         <ActionForm action={saveRecurringTransaction} successMessage="Recurring item saved" className="grid gap-3">
-          <select name="type" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm"><option value="expense">Expense</option><option value="income">Income</option></select>
-          <input required name="amount" type="number" min="0" step="0.01" placeholder="Amount" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
-          <select name="category_or_source" required className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm">
+          <select name="type" className="form-control"><option value="expense">Expense</option><option value="income">Income</option></select>
+          <input required name="amount" type="number" min="0" step="0.01" placeholder="Amount" className="form-control" />
+          <select name="category_or_source" required className="form-control">
             <option value="">Category or source</option>
             {allCategoryNames.map((name) => <option key={name} value={name}>{name}</option>)}
           </select>
-          <select name="frequency" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm"><option value="weekly">Weekly</option><option value="monthly">Monthly</option><option value="yearly">Yearly</option></select>
+          <select name="frequency" className="form-control"><option value="weekly">Weekly</option><option value="monthly">Monthly</option><option value="yearly">Yearly</option></select>
           <DatePicker name="next_date" label="Next date" />
-          <input name="note" placeholder="Note" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
+          <input name="note" placeholder="Note" className="form-control" />
           <SubmitButton className="bg-(--color-primary) text-(--color-on-primary) rounded-lg py-2 text-button">Save Recurring</SubmitButton>
         </ActionForm>
         <div className="mt-5 grid gap-2">
@@ -143,7 +143,7 @@ export function PlanningPanel({
           <h2 className="text-title-md">CSV and Bank Statement Import</h2>
         </div>
         <ActionForm action={importTransactions} successMessage="Import completed" className="flex flex-col md:flex-row gap-3">
-          <input required name="file" type="file" accept=".csv,text/csv" className="flex-1 bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
+          <input required name="file" type="file" accept=".csv,text/csv" className="form-control flex-1" />
           <SubmitButton className="bg-(--color-primary) text-(--color-on-primary) rounded-lg px-5 py-2 text-button">Import CSV</SubmitButton>
         </ActionForm>
       </section>

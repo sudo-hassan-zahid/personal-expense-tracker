@@ -100,7 +100,7 @@ export function CategoryManager({
                               autoFocus
                               value={editName}
                               onChange={(e) => setEditName(e.target.value)}
-                              className="flex-1 bg-transparent border border-(--color-primary) rounded-md px-3 py-1.5 text-body-md focus:outline-none"
+                              className="form-control form-control-compact flex-1 text-body-md"
                               onKeyDown={(e) => {
                                 if (e.key === "Enter") handleUpdate(cat.id);
                                 if (e.key === "Escape") setEditingId(null);
@@ -169,7 +169,7 @@ export function CategoryManager({
                   required
                   name="name"
                   placeholder="e.g. Food, Rent, Salary"
-                  className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-lg px-4 py-2.5 text-body-md focus:border-(--color-primary) focus:outline-none transition-all"
+                  className="form-control w-full px-4 py-2.5 text-body-md"
                 />
               </div>
               <SubmitButton

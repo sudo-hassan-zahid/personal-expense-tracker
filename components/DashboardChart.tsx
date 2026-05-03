@@ -162,15 +162,15 @@ export const DashboardChart = memo(
               onChange={(e) => {
                 if (isTransactionType(e.target.value)) setFilterType(e.target.value);
               }}
-              className="bg-transparent hover:bg-(--color-surface-elevated-dark) transition-colors rounded-lg px-3 py-2 text-body-sm text-(--color-on-dark) focus:outline-none cursor-pointer border-none"
+              className="form-control border-none px-3 py-2"
             >
-              <option value="all" className="bg-(--color-surface-elevated-dark)">
+              <option value="all">
                 All Types
               </option>
-              <option value="income" className="bg-(--color-surface-elevated-dark)">
+              <option value="income">
                 Income Only
               </option>
-              <option value="expense" className="bg-(--color-surface-elevated-dark)">
+              <option value="expense">
                 Expense Only
               </option>
             </select>
@@ -180,13 +180,13 @@ export const DashboardChart = memo(
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
-              className="bg-transparent hover:bg-(--color-surface-elevated-dark) transition-colors rounded-lg px-3 py-2 text-body-sm text-(--color-on-dark) focus:outline-none cursor-pointer capitalize border-none"
+              className="form-control border-none px-3 py-2 capitalize"
             >
-              <option value="all" className="bg-(--color-surface-elevated-dark)">
+              <option value="all">
                 All Categories
               </option>
               {categories.map((c) => (
-                <option key={c} value={c} className="bg-(--color-surface-elevated-dark)">
+                <option key={c} value={c}>
                   {c}
                 </option>
               ))}

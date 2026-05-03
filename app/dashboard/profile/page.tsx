@@ -35,7 +35,7 @@ export default async function ProfilePage() {
               type="text"
               name="name"
               defaultValue={profile?.name || ""}
-              className="w-full bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)"
+              className="form-control w-full text-body-md"
               placeholder="Your Name"
             />
           </div>
@@ -46,7 +46,7 @@ export default async function ProfilePage() {
               type="email"
               name="email"
               defaultValue={user.email || ""}
-              className="w-full bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)"
+              className="form-control w-full text-body-md"
               placeholder="Email"
             />
           </div>
@@ -58,7 +58,7 @@ export default async function ProfilePage() {
             <input
               type="password"
               name="password"
-              className="w-full bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)"
+              className="form-control w-full text-body-md"
               placeholder="••••••••"
             />
           </div>
@@ -69,7 +69,7 @@ export default async function ProfilePage() {
               <select
                 name="currency"
                 defaultValue={profile?.currency || "USD"}
-                className="w-full bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)"
+                className="form-control w-full text-body-md"
               >
                 <option value="USD">USD ($)</option>
                 <option value="EUR">EUR (€)</option>
@@ -85,7 +85,7 @@ export default async function ProfilePage() {
               <select
                 name="theme"
                 defaultValue={profile?.theme || "dark"}
-                className="w-full bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)"
+                className="form-control w-full text-body-md"
               >
                 <option value="dark">Dark Theme</option>
                 <option value="light">Light Theme</option>
@@ -175,7 +175,7 @@ export default async function ProfilePage() {
           <input
             name="confirmation"
             placeholder="Type DELETE"
-            className="flex-1 bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-trading-down) focus:outline-none text-(--color-on-dark)"
+            className="form-control flex-1 text-body-md focus:border-(--color-trading-down)"
           />
           <SubmitButton
             className="bg-(--color-trading-down) text-white text-button rounded-md px-5 py-3 hover:opacity-90 transition-colors"
