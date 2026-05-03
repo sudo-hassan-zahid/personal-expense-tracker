@@ -53,21 +53,21 @@ export function PaginationControls({
                   scroll: false,
                 });
             }}
-            className="bg-transparent border border-(--color-hairline-on-dark) rounded-md px-2 py-1 text-body-sm text-(--color-on-dark) focus:border-(--color-primary) focus:outline-none"
+            className="form-control px-2 py-1"
           >
-            <option value="5" className="bg-(--color-surface-elevated-dark)">
+            <option value="5">
               5
             </option>
-            <option value="10" className="bg-(--color-surface-elevated-dark)">
+            <option value="10">
               10
             </option>
-            <option value="20" className="bg-(--color-surface-elevated-dark)">
+            <option value="20">
               20
             </option>
-            <option value="50" className="bg-(--color-surface-elevated-dark)">
+            <option value="50">
               50
             </option>
-            <option value="100" className="bg-(--color-surface-elevated-dark)">
+            <option value="100">
               100
             </option>
           </select>

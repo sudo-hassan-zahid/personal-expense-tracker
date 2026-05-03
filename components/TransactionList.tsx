@@ -322,7 +322,7 @@ export function TransactionList({
             placeholder="Search transactions..."
             value={search}
             onChange={(e) => handleSearchChange(e.target.value)}
-            className="block w-full pl-10 pr-10 py-2.5 bg-(--color-canvas-dark)/50 border border-(--color-hairline-on-dark) rounded-xl text-body-md text-(--color-on-dark) focus:border-(--color-primary) focus:ring-1 focus:ring-(--color-primary) focus:outline-none transition-all group-hover:border-(--color-hairline-on-dark)/80"
+            className="form-control block w-full rounded-xl py-2.5 pl-10 pr-10 text-body-md"
           />
           {search && (
             <button 
@@ -357,7 +357,7 @@ export function TransactionList({
                   placeholder="Min"
                   value={minAmount}
                   onChange={(e) => setMinAmount(e.target.value)}
-                  className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-lg px-3 py-1.5 text-body-sm focus:border-(--color-primary) outline-none"
+                  className="form-control form-control-compact w-full"
                 />
                 <span className="text-(--color-muted)">-</span>
                 <input
@@ -365,7 +365,7 @@ export function TransactionList({
                   placeholder="Max"
                   value={maxAmount}
                   onChange={(e) => setMaxAmount(e.target.value)}
-                  className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-lg px-3 py-1.5 text-body-sm focus:border-(--color-primary) outline-none"
+                  className="form-control form-control-compact w-full"
                 />
               </div>
             </div>
@@ -401,13 +401,13 @@ export function TransactionList({
       {selectedTransactions.length > 0 && (
         <div className="bg-(--color-surface-elevated-dark) border border-(--color-hairline-on-dark) rounded-xl p-3 flex flex-col lg:flex-row gap-3 lg:items-center">
           <span className="text-body-sm text-(--color-on-dark)">{selectedTransactions.length} selected</span>
-          <input type="date" value={bulkDate} onChange={(e) => setBulkDate(e.target.value)} className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
-          <select value={bulkCategory} onChange={(e) => setBulkCategory(e.target.value)} className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm">
+          <input type="date" value={bulkDate} onChange={(e) => setBulkDate(e.target.value)} className="form-control" />
+          <select value={bulkCategory} onChange={(e) => setBulkCategory(e.target.value)} className="form-control">
             <option value="">Category/source</option>
             {[...expenseCategories, ...incomeCategories].map((category) => <option key={`${category.type}-${category.id}`} value={category.name}>{category.name}</option>)}
           </select>
           {enableStatusTracking && (
-            <select value={bulkStatus} onChange={(e) => setBulkStatus(e.target.value)} className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm">
+            <select value={bulkStatus} onChange={(e) => setBulkStatus(e.target.value)} className="form-control">
               <option value="">Status</option>
               <option value="done">Done</option>
               <option value="pending">Pending</option>

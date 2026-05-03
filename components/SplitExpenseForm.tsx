@@ -14,7 +14,7 @@ export function SplitExpenseForm({ categories, currency }: { categories: Categor
       <ActionForm action={addSplitExpense} successMessage="Split expense saved" className="grid gap-3">
         <input type="hidden" name="currency" value={currency} />
         <DatePicker name="date" defaultValue={getTodayPKT()} label="Date" />
-        <input name="note" placeholder="Shared note" className="bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md" />
+        <input name="note" placeholder="Shared note" className="form-control text-body-md" />
         {[0, 1, 2].map((index) => (
           <div key={index} className="grid grid-cols-1 gap-2 rounded-lg border border-(--color-hairline-on-dark) p-3">
             <CategorySelect
@@ -35,7 +35,7 @@ export function SplitExpenseForm({ categories, currency }: { categories: Categor
                 step="0.01"
                 placeholder="0.00"
                 required={index < 2}
-                className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md text-(--color-on-dark) focus:border-(--color-primary) focus:outline-none"
+                className="form-control w-full text-body-md"
               />
             </label>
           </div>

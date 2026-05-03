@@ -35,7 +35,7 @@ export function TransactionFilter({
       {isPending && <Loader2 size={16} className="animate-spin text-(--color-primary)" />}
 
       <select
-        className={`bg-(--color-canvas-dark) text-(--color-on-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-1.5 text-body-sm focus:ring-1 focus:ring-(--color-primary) outline-none transition-all ${isPending ? "opacity-50" : ""}`}
+        className={`form-control form-control-compact ${isPending ? "opacity-50" : ""}`}
         defaultValue={defaultType}
         disabled={isPending}
         onChange={(e) => updateFilter("type", e.target.value)}
@@ -47,7 +47,7 @@ export function TransactionFilter({
 
       {showStatusFilter && (
         <select
-          className={`bg-(--color-canvas-dark) text-(--color-on-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-1.5 text-body-sm focus:ring-1 focus:ring-(--color-primary) outline-none transition-all ${isPending ? "opacity-50" : ""}`}
+          className={`form-control form-control-compact ${isPending ? "opacity-50" : ""}`}
           defaultValue={defaultStatus || "all"}
           disabled={isPending}
           onChange={(e) => updateFilter("status", e.target.value)}

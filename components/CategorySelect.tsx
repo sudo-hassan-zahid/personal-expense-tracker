@@ -69,13 +69,12 @@ export function CategorySelect({
             required={required}
             name={name}
             defaultValue={defaultValue}
-            className="flex-1 bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)"
+            className="form-control flex-1 text-body-md"
           >
             {localCategories.map((cat) => (
               <option
                 key={cat.id}
                 value={cat.name}
-                className="bg-(--color-surface-card-dark) text-(--color-on-dark)"
               >
                 {cat.parent_id ? `  └ ${cat.name}` : cat.name}
               </option>
@@ -99,7 +98,7 @@ export function CategorySelect({
               onChange={(e) => setNewCategoryName(e.target.value)}
               placeholder="New category name"
               title="New category name"
-              className="flex-1 bg-transparent border border-(--color-primary) rounded-md px-3 py-2 text-body-md text-(--color-on-dark) focus:outline-none"
+              className="form-control flex-1 text-body-md"
               autoFocus
               onKeyDown={(e) => {
                 if (e.key === "Enter") {

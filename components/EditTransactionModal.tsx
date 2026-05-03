@@ -109,7 +109,7 @@ export function EditTransactionModal({
                   step="0.01"
                   name="amount"
                   defaultValue={transaction.amount}
-                  className="w-full bg-(--color-canvas-dark)/50 border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-number-md focus:border-(--color-primary) focus:outline-none"
+                  className="form-control w-full text-number-md"
                 />
               </div>
 
@@ -136,7 +136,7 @@ export function EditTransactionModal({
                 type="text"
                 name="note"
                 defaultValue={transaction.note}
-                className="w-full bg-(--color-canvas-dark)/50 border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none"
+                className="form-control w-full text-body-md"
               />
             </div>
 

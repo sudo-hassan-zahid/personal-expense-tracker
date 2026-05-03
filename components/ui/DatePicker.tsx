@@ -41,7 +41,7 @@ export function DatePicker({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between bg-transparent border border-(--color-hairline-on-dark) rounded-lg px-4 py-2.5 text-body-md text-(--color-on-dark) focus:border-(--color-primary) focus:outline-none transition-all hover:bg-(--color-surface-elevated-dark)"
+        className="form-control flex w-full items-center justify-between px-4 py-2.5 text-body-md"
       >
         <span className="flex items-center gap-2">
           <CalendarIcon size={18} className="text-(--color-muted)" />

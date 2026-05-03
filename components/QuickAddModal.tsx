@@ -63,16 +63,16 @@ export function QuickAddModal({
               onSuccess={() => setOpen(false)}
             >
               <input type="hidden" name="currency" value={currency} />
-              <input required autoFocus name="amount" type="number" min="0" step="0.01" placeholder="Amount" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
+              <input required autoFocus name="amount" type="number" min="0" step="0.01" placeholder="Amount" className="form-control" />
               {type === "expense" ? (
                 <CategorySelect categories={expenseCategories} type="expense" name="category" label="Category" />
               ) : (
                 <CategorySelect categories={incomeCategories} type="income" name="source" label="Source" />
               )}
               <DatePicker name="date" defaultValue={getTodayPKT()} label="Date" />
-              <input name="note" placeholder="Note" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
+              <input name="note" placeholder="Note" className="form-control" />
               {type === "expense" && (
-                <input name="attachment" type="file" className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
+                <input name="attachment" type="file" className="form-control" />
               )}
               <SubmitButton className="bg-(--color-primary) text-(--color-on-primary) rounded-lg py-3 text-button">Save</SubmitButton>
             </ActionForm>
