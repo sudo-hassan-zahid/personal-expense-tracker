@@ -53,7 +53,7 @@ export async function getDashboardData(cookieStore?: unknown) {
       .select("id, name, type, parent_id")
       .eq("type", "income")
       .order("name", { ascending: true }),
-    supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+    supabase.from("profiles").select("id, currency, pagination_enabled, enable_status_tracking").eq("id", userId).maybeSingle(),
   ]);
 
   return {

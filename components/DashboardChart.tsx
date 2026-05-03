@@ -270,8 +270,8 @@ export function DashboardChart({
                     fill: "var(--color-canvas-dark)",
                   }}
                   isAnimationActive={true}
-                  animationDuration={1500}
-                  animationBegin={400}
+                  animationDuration={500}
+                  animationBegin={100}
                   animationEasing="ease-in-out"
                 />
               )}
@@ -291,8 +291,8 @@ export function DashboardChart({
                     fill: "var(--color-canvas-dark)",
                   }}
                   isAnimationActive={true}
-                  animationDuration={1500}
-                  animationBegin={600}
+                  animationDuration={500}
+                  animationBegin={200}
                   animationEasing="ease-in-out"
                 />
               )}

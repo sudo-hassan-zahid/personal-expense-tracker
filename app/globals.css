@@ -286,24 +286,26 @@
   }
 
   .animate-slide-up {
-    animation: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     opacity: 0;
+    will-change: transform, opacity;
+    transform: translateZ(0);
   }
 
   .stagger-1 {
-    animation-delay: 100ms;
+    animation-delay: 50ms;
   }
   .stagger-2 {
-    animation-delay: 200ms;
+    animation-delay: 100ms;
   }
   .stagger-3 {
-    animation-delay: 300ms;
+    animation-delay: 150ms;
   }
   .stagger-4 {
-    animation-delay: 400ms;
+    animation-delay: 200ms;
   }
   .stagger-5 {
-    animation-delay: 500ms;
+    animation-delay: 250ms;
   }
 
   /* Crazy Liquid Glow Animation */
