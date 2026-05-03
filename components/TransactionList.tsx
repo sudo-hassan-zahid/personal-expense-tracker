@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, memo } from "react";
 import {
   ArrowUpRight,
   ArrowDownRight,
@@ -13,13 +13,16 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
-import { format, isWithinInterval, startOfDay, endOfDay } from "date-fns";
+import { format } from "date-fns";
 import { DeleteButton } from "./DeleteButton";
 import { deleteExpense } from "@/actions/expense";
 import { deleteIncome } from "@/actions/income";
 import { PaginationControls } from "./PaginationControls";
 import { DateRangePicker } from "./ui/DateRangePicker";
 import { toast } from "sonner";
+import { useTransactions } from "@/hooks/useTransactions";
+import { EditTransactionModal } from "./EditTransactionModal";
+import { Category } from "./CategorySelect";
 
 interface Transaction {
   id: string;
@@ -33,14 +36,126 @@ interface Transaction {
   created_at: string;
 }
 
-import { useTransactions } from "@/hooks/useTransactions";
-import { EditTransactionModal } from "./EditTransactionModal";
-import { Category } from "./CategorySelect";
+// Memoized Row Component for maximum performance
+const TransactionRow = memo(({ 
+  t, 
+  index, 
+  currentPage, 
+  itemsPerPage, 
+  currency, 
+  enableStatusTracking, 
+  isWideView, 
+  newlyAddedId, 
+  onEdit, 
+  onDelete 
+}: { 
+  t: Transaction; 
+  index: number; 
+  currentPage: number; 
+  itemsPerPage: number; 
+  currency: string; 
+  enableStatusTracking: boolean; 
+  isWideView: boolean; 
+  newlyAddedId: string | null; 
+  onEdit: (t: Transaction) => void; 
+  onDelete: (t: Transaction) => void; 
+}) => {
+  return (
+    <div
+      className={`flex flex-col md:grid ${enableStatusTracking ? "md:grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "md:grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-2 md:gap-4 items-start md:items-center py-4 md:py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-200 px-3 md:px-2 -mx-3 md:-mx-2 rounded-xl md:rounded-lg ${index < 10 ? "animate-slide-up" : "opacity-100"} ${index < 5 ? `stagger-${index + 1}` : ""} ${newlyAddedId === t.id ? "bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse" : ""}`}
+    >
+      <div className="hidden md:block text-number-sm text-(--color-muted) pl-2">
+        {(currentPage - 1) * itemsPerPage + index + 1}
+      </div>
 
-/**
- * Component for displaying and managing the list of transactions.
- * Supports sorting, searching, pagination, and editing.
- */
+      <div className="flex items-center justify-between w-full md:contents">
+        <div className="flex flex-col md:contents min-w-0">
+          <div className="flex items-center gap-3 text-left min-w-0">
+            {t.type === "income" ? (
+              <div className="w-8 h-8 shrink-0 rounded-full bg-green-500/10 flex items-center justify-center text-green-500">
+                <ArrowUpRight size={16} />
+              </div>
+            ) : (
+              <div className="w-8 h-8 shrink-0 rounded-full bg-red-500/10 flex items-center justify-center text-red-500">
+                <ArrowDownRight size={16} />
+              </div>
+            )}
+            <div className="overflow-hidden min-w-0 flex-1">
+              <div
+                className={`text-body-md text-(--color-on-dark) font-medium ${isWideView ? "break-words" : "truncate"}`}
+                title={t.note || "No note"}
+              >
+                {t.note || "No note"}
+              </div>
+              <div
+                className={`text-caption text-(--color-muted) ${isWideView ? "break-words" : "truncate"}`}
+                title={(t.type === "income" ? t.source : t.category) || ""}
+              >
+                {t.type === "income" ? t.source : t.category}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          className={`text-number-md font-semibold text-right md:hidden ${t.type === "income" ? "text-green-500" : "text-red-500"} truncate`}
+        >
+          {t.type === "income" ? "+" : "-"}
+          {formatCurrency(Number(t.amount), currency).replace(/^[^\d]*/, "")}
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between w-full md:contents mt-2 md:mt-0 pt-2 md:pt-0 border-t border-(--color-hairline-on-dark)/50 md:border-0">
+        <div className="text-number-sm text-(--color-muted) truncate">
+          {format(new Date(t.date), "MMM d, yyyy")}
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="text-body-sm capitalize flex justify-center">
+            <span
+              className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.type === "income" ? "bg-green-500/10 text-green-500 border border-green-500/20" : "bg-red-500/10 text-red-500 border border-red-500/20"}`}
+            >
+              {t.type}
+            </span>
+          </div>
+          {enableStatusTracking && (
+            <div className="text-center">
+              <span
+                className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.status === "done" ? "bg-green-500/10 text-green-500 border border-green-500/20" : "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"}`}
+              >
+                {t.status || "done"}
+              </span>
+            </div>
+          )}
+        </div>
+
+        <div
+          className={`hidden md:block text-number-md font-semibold text-right ${t.type === "income" ? "text-green-500" : "text-red-500"} truncate`}
+        >
+          {t.type === "income" ? "+" : "-"}
+          {formatCurrency(Number(t.amount), currency).replace(/^[^\d]*/, "")}
+        </div>
+
+        <div className="text-right flex justify-end gap-1 pr-2">
+          <button
+            onClick={() => onEdit(t)}
+            className="p-2 text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-primary)/10 rounded-md transition-all"
+          >
+            <Pencil size={16} />
+          </button>
+          <DeleteButton
+            onClick={() => onDelete(t)}
+            className="p-2 text-(--color-muted) hover:text-red-500 hover:bg-red-500/10 rounded-md transition-all"
+          >
+            <Trash2 size={16} />
+          </DeleteButton>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+TransactionRow.displayName = "TransactionRow";
+
 export function TransactionList({
   initialTransactions,
   currency,
@@ -77,7 +192,6 @@ export function TransactionList({
     setStartDate,
     endDate,
     setEndDate,
-    sortedTransactions,
     totalItems,
     totalPages,
     displayedTransactions,
@@ -89,7 +203,6 @@ export function TransactionList({
   const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Monitor for new transactions to show highlight
   const [prevCount, setPrevCount] = useState(initialTransactions.length);
   useEffect(() => {
     if (initialTransactions.length > prevCount) {
@@ -101,7 +214,7 @@ export function TransactionList({
       }
     }
     setPrevCount(initialTransactions.length);
-  }, [initialTransactions]);
+  }, [initialTransactions, prevCount]);
 
   const toggleSort = (field: string) => {
     if (sortField === field) {
@@ -114,7 +227,6 @@ export function TransactionList({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Search and Global Actions */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-2">
         <div className="relative w-full md:max-w-sm">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-(--color-muted)">
@@ -141,7 +253,6 @@ export function TransactionList({
         </button>
       </div>
 
-      {/* Advanced Filters Panel */}
       {showFilters && (
         <div className="bg-(--color-canvas-dark)/30 border border-(--color-hairline-on-dark) rounded-xl p-4 animate-in slide-in-from-top-4 duration-300">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -195,11 +306,9 @@ export function TransactionList({
       )}
 
       <div className="flex flex-col gap-2">
-        {/* Table Header */}
         <div
           className={`hidden md:grid ${enableStatusTracking ? "grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}
         >
-
           <div className="pl-2">#</div>
           <div
             className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1"
@@ -263,99 +372,19 @@ export function TransactionList({
         )}
 
         {displayedTransactions.map((t, i) => (
-          <div
+          <TransactionRow
             key={t.id + t.type}
-            className={`flex flex-col md:grid ${enableStatusTracking ? "md:grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "md:grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-2 md:gap-4 items-start md:items-center py-4 md:py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-200 px-3 md:px-2 -mx-3 md:-mx-2 rounded-xl md:rounded-lg animate-slide-up ${i < 5 ? `stagger-${i + 1}` : "opacity-100"} ${newlyAddedId === t.id ? "bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse" : ""}`}
-          >
-
-            <div className="hidden md:block text-number-sm text-(--color-muted) pl-2">
-              {(currentPage - 1) * itemsPerPage + i + 1}
-            </div>
-
-            <div className="flex items-center justify-between w-full md:contents">
-              <div className="flex flex-col md:contents min-w-0">
-                <div className="flex items-center gap-3 text-left min-w-0">
-                  {t.type === "income" ? (
-                    <div className="w-8 h-8 shrink-0 rounded-full bg-green-500/10 flex items-center justify-center text-green-500">
-                      <ArrowUpRight size={16} />
-                    </div>
-                  ) : (
-                    <div className="w-8 h-8 shrink-0 rounded-full bg-red-500/10 flex items-center justify-center text-red-500">
-                      <ArrowDownRight size={16} />
-                    </div>
-                  )}
-                  <div className="overflow-hidden min-w-0 flex-1">
-                    <div
-                      className={`text-body-md text-(--color-on-dark) font-medium ${isWideView ? "break-words" : "truncate"}`}
-                      title={t.note || "No note"}
-                    >
-                      {t.note || "No note"}
-                    </div>
-                    <div
-                      className={`text-caption text-(--color-muted) ${isWideView ? "break-words" : "truncate"}`}
-                      title={(t.type === "income" ? t.source : t.category) || ""}
-                    >
-                      {t.type === "income" ? t.source : t.category}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className={`text-number-md font-semibold text-right md:hidden ${t.type === "income" ? "text-green-500" : "text-red-500"} truncate`}
-              >
-                {t.type === "income" ? "+" : "-"}
-                {formatCurrency(Number(t.amount), currency).replace(/^[^\d]*/, "")}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between w-full md:contents mt-2 md:mt-0 pt-2 md:pt-0 border-t border-(--color-hairline-on-dark)/50 md:border-0">
-              <div className="text-number-sm text-(--color-muted) truncate">
-                {format(new Date(t.date), "MMM d, yyyy")}
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="text-body-sm capitalize flex justify-center">
-                  <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.type === "income" ? "bg-green-500/10 text-green-500 border border-green-500/20" : "bg-red-500/10 text-red-500 border border-red-500/20"}`}
-                  >
-                    {t.type}
-                  </span>
-                </div>
-                {enableStatusTracking && (
-                  <div className="text-center">
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.status === "done" ? "bg-green-500/10 text-green-500 border border-green-500/20" : "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"}`}
-                    >
-                      {t.status || "done"}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              <div
-                className={`hidden md:block text-number-md font-semibold text-right ${t.type === "income" ? "text-green-500" : "text-red-500"} truncate`}
-              >
-                {t.type === "income" ? "+" : "-"}
-                {formatCurrency(Number(t.amount), currency).replace(/^[^\d]*/, "")}
-              </div>
-
-              <div className="text-right flex justify-end gap-1 pr-2">
-                <button
-                  onClick={() => setEditingTransaction(t)}
-                  className="p-2 text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-primary)/10 rounded-md transition-all"
-                >
-                  <Pencil size={16} />
-                </button>
-                <DeleteButton
-                  onClick={() => setTransactionToDelete(t)}
-                  className="p-2 text-(--color-muted) hover:text-red-500 hover:bg-red-500/10 rounded-md transition-all"
-                >
-                  <Trash2 size={16} />
-                </DeleteButton>
-              </div>
-            </div>
-
-          </div>
+            t={t}
+            index={i}
+            currentPage={currentPage}
+            itemsPerPage={itemsPerPage}
+            currency={currency}
+            enableStatusTracking={enableStatusTracking}
+            isWideView={isWideView}
+            newlyAddedId={newlyAddedId}
+            onEdit={setEditingTransaction}
+            onDelete={setTransactionToDelete}
+          />
         ))}
       </div>
 
@@ -379,7 +408,6 @@ export function TransactionList({
         />
       )}
 
-      {/* Delete Confirmation Modal */}
       {transactionToDelete && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
           <div className="bg-(--color-surface-card-dark) border border-(--color-hairline-on-dark) rounded-2xl p-6 w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-200">
@@ -432,3 +460,4 @@ export function TransactionList({
     </div>
   );
 }
+

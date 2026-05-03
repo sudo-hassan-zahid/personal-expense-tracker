@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, memo } from "react";
 import {
   AreaChart,
   Area,
@@ -13,15 +13,14 @@ import {
 } from "recharts";
 import {
   format,
-  subDays,
   parseISO,
   eachDayOfInterval,
   startOfMonth,
-  endOfMonth,
   startOfDay,
   endOfDay,
 } from "date-fns";
 import { formatCurrency } from "@/lib/currency";
+import { DateRangePicker } from "./ui/DateRangePicker";
 
 type Transaction = {
   id: string;
@@ -34,13 +33,15 @@ type Transaction = {
   status?: string;
 };
 
-import { DateRangePicker } from "./ui/DateRangePicker";
+const compactNumberFormatter = new Intl.NumberFormat("en-US", {
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
 
 /**
  * Component for rendering the transaction history chart and summary statistics.
- * Supports date range filtering and optional status-based filtering.
  */
-export function DashboardChart({
+export const DashboardChart = memo(({
   transactions,
   currency,
   enableStatusTracking,
@@ -48,7 +49,7 @@ export function DashboardChart({
   transactions: Transaction[];
   currency: string;
   enableStatusTracking?: boolean;
-}) {
+}) => {
   const [dateRange, setDateRange] = useState<{ start: Date; end: Date }>({
     start: startOfMonth(new Date()),
     end: new Date(),
@@ -123,7 +124,7 @@ export function DashboardChart({
         ...d,
         displayDate: format(parseISO(d.date), "MMM dd"),
       }));
-  }, [transactions, dateRange, filterType, filterCategory]);
+  }, [transactions, dateRange, filterType, filterCategory, enableStatusTracking]);
 
   return (
     <div className="w-full bg-(--color-surface-card-dark) p-4 md:p-8 rounded-2xl border border-(--color-hairline-on-dark) flex flex-col gap-8 shadow-2xl relative overflow-hidden animate-slide-up">
@@ -225,15 +226,12 @@ export function DashboardChart({
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(val) =>
-                  Intl.NumberFormat("en-US", {
-                    notation: "compact",
-                    maximumFractionDigits: 1,
-                  }).format(val)
-                }
+                tickFormatter={(val) => compactNumberFormatter.format(val)}
                 dx={-10}
                 tick={{ fill: "var(--color-muted)" }}
               />
+
+
               <Tooltip
                 cursor={{
                   stroke: "var(--color-primary)",
@@ -308,4 +306,7 @@ export function DashboardChart({
       </div>
     </div>
   );
-}
+});
+
+DashboardChart.displayName = "DashboardChart";
+

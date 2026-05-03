@@ -10,6 +10,8 @@ const CURRENCY_SYMBOL_OVERRIDES: Record<string, string> = {
   SAR: "SR",
 };
 
+const formatterCache = new Map<string, Intl.NumberFormat>();
+
 /**
  * Format a number as currency using the Intl.NumberFormat API,
  * with custom symbol overrides for currencies like PKR → Rs.
@@ -17,23 +19,29 @@ const CURRENCY_SYMBOL_OVERRIDES: Record<string, string> = {
 export function formatCurrency(amount: number, currencyCode: string = "USD"): string {
   const zeroDecimalCurrencies = ["PKR", "INR", "JPY", "KRW", "VND", "BDT"];
   const isZeroDecimal = zeroDecimalCurrencies.includes(currencyCode);
+  const cacheKey = `${currencyCode}-${isZeroDecimal}`;
 
-  const formatted = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: currencyCode,
-    minimumFractionDigits: isZeroDecimal ? 0 : 2,
-    maximumFractionDigits: isZeroDecimal ? 0 : 2,
-  }).format(amount);
+  let formatter = formatterCache.get(cacheKey);
+  if (!formatter) {
+    formatter = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: currencyCode,
+      minimumFractionDigits: isZeroDecimal ? 0 : 2,
+      maximumFractionDigits: isZeroDecimal ? 0 : 2,
+    });
+    formatterCache.set(cacheKey, formatter);
+  }
+
+  const formatted = formatter.format(amount);
 
   const override = CURRENCY_SYMBOL_OVERRIDES[currencyCode];
   if (override) {
-    // Replace the Intl-generated symbol with our custom one
-    // Intl outputs e.g. "PKR 15,000.00" or "PKR15,000.00"
     return formatted.replace(/^[^\d\-−]*/, `${override} `);
   }
 
   return formatted;
 }
+
 
 /**
  * Common currencies for the currency selector.

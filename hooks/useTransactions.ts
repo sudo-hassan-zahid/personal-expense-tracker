@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useDeferredValue } from "react";
 import { format, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 
 interface Transaction {
@@ -15,6 +15,7 @@ interface Transaction {
 
 export function useTransactions(initialTransactions: Transaction[], initialItemsPerPage: number) {
   const [search, setSearch] = useState("");
+  const deferredSearch = useDeferredValue(search);
   const [sortField, setSortField] = useState<string>("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,8 +26,8 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
   const [endDate, setEndDate] = useState<Date | null>(null);
 
   const filteredTransactions = useMemo(() => {
+    const searchLower = deferredSearch.toLowerCase();
     return initialTransactions.filter((t) => {
-      const searchLower = search.toLowerCase();
       const categoryText = (t.type === "income" ? t.source : t.category) || "";
       const amount = Number(t.amount);
       const date = new Date(t.date);
@@ -52,7 +53,7 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
 
       return matchesSearch && matchesMinAmount && matchesMaxAmount && matchesDateRange;
     });
-  }, [initialTransactions, search, minAmount, maxAmount, startDate, endDate]);
+  }, [initialTransactions, deferredSearch, minAmount, maxAmount, startDate, endDate]);
 
   const sortedTransactions = useMemo(() => {
     return [...filteredTransactions].sort((a, b) => {
@@ -65,7 +66,6 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
           valB = Number(b.amount);
           break;
         case "category":
-          // Special handling for category/source
           valA = ((a.type === "income" ? a.source : a.category) || "").toLowerCase();
           valB = ((b.type === "income" ? b.source : b.category) || "").toLowerCase();
           break;
@@ -93,7 +93,6 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
       if (valA < valB) return sortOrder === "asc" ? -1 : 1;
       if (valA > valB) return sortOrder === "asc" ? 1 : -1;
 
-      // Tie breaker: newest created_at first for desc, oldest for asc
       const timeA = new Date(a.created_at).getTime();
       const timeB = new Date(b.created_at).getTime();
       return sortOrder === "asc" ? timeA - timeB : timeB - timeA;
@@ -102,17 +101,19 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
 
   const totalPages =
     initialItemsPerPage > 0 ? Math.ceil(sortedTransactions.length / initialItemsPerPage) : 1;
-  const displayedTransactions =
-    initialItemsPerPage > 0
-      ? sortedTransactions.slice(
-          (currentPage - 1) * initialItemsPerPage,
-          currentPage * initialItemsPerPage
-        )
-      : sortedTransactions;
+  
+  const displayedTransactions = useMemo(() => {
+    if (initialItemsPerPage <= 0) return sortedTransactions;
+    return sortedTransactions.slice(
+      (currentPage - 1) * initialItemsPerPage,
+      currentPage * initialItemsPerPage
+    );
+  }, [sortedTransactions, currentPage, initialItemsPerPage]);
 
   return {
     search,
     setSearch,
+    deferredSearch,
     sortField,
     setSortField,
     sortOrder,
@@ -133,3 +134,4 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
     displayedTransactions,
   };
 }
+
