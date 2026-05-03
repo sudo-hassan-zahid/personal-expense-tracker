@@ -1,23 +1,6 @@
-/**
- * Page/Route: page.tsx
- */
-import { addExpense } from "@/actions/expense";
-import { addIncome } from "@/actions/income";
 import { createClient } from "@/lib/supabase";
-import { formatCurrency } from "@/lib/currency";
-import { getTodayPKT } from "@/lib/date-utils";
 import { getDashboardData } from "@/lib/dashboard-data";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import Link from "next/link";
-import { CategorySelect } from "@/components/CategorySelect";
-import { ActionForm, SubmitButton } from "@/components/ActionForm";
-import { DashboardChart } from "@/components/DashboardChart";
-import { TransactionList } from "@/components/TransactionList";
-import { DatePicker } from "@/components/ui/DatePicker";
-import { TransactionFilter } from "@/components/TransactionFilter";
-
 import { cookies } from "next/headers";
-
 import { DashboardContent } from "@/components/DashboardContent";
 
 export default async function DashboardPage(props: {

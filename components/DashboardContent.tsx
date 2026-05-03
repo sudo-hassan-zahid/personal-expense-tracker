@@ -13,7 +13,7 @@ import { ActionForm, SubmitButton } from "./ActionForm";
 import { TransactionList } from "./TransactionList";
 import { DatePicker } from "./ui/DatePicker";
 import { TransactionFilter } from "./TransactionFilter";
-import { Transaction, Expense, Income, Category } from "@/types";
+import { Expense, Income, Category } from "@/types";
 
 const DashboardChart = dynamic(
   () => import("./DashboardChart").then((module) => ({ default: module.DashboardChart })),
@@ -29,7 +29,7 @@ interface DashboardContentProps {
   incomes: Income[];
   expenseCategories: Category[];
   incomeCategories: Category[];
-  profile: any;
+  profile: DashboardProfile | null;
   currency: string;
   paginationEnabled: boolean;
   isStatusTrackingEnabled: boolean;
@@ -39,6 +39,19 @@ interface DashboardContentProps {
   isWideView: boolean;
   searchParams: Record<string, string | string[] | undefined>;
 }
+
+type DashboardProfile = {
+  enable_status_tracking?: boolean | null;
+};
+
+type OptimisticTransaction =
+  | { action: "delete"; id: string }
+  | {
+      action: "add";
+      data:
+        | (Expense & { type: "expense" })
+        | (Income & { type: "income" });
+    };
 
 export function DashboardContent({
   expenses: initialExpenses,
@@ -66,7 +79,7 @@ export function DashboardContent({
   // Optimistic state for ALL transactions
   const [optimisticTransactions, addOptimisticTransaction] = useOptimistic(
     initialTransactions,
-    (state, newTransaction: any) => {
+    (state, newTransaction: OptimisticTransaction) => {
       if (newTransaction.action === "delete") {
         return state.filter((t) => t.id !== newTransaction.id);
       }
@@ -142,7 +155,7 @@ export function DashboardContent({
       <DashboardChart
         transactions={allTransactions}
         currency={currency}
-        enableStatusTracking={profile?.enable_status_tracking}
+        enableStatusTracking={profile?.enable_status_tracking ?? false}
       />
 
       {/* 8/4 or 12 Split Layout */}

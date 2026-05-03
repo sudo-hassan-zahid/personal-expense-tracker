@@ -5,6 +5,8 @@ import { useState, useMemo, useDeferredValue } from "react";
 import { format, startOfDay, endOfDay } from "date-fns";
 import { Transaction } from "@/types";
 
+type SortableValue = string | number;
+
 type NormalizedTransaction = {
   transaction: Transaction;
   amount: number;
@@ -79,8 +81,8 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
 
   const sortedTransactions = useMemo(() => {
     return [...filteredTransactions].sort((a, b) => {
-      let valA: any;
-      let valB: any;
+      let valA: SortableValue;
+      let valB: SortableValue;
 
       switch (sortField) {
         case "amount":
@@ -108,8 +110,8 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
           valB = (b.transaction.status || "pending").toLowerCase();
           break;
         default:
-          valA = (a.transaction as any)[sortField] || "";
-          valB = (b.transaction as any)[sortField] || "";
+          valA = String(a.transaction[sortField as keyof Transaction] || "");
+          valB = String(b.transaction[sortField as keyof Transaction] || "");
       }
 
       if (valA < valB) return sortOrder === "asc" ? -1 : 1;

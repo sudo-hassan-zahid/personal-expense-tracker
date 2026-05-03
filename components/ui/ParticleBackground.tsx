@@ -107,7 +107,7 @@ export function ParticleBackground() {
     if (!ctx) return;
 
     let particles: Particle[] = [];
-    let mouse = { x: 0, y: 0 };
+    const mouse = { x: 0, y: 0 };
     let animationFrameId: number;
     let isVisible = document.visibilityState === "visible";
     const CONNECTION_DIST = 100;
