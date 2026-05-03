@@ -1,6 +1,6 @@
 "use client";
 
-import { useOptimistic, useTransition, useState } from "react";
+import { useMemo, useOptimistic } from "react";
 import { formatCurrency } from "@/lib/currency";
 import { getTodayPKT } from "@/lib/date-utils";
 import { addExpense } from "@/actions/expense";
@@ -46,11 +46,13 @@ export function DashboardContent({
   isWideView,
   searchParams,
 }: DashboardContentProps) {
-  // Combine initial transactions
-  const initialTransactions = [
-    ...initialExpenses.map((e) => ({ ...e, type: "expense" as const })),
-    ...initialIncomes.map((i) => ({ ...i, type: "income" as const })),
-  ];
+  const initialTransactions = useMemo(
+    () => [
+      ...initialExpenses.map((e) => ({ ...e, type: "expense" as const })),
+      ...initialIncomes.map((i) => ({ ...i, type: "income" as const })),
+    ],
+    [initialExpenses, initialIncomes]
+  );
 
   // Optimistic state for ALL transactions
   const [optimisticTransactions, addOptimisticTransaction] = useOptimistic(
@@ -70,33 +72,34 @@ export function DashboardContent({
     }
   );
 
-  // Filter transactions
-  let filteredTransactions = optimisticTransactions;
+  const allTransactions = useMemo(() => {
+    return optimisticTransactions
+      .filter((t) => {
+        if (filterType && filterType !== "all" && t.type !== filterType) return false;
+        if (filterStatus && filterStatus !== "all" && (t.status || "done") !== filterStatus) {
+          return false;
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
+        if (dateDiff !== 0) return dateDiff;
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      });
+  }, [optimisticTransactions, filterType, filterStatus]);
 
-  if (filterType && filterType !== "all") {
-    filteredTransactions = filteredTransactions.filter((t) => t.type === filterType);
-  }
-
-  if (filterStatus && filterStatus !== "all") {
-    filteredTransactions = filteredTransactions.filter(
-      (t) => (t.status || "done") === filterStatus
+  const { totalExpenses, totalIncome } = useMemo(() => {
+    return optimisticTransactions.reduce(
+      (totals, transaction) => {
+        if (isStatusTrackingEnabled && transaction.status !== "done") return totals;
+        const amount = Number(transaction.amount);
+        if (transaction.type === "expense") totals.totalExpenses += amount;
+        else totals.totalIncome += amount;
+        return totals;
+      },
+      { totalExpenses: 0, totalIncome: 0 }
     );
-  }
-
-  const allTransactions = filteredTransactions.sort((a, b) => {
-    const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
-    if (dateDiff !== 0) return dateDiff;
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-  });
-
-  // Calculate totals from optimistic state
-  const totalExpenses = optimisticTransactions
-    .filter((t) => t.type === "expense" && (!isStatusTrackingEnabled || t.status === "done"))
-    .reduce((acc, curr) => acc + Number(curr.amount), 0);
-
-  const totalIncome = optimisticTransactions
-    .filter((t) => t.type === "income" && (!isStatusTrackingEnabled || t.status === "done"))
-    .reduce((acc, curr) => acc + Number(curr.amount), 0);
+  }, [optimisticTransactions, isStatusTrackingEnabled]);
 
   const netBalance = totalIncome - totalExpenses;
 
