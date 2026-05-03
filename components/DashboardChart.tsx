@@ -24,6 +24,17 @@ const compactNumberFormatter = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 1,
 });
 
+type ChartDatum = {
+  date: string;
+  income: number;
+  expense: number;
+  displayDate?: string;
+};
+
+function isTransactionType(value: string): value is "all" | "income" | "expense" {
+  return value === "all" || value === "income" || value === "expense";
+}
+
 /**
  * Component for rendering the transaction history chart and summary statistics.
  */
@@ -68,7 +79,7 @@ export const DashboardChart = memo(
 
         // Generate all days in range
         const allDays = eachDayOfInterval({ start: startDate, end: endDate });
-        const chartDataMap = new Map();
+        const chartDataMap = new Map<string, ChartDatum>();
 
         allDays.forEach((day) => {
           const d = format(day, "yyyy-MM-dd");
@@ -96,7 +107,7 @@ export const DashboardChart = memo(
 
         // Status filter: If enabled, only show completed transactions
         const transactionsToProcess = enableStatusTracking
-          ? filtered.filter((t) => (t as any).status === "done")
+          ? filtered.filter((t) => t.status === "done")
           : filtered;
 
         transactionsToProcess.forEach((t) => {
@@ -104,6 +115,7 @@ export const DashboardChart = memo(
 
           if (chartDataMap.has(dateKey)) {
             const entry = chartDataMap.get(dateKey);
+            if (!entry) return;
             if (t.type === "income") entry.income += Number(t.amount);
             else entry.expense += Number(t.amount);
           }
@@ -147,7 +159,9 @@ export const DashboardChart = memo(
 
             <select
               value={filterType}
-              onChange={(e) => setFilterType(e.target.value as any)}
+              onChange={(e) => {
+                if (isTransactionType(e.target.value)) setFilterType(e.target.value);
+              }}
               className="bg-transparent hover:bg-(--color-surface-elevated-dark) transition-colors rounded-lg px-3 py-2 text-body-sm text-(--color-on-dark) focus:outline-none cursor-pointer border-none"
             >
               <option value="all" className="bg-(--color-surface-elevated-dark)">
@@ -251,7 +265,7 @@ export const DashboardChart = memo(
                     }}
                     itemStyle={{ fontWeight: 600 }}
                     labelStyle={{ color: "var(--color-muted)", marginBottom: "4px" }}
-                    formatter={(value: any) => [
+                    formatter={(value: unknown) => [
                       formatCurrency(Number(value) || 0, currency),
                       undefined,
                     ]}

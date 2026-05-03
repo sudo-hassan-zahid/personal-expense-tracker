@@ -5,7 +5,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon, X } from "lucide-react";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { Calendar } from "./Calendar";
 
 export function DatePicker({

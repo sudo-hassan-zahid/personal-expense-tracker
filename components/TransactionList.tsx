@@ -3,7 +3,7 @@
  */
 "use client";
 
-import { useState, useEffect, useMemo, memo, useOptimistic, useTransition, startTransition } from "react";
+import { useState, useEffect, memo, useTransition } from "react";
 import {
   ArrowUpRight,
   ArrowDownRight,
@@ -210,12 +210,16 @@ export function TransactionList({
     if (initialTransactions.length > prevCount) {
       const newest = initialTransactions[0];
       if (newest) {
-        setNewlyAddedId(newest.id);
+        const highlightTimer = setTimeout(() => setNewlyAddedId(newest.id), 0);
         const timer = setTimeout(() => setNewlyAddedId(null), 3000);
-        return () => clearTimeout(timer);
+        return () => {
+          clearTimeout(highlightTimer);
+          clearTimeout(timer);
+        };
       }
     }
-    setPrevCount(initialTransactions.length);
+    const countTimer = setTimeout(() => setPrevCount(initialTransactions.length), 0);
+    return () => clearTimeout(countTimer);
   }, [initialTransactions, prevCount]);
 
   const toggleSort = (field: string) => {
@@ -471,8 +475,8 @@ export function TransactionList({
                       else await deleteExpense(idToRemove);
                       toast.success("Transaction deleted successfully");
                       setTransactionToDelete(null);
-                    } catch (error: any) {
-                      toast.error(error.message || "Failed to delete");
+                    } catch (error) {
+                      toast.error(error instanceof Error ? error.message : "Failed to delete");
                     } finally {
                       setIsDeleting(false);
                     }

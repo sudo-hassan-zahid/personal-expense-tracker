@@ -100,7 +100,8 @@ export default async function ProfilePage() {
               <div className="flex flex-col">
                 <span className="text-body-md text-(--color-on-dark)">Enable Status Tracking</span>
                 <span className="text-caption text-(--color-muted)">
-                  Transactions marked as "Pending" will be excluded from chart totals and summaries.
+                  Transactions marked as &quot;Pending&quot; will be excluded from chart totals and
+                  summaries.
                 </span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer group">

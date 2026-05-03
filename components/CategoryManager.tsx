@@ -41,8 +41,8 @@ export function CategoryManager({
       await updateCategory(id, editName);
       setEditingId(null);
       toast.success("Category updated successfully");
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to update category");
     }
   };
 
@@ -196,7 +196,7 @@ export function CategoryManager({
                 <p className="text-body-sm text-(--color-muted)">
                   Are you sure you want to delete{" "}
                   <span className="text-(--color-on-dark) font-semibold">
-                    "{categoryToDelete.name}"
+                    &quot;{categoryToDelete.name}&quot;
                   </span>
                   ? This will also affect transactions using this category.
                 </p>
@@ -218,8 +218,10 @@ export function CategoryManager({
                       await deleteCategory(categoryToDelete.id);
                       toast.success("Category deleted successfully");
                       setCategoryToDelete(null);
-                    } catch (error: any) {
-                      toast.error(error.message || "Failed to delete category");
+                    } catch (error) {
+                      toast.error(
+                        error instanceof Error ? error.message : "Failed to delete category"
+                      );
                     } finally {
                       setIsDeleting(false);
                     }
