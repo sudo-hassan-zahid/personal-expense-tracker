@@ -58,7 +58,9 @@ export default async function DashboardPage(props: {
   }
 
   if (filterStatus && filterStatus !== "all") {
-    filteredTransactions = filteredTransactions.filter((t) => (t.status || "done") === filterStatus);
+    filteredTransactions = filteredTransactions.filter(
+      (t) => (t.status || "done") === filterStatus
+    );
   }
 
   const allTransactions = filteredTransactions.sort((a, b) => {
@@ -128,8 +130,8 @@ export default async function DashboardPage(props: {
                 )}
               </Link>
             </div>
-            <TransactionFilter 
-              defaultType={filterType || "all"} 
+            <TransactionFilter
+              defaultType={filterType || "all"}
               defaultStatus={filterStatus || "all"}
               showStatusFilter={isStatusTrackingEnabled}
             />
