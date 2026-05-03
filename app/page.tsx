@@ -2,17 +2,8 @@
  * Page/Route: page.tsx
  */
 import Link from "next/link";
-import { createClient } from "@/lib/supabase";
-import { redirect } from "next/navigation";
 
 export default async function Home() {
-  const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
-
-  if (data?.user) {
-    redirect("/dashboard");
-  }
-
   return (
     <div className="flex-1 flex flex-col items-center justify-center w-full max-w-[1280px] mx-auto px-6 py-12 lg:py-0">
       <div className="w-full flex flex-col gap-12 lg:gap-16">

@@ -7,8 +7,15 @@ import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
+import type { User } from "@supabase/supabase-js";
 
-export function TopNavClient({ user, activeTheme }: { user: any; activeTheme: "light" | "dark" }) {
+export function TopNavClient({
+  user,
+  activeTheme,
+}: {
+  user: User | null;
+  activeTheme: "light" | "dark";
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

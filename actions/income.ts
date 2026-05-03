@@ -3,9 +3,8 @@
  */
 "use server";
 
-import { createClient, getAuthenticatedClient } from "@/lib/supabase";
-import { revalidateTag, revalidatePath } from "next/cache";
-import { revalidateAll } from "@/lib/revalidate";
+import { getAuthenticatedClient } from "@/lib/supabase";
+import { revalidateTransactions } from "@/lib/revalidate";
 
 /**
  * Adds a new income record to the database.
@@ -34,7 +33,7 @@ export async function addIncome(formData: FormData) {
     throw new Error("Failed to add income");
   }
 
-  revalidateAll();
+  revalidateTransactions();
 }
 
 /**
@@ -42,15 +41,15 @@ export async function addIncome(formData: FormData) {
  * @param id - The UUID of the income to delete.
  */
 export async function deleteIncome(id: string) {
-  const supabase = await createClient();
-  const { error } = await supabase.from("incomes").delete().match({ id });
+  const { supabase, user } = await getAuthenticatedClient();
+  const { error } = await supabase.from("incomes").delete().eq("id", id).eq("user_id", user.id);
 
   if (error) {
     console.error("Error deleting income:", error);
     throw new Error("Failed to delete income");
   }
 
-  revalidateAll();
+  revalidateTransactions();
 }
 
 /**
@@ -59,7 +58,7 @@ export async function deleteIncome(id: string) {
  * @param formData - The form data containing updated fields (amount, source, date, note, status).
  */
 export async function updateIncome(id: string, formData: FormData) {
-  const supabase = await createClient();
+  const { supabase, user } = await getAuthenticatedClient();
   const amount = parseFloat(formData.get("amount") as string);
   const source = formData.get("source") as string;
   const date = formData.get("date") as string;
@@ -69,13 +68,14 @@ export async function updateIncome(id: string, formData: FormData) {
   const { error } = await supabase
     .from("incomes")
     .update({ amount, source, date, note, status })
-    .match({ id });
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) {
     console.error("Error updating income:", error);
     throw new Error("Failed to update income");
   }
 
-  revalidateAll();
+  revalidateTransactions();
 }
 

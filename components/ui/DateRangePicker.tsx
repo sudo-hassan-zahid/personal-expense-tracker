@@ -4,8 +4,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { format, isSameDay, isAfter, isBefore } from "date-fns";
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { format, isBefore } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { Calendar } from "./Calendar";
 
 export function DateRangePicker({
@@ -18,7 +18,7 @@ export function DateRangePicker({
   const [startDate, setStartDate] = useState<Date>(
     new Date(new Date().getFullYear(), new Date().getMonth(), 1)
   );
-  const [endDate, setEndDate] = useState<Date>(new Date());
+  const [endDate, setEndDate] = useState<Date | null>(new Date());
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -35,10 +35,10 @@ export function DateRangePicker({
   const handleSelect = (date: Date) => {
     if (!startDate || (startDate && endDate)) {
       setStartDate(date);
-      setEndDate(null as any);
+      setEndDate(null);
     } else if (isBefore(date, startDate)) {
       setStartDate(date);
-      setEndDate(null as any);
+      setEndDate(null);
     } else {
       setEndDate(date);
       onRangeChange(startDate, date);

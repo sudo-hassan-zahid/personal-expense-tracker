@@ -4,8 +4,22 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
+type Cookie = {
+  name: string;
+  value: string;
+};
+
+type CookieStoreLike = {
+  getAll(): Cookie[];
+  set?: (name: string, value: string, options?: Record<string, unknown>) => void;
+};
+
+function isCookieStoreLike(value: unknown): value is CookieStoreLike {
+  return typeof value === "object" && value !== null && "getAll" in value;
+}
+
 export async function createClient(cookieStore?: unknown) {
-  const effectiveCookies = (cookieStore as any) || (await cookies());
+  const effectiveCookies = cookieStore || (await cookies());
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -13,15 +27,16 @@ export async function createClient(cookieStore?: unknown) {
     {
       cookies: {
         getAll() {
-          return typeof effectiveCookies.getAll === "function"
+          return isCookieStoreLike(effectiveCookies)
             ? effectiveCookies.getAll()
-            : effectiveCookies;
+            : (effectiveCookies as Cookie[]);
         },
         setAll(cookiesToSet) {
-          if (typeof effectiveCookies.set === "function") {
+          if (isCookieStoreLike(effectiveCookies) && typeof effectiveCookies.set === "function") {
             try {
+              const setCookie = effectiveCookies.set;
               cookiesToSet.forEach(({ name, value, options }) =>
-                effectiveCookies.set(name, value, options)
+                setCookie(name, value, options)
               );
             } catch {
               // Ignore set errors in server components

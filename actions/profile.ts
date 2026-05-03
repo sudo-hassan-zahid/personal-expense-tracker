@@ -4,10 +4,28 @@
 "use server";
 
 import { createClient, getAuthenticatedClient } from "@/lib/supabase";
-import { revalidateTag, revalidatePath, cacheTag } from "next/cache";
 import { cookies } from "next/headers";
-import { revalidateAll } from "@/lib/revalidate";
+import { revalidateProfile } from "@/lib/revalidate";
 import type { SupabaseClient } from "@supabase/supabase-js";
+
+type ProfileUpdate = {
+  name: string;
+  currency: string;
+  theme: string;
+  pagination_enabled: boolean;
+  enable_status_tracking: boolean;
+  show_cursor_trail: boolean;
+  updated_at: string;
+};
+
+type AuthUpdate = {
+  email?: string;
+  password?: string;
+};
+
+function hasSupabaseAuthCookie(allCookies: { name: string }[]) {
+  return allCookies.some((cookie) => cookie.name.startsWith("sb-"));
+}
 
 /**
  * Fetches the current user's profile from the database.
@@ -18,6 +36,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 export async function getProfile(client?: SupabaseClient) {
   const cookieStore = await cookies();
   const allCookies = cookieStore.getAll();
+  if (!hasSupabaseAuthCookie(allCookies)) return null;
 
   const supabase = client || (await createClient(allCookies));
   const {
@@ -32,7 +51,7 @@ export async function getProfile(client?: SupabaseClient) {
 /**
  * Inner function to fetch profile data directly from DB.
  */
-async function fetchProfile(userId: string, cookieStore?: any) {
+async function fetchProfile(userId: string, cookieStore?: unknown) {
   const supabase = await createClient(cookieStore);
   const { data, error } = await supabase
     .from("profiles")
@@ -65,11 +84,14 @@ export async function updateCurrency(formData: FormData) {
 
     if (error) throw error;
 
-    revalidateAll();
+    revalidateProfile(user.id);
     return { success: true };
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error updating currency:", error);
-    return { success: false, error: error.message || "Failed to update currency" };
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to update currency",
+    };
   }
 }
 
@@ -90,7 +112,7 @@ export async function updateProfile(formData: FormData) {
     const statusTrackingEnabled = formData.get("enable_status_tracking") === "on";
     const showCursorTrail = formData.get("show_cursor_trail") === "on";
 
-    const updates: any = {
+    const updates: ProfileUpdate = {
       name,
       currency,
       theme,
@@ -110,7 +132,7 @@ export async function updateProfile(formData: FormData) {
     }
 
     // Update Auth Email/Password if provided
-    const authUpdates: any = {};
+    const authUpdates: AuthUpdate = {};
     if (email && email !== user.email) authUpdates.email = email;
     if (password) authUpdates.password = password;
 
@@ -125,17 +147,15 @@ export async function updateProfile(formData: FormData) {
       cookieStore.set("theme", theme, { path: "/", maxAge: 31536000 });
     }
 
-    revalidateAll();
-    revalidateTag(`profile-${user.id}`, { expire: 0 });
-    revalidateTag(user.id, { expire: 0 });
-    revalidatePath("/", "layout");
-    revalidatePath("/dashboard", "layout");
-    revalidatePath("/dashboard/profile", "layout");
+    revalidateProfile(user.id);
     
     return { success: true };
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error updating profile:", error);
-    return { success: false, error: error.message || "Failed to update profile" };
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to update profile",
+    };
   }
 }
 

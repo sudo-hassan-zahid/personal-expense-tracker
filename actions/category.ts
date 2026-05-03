@@ -3,10 +3,10 @@
  */
 "use server";
 
-import { createClient, getAuthenticatedClient } from "@/lib/supabase";
-import { revalidateTag, revalidatePath } from "next/cache";
-import { revalidateAll } from "@/lib/revalidate";
+import { getAuthenticatedClient } from "@/lib/supabase";
+import { revalidateCategories, revalidateTransactions } from "@/lib/revalidate";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@/lib/supabase";
 
 /**
  * Fetches categories for a given type.
@@ -56,17 +56,19 @@ export async function addCategory(formData: FormData) {
     throw new Error("Failed to add category");
   }
 
-  revalidateAll();
+  revalidateCategories();
 }
 
 export async function updateCategory(id: string, name: string) {
-  const supabase = await createClient();
+  const { supabase, user } = await getAuthenticatedClient();
+  const nextName = name.trim();
 
   // 1. Get current category name and type
   const { data: category, error: fetchError } = await supabase
     .from("categories")
-    .select("*")
+    .select("name, type")
     .eq("id", id)
+    .eq("user_id", user.id)
     .single();
 
   if (fetchError || !category) {
@@ -77,7 +79,11 @@ export async function updateCategory(id: string, name: string) {
   const type = category.type;
 
   // 2. Update the category name
-  const { error } = await supabase.from("categories").update({ name }).eq("id", id);
+  const { error } = await supabase
+    .from("categories")
+    .update({ name: nextName })
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) {
     if (error.code === "23505") {
@@ -88,25 +94,35 @@ export async function updateCategory(id: string, name: string) {
   }
 
   // 3. Propagate name change to linked transactions (since they use text links)
-  if (oldName !== name) {
+  if (oldName !== nextName) {
     if (type === "expense") {
-      await supabase.from("expenses").update({ category: name }).ilike("category", oldName);
+      await supabase
+        .from("expenses")
+        .update({ category: nextName })
+        .eq("user_id", user.id)
+        .eq("category", oldName);
     } else {
-      await supabase.from("incomes").update({ source: name }).ilike("source", oldName);
+      await supabase
+        .from("incomes")
+        .update({ source: nextName })
+        .eq("user_id", user.id)
+        .eq("source", oldName);
     }
+    revalidateTransactions();
   }
 
-  revalidateAll();
+  revalidateCategories();
 }
 
 export async function deleteCategory(id: string) {
-  const supabase = await createClient();
+  const { supabase, user } = await getAuthenticatedClient();
 
   // Get category details first
   const { data: category, error: fetchError } = await supabase
     .from("categories")
-    .select("*")
+    .select("name, type")
     .eq("id", id)
+    .eq("user_id", user.id)
     .single();
 
   if (fetchError || !category) {
@@ -117,8 +133,9 @@ export async function deleteCategory(id: string) {
   if (category.type === "expense") {
     const { count, error: checkError } = await supabase
       .from("expenses")
-      .select("*", { count: "exact", head: true })
-      .ilike("category", category.name);
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("category", category.name);
 
     if (checkError) throw checkError;
     if (count && count > 0) {
@@ -127,8 +144,9 @@ export async function deleteCategory(id: string) {
   } else {
     const { count, error: checkError } = await supabase
       .from("incomes")
-      .select("*", { count: "exact", head: true })
-      .ilike("source", category.name);
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("source", category.name);
 
     if (checkError) throw checkError;
     if (count && count > 0) {
@@ -136,13 +154,13 @@ export async function deleteCategory(id: string) {
     }
   }
 
-  const { error } = await supabase.from("categories").delete().match({ id });
+  const { error } = await supabase.from("categories").delete().eq("id", id).eq("user_id", user.id);
 
   if (error) {
     console.error("Error deleting category:", error);
     throw new Error("Failed to delete category");
   }
 
-  revalidateAll();
+  revalidateCategories();
 }
 

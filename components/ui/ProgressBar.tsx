@@ -10,9 +10,10 @@ export function ProgressBar() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // When path or search params change, show progress bar
-    setVisible(true);
-    setProgress(30);
+    const startTimer = setTimeout(() => {
+      setVisible(true);
+      setProgress(30);
+    }, 0);
     
     const timer1 = setTimeout(() => setProgress(60), 100);
     const timer2 = setTimeout(() => setProgress(90), 300);
@@ -25,6 +26,7 @@ export function ProgressBar() {
     }, 600);
 
     return () => {
+      clearTimeout(startTimer);
       clearTimeout(timer1);
       clearTimeout(timer2);
       clearTimeout(timer3);
