@@ -3,7 +3,9 @@ import { formatCurrency } from "@/lib/currency";
 import {
   getAverageDailySpend,
   getCompletedTransactions,
+  getForecastedMonthlyExpense,
   getTopExpenseCategories,
+  getYearlyComparison,
   summarizeCashFlow,
 } from "@/lib/analytics";
 import type { Transaction } from "@/types";
@@ -21,6 +23,8 @@ export function AnalyticsSummary({
   const cashFlow = summarizeCashFlow(completed);
   const topCategories = getTopExpenseCategories(completed);
   const averageDailySpend = getAverageDailySpend(completed);
+  const forecast = getForecastedMonthlyExpense(completed);
+  const yearly = getYearlyComparison(completed);
 
   return (
     <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-slide-up stagger-4">
@@ -89,6 +93,12 @@ export function AnalyticsSummary({
         <div className="mt-2 flex items-center gap-2 text-caption text-(--color-muted)">
           <BarChart3 size={14} />
           Average expense per active day
+        </div>
+        <div className="mt-3 text-caption text-(--color-muted)">
+          Forecast: {formatCurrency(forecast, currency)}
+        </div>
+        <div className="mt-1 text-caption text-(--color-muted)">
+          This year net: {formatCurrency(yearly.currentIncome - yearly.currentExpense, currency)}
         </div>
       </div>
     </section>

@@ -4,6 +4,7 @@
 import { createClient } from "@/lib/supabase";
 import { cacheTag } from "next/cache";
 import type { DashboardFilters } from "@/lib/dashboard-filters";
+import { format } from "date-fns";
 
 /**
  * Cached data fetcher for the dashboard.
@@ -22,13 +23,15 @@ export async function getDashboardData(
 
   let expenseQuery = supabase
     .from("expenses")
-    .select("id, amount, category, date, note, status, created_at")
-    .eq("user_id", userId);
+    .select("id, amount, category, date, note, status, created_at, updated_at, deleted_at, attachment_url, currency")
+    .eq("user_id", userId)
+    .is("deleted_at", null);
 
   let incomeQuery = supabase
     .from("incomes")
-    .select("id, amount, source, date, note, status, created_at")
-    .eq("user_id", userId);
+    .select("id, amount, source, date, note, status, created_at, updated_at, deleted_at, currency")
+    .eq("user_id", userId)
+    .is("deleted_at", null);
 
   if (filters?.startDate) {
     expenseQuery = expenseQuery.gte("date", filters.startDate);
@@ -57,7 +60,7 @@ export async function getDashboardData(
   }
 
   // Keep independent dashboard reads parallel while avoiding duplicate category round trips.
-  const [expensesRes, incomesRes, categoriesRes, profileRes] = await Promise.all([
+  const [expensesRes, incomesRes, categoriesRes, profileRes, budgetsRes] = await Promise.all([
     expenseQuery
       .order("date", { ascending: false })
       .order("created_at", { ascending: false }),
@@ -76,6 +79,12 @@ export async function getDashboardData(
       .select("id, currency, pagination_enabled, enable_status_tracking, theme, show_cursor_trail, name")
       .eq("id", userId)
       .maybeSingle(),
+    supabase
+      .from("monthly_budgets")
+      .select("id, category, month, limit_amount, alert_threshold, rollover_amount")
+      .eq("user_id", userId)
+      .eq("month", format(new Date(), "yyyy-MM-01"))
+      .order("category"),
   ]);
 
   const categories = categoriesRes.data || [];
@@ -86,6 +95,7 @@ export async function getDashboardData(
     expenseCategories: categories.filter((category) => category.type === "expense"),
     incomeCategories: categories.filter((category) => category.type === "income"),
     profile: profileRes.data,
+    budgets: budgetsRes.data || [],
   };
 }
 

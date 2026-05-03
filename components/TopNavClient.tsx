@@ -50,6 +50,13 @@ export function TopNavClient({
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-(--color-primary) transition-all duration-300 group-hover:w-full" />
               </Link>
               <Link
+                href="/dashboard/planning"
+                className="relative group text-nav-link text-(--color-body) hover:text-(--color-primary) transition-colors"
+              >
+                Planning
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-(--color-primary) transition-all duration-300 group-hover:w-full" />
+              </Link>
+              <Link
                 href="/dashboard/profile"
                 className="relative group text-nav-link text-(--color-body) hover:text-(--color-primary) transition-colors"
               >
@@ -134,6 +141,13 @@ export function TopNavClient({
                   onClick={() => setIsOpen(false)}
                 >
                   Categories
+                </Link>
+                <Link
+                  href="/dashboard/planning"
+                  className="text-title-sm text-(--color-body) hover:text-(--color-primary) py-2 border-b border-(--color-hairline-on-dark) hover:pl-2 transition-all"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Planning
                 </Link>
                 <Link
                   href="/dashboard/profile"

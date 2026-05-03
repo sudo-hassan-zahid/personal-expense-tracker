@@ -33,3 +33,9 @@ export function revalidateAll() {
   revalidateCategories();
   revalidateProfile();
 }
+
+export function revalidatePlanning() {
+  revalidateTag("planning", { expire: 0 });
+  revalidatePath("/dashboard", "page");
+  revalidatePath("/dashboard/planning", "page");
+}

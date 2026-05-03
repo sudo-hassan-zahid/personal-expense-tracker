@@ -15,12 +15,16 @@ import {
   Pencil,
   AlertCircle,
   Loader2,
+  Paperclip,
 } from "lucide-react";
+import Link from "next/link";
 import { formatCurrency } from "@/lib/currency";
 import { format } from "date-fns";
 import { DeleteButton } from "./DeleteButton";
 import { deleteExpense } from "@/actions/expense";
 import { deleteIncome } from "@/actions/income";
+import { bulkUpdateExpenses } from "@/actions/expense";
+import { bulkUpdateIncomes } from "@/actions/income";
 import { PaginationControls } from "./PaginationControls";
 import { DateRangePicker } from "./ui/DateRangePicker";
 import { toast } from "sonner";
@@ -34,32 +38,38 @@ const TransactionRow = memo(
   ({
     t,
     index,
-    currentPage,
-    itemsPerPage,
     currency,
     enableStatusTracking,
     isWideView,
     newlyAddedId,
     onEdit,
     onDelete,
+    selected,
+    onToggleSelected,
   }: {
     t: Transaction;
     index: number;
-    currentPage: number;
-    itemsPerPage: number;
     currency: string;
     enableStatusTracking: boolean;
     isWideView: boolean;
     newlyAddedId: string | null;
     onEdit: (t: Transaction) => void;
     onDelete: (t: Transaction) => void;
+    selected: boolean;
+    onToggleSelected: (t: Transaction) => void;
   }) => {
     return (
       <div
         className={`flex flex-col md:grid ${enableStatusTracking ? "md:grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "md:grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-2 md:gap-4 items-start md:items-center py-4 md:py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-200 px-3 md:px-2 -mx-3 md:-mx-2 rounded-xl md:rounded-lg ${index < 10 ? "animate-slide-up" : "opacity-100"} ${index < 5 ? `stagger-${index + 1}` : ""} ${newlyAddedId === t.id ? "bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse" : ""}`}
       >
         <div className="hidden md:block text-number-sm text-(--color-muted) pl-2">
-          {(currentPage - 1) * itemsPerPage + index + 1}
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={() => onToggleSelected(t)}
+            className="accent-(--color-primary)"
+            aria-label="Select transaction"
+          />
         </div>
 
         <div className="flex items-center justify-between w-full md:contents">
@@ -132,6 +142,15 @@ const TransactionRow = memo(
           )}
 
           <div className="text-right flex justify-end gap-1 pr-2">
+            {t.type === "expense" && t.attachment_url && (
+              <Link
+                href={`/dashboard/attachments?path=${encodeURIComponent(t.attachment_url)}`}
+                className="p-2 text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-primary)/10 rounded-md transition-all"
+                title="Open attachment"
+              >
+                <Paperclip size={16} />
+              </Link>
+            )}
             <button
               onClick={() => onEdit(t)}
               className="p-2 text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-primary)/10 rounded-md transition-all"
@@ -204,6 +223,10 @@ export function TransactionList({
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedTransactions, setSelectedTransactions] = useState<Transaction[]>([]);
+  const [bulkDate, setBulkDate] = useState("");
+  const [bulkCategory, setBulkCategory] = useState("");
+  const [bulkStatus, setBulkStatus] = useState("");
 
   const [prevCount, setPrevCount] = useState(initialTransactions.length);
   useEffect(() => {
@@ -233,6 +256,58 @@ export function TransactionList({
 
   const handleSearchChange = (val: string) => {
     setSearch(val);
+  };
+
+  const toggleSelected = (transaction: Transaction) => {
+    setSelectedTransactions((current) =>
+      current.some((item) => item.id === transaction.id && item.type === transaction.type)
+        ? current.filter((item) => !(item.id === transaction.id && item.type === transaction.type))
+        : [...current, transaction]
+    );
+  };
+
+  const applyBulkUpdate = async () => {
+    const expenseIds = selectedTransactions.filter((t) => t.type === "expense").map((t) => t.id);
+    const incomeIds = selectedTransactions.filter((t) => t.type === "income").map((t) => t.id);
+    const sharedUpdates: Record<string, string> = {};
+    if (bulkDate) sharedUpdates.date = bulkDate;
+    if (bulkStatus) sharedUpdates.status = bulkStatus;
+
+    try {
+      if (expenseIds.length > 0) {
+        await bulkUpdateExpenses(expenseIds, {
+          ...sharedUpdates,
+          ...(bulkCategory ? { category: bulkCategory } : {}),
+        });
+      }
+      if (incomeIds.length > 0) {
+        await bulkUpdateIncomes(incomeIds, {
+          ...sharedUpdates,
+          ...(bulkCategory ? { source: bulkCategory } : {}),
+        });
+      }
+      toast.success("Bulk update complete");
+      setSelectedTransactions([]);
+      setBulkDate("");
+      setBulkCategory("");
+      setBulkStatus("");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Bulk update failed");
+    }
+  };
+
+  const bulkDelete = async () => {
+    try {
+      await Promise.all(
+        selectedTransactions.map((transaction) =>
+          transaction.type === "income" ? deleteIncome(transaction.id) : deleteExpense(transaction.id)
+        )
+      );
+      toast.success("Selected transactions deleted");
+      setSelectedTransactions([]);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Bulk delete failed");
+    }
   };
 
   return (
@@ -323,6 +398,29 @@ export function TransactionList({
         </div>
       )}
 
+      {selectedTransactions.length > 0 && (
+        <div className="bg-(--color-surface-elevated-dark) border border-(--color-hairline-on-dark) rounded-xl p-3 flex flex-col lg:flex-row gap-3 lg:items-center">
+          <span className="text-body-sm text-(--color-on-dark)">{selectedTransactions.length} selected</span>
+          <input type="date" value={bulkDate} onChange={(e) => setBulkDate(e.target.value)} className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm" />
+          <select value={bulkCategory} onChange={(e) => setBulkCategory(e.target.value)} className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm">
+            <option value="">Category/source</option>
+            {[...expenseCategories, ...incomeCategories].map((category) => <option key={`${category.type}-${category.id}`} value={category.name}>{category.name}</option>)}
+          </select>
+          {enableStatusTracking && (
+            <select value={bulkStatus} onChange={(e) => setBulkStatus(e.target.value)} className="bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-2 text-body-sm">
+              <option value="">Status</option>
+              <option value="done">Done</option>
+              <option value="pending">Pending</option>
+            </select>
+          )}
+          <div className="flex gap-2 lg:ml-auto">
+            <button onClick={applyBulkUpdate} className="px-4 py-2 rounded-lg bg-(--color-primary) text-(--color-on-primary) text-button">Apply</button>
+            <button onClick={bulkDelete} className="px-4 py-2 rounded-lg bg-(--color-trading-down) text-white text-button">Delete</button>
+            <button onClick={() => setSelectedTransactions([])} className="px-4 py-2 rounded-lg border border-(--color-hairline-on-dark) text-button">Clear</button>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-col gap-2 relative">
         {/* Sorting header */}
         <div
@@ -400,14 +498,14 @@ export function TransactionList({
               key={t.id + t.type}
               t={t}
               index={i}
-              currentPage={currentPage}
-              itemsPerPage={itemsPerPage}
               currency={currency}
               enableStatusTracking={enableStatusTracking}
               isWideView={isWideView}
               newlyAddedId={newlyAddedId}
               onEdit={setEditingTransaction}
               onDelete={setTransactionToDelete}
+              selected={selectedTransactions.some((item) => item.id === t.id && item.type === t.type)}
+              onToggleSelected={toggleSelected}
             />
           ))}
         </div>

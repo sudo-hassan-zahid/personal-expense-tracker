@@ -55,3 +55,26 @@ export function getAverageDailySpend(transactions: Transaction[]) {
 
   return total / days;
 }
+
+export function getForecastedMonthlyExpense(transactions: Transaction[]) {
+  const average = getAverageDailySpend(transactions);
+  const now = new Date();
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  return average * daysInMonth;
+}
+
+export function getYearlyComparison(transactions: Transaction[]) {
+  const currentYear = new Date().getFullYear();
+  const totals = { currentIncome: 0, currentExpense: 0, previousIncome: 0, previousExpense: 0 };
+
+  transactions.forEach((transaction) => {
+    const year = parseISO(transaction.date).getFullYear();
+    const amount = Number(transaction.amount);
+    if (year === currentYear && transaction.type === "income") totals.currentIncome += amount;
+    if (year === currentYear && transaction.type === "expense") totals.currentExpense += amount;
+    if (year === currentYear - 1 && transaction.type === "income") totals.previousIncome += amount;
+    if (year === currentYear - 1 && transaction.type === "expense") totals.previousExpense += amount;
+  });
+
+  return totals;
+}

@@ -15,6 +15,10 @@ import { DatePicker } from "./ui/DatePicker";
 import { TransactionFilter } from "./TransactionFilter";
 import { Expense, Income, Category } from "@/types";
 import { AnalyticsSummary } from "./AnalyticsSummary";
+import { BudgetProgress } from "./BudgetProgress";
+import type { MonthlyBudget } from "@/types";
+import { QuickAddModal } from "./QuickAddModal";
+import { SplitExpenseForm } from "./SplitExpenseForm";
 
 const DashboardChart = dynamic(
   () => import("./DashboardChart").then((module) => ({ default: module.DashboardChart })),
@@ -31,6 +35,7 @@ interface DashboardContentProps {
   expenseCategories: Category[];
   incomeCategories: Category[];
   profile: DashboardProfile | null;
+  budgets: MonthlyBudget[];
   currency: string;
   paginationEnabled: boolean;
   isStatusTrackingEnabled: boolean;
@@ -60,6 +65,7 @@ export function DashboardContent({
   expenseCategories,
   incomeCategories,
   profile,
+  budgets,
   currency,
   paginationEnabled,
   isStatusTrackingEnabled,
@@ -128,6 +134,14 @@ export function DashboardContent({
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 py-6 md:py-[40px] flex flex-col gap-6 md:gap-8 flex-1">
+      <div className="flex justify-end">
+        <QuickAddModal
+          expenseCategories={expenseCategories}
+          incomeCategories={incomeCategories}
+          currency={currency}
+        />
+      </div>
+
       {/* Top Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-(--color-surface-card-dark) p-4 md:p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-1">
@@ -164,6 +178,8 @@ export function DashboardContent({
         currency={currency}
         enableStatusTracking={isStatusTrackingEnabled}
       />
+
+      <BudgetProgress budgets={budgets} expenses={initialExpenses} currency={currency} />
 
       {/* 8/4 or 12 Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -317,6 +333,8 @@ export function DashboardContent({
               </SubmitButton>
             </ActionForm>
           </div>
+
+          <SplitExpenseForm categories={expenseCategories} currency={currency} />
 
           {/* Add Income Card */}
           <div className="bg-(--color-surface-card-dark) rounded-xl p-4 md:p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">

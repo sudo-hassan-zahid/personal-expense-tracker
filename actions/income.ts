@@ -20,6 +20,22 @@ export async function addIncome(formData: FormData) {
     if (!transaction.ok) return { error: transaction.error };
     if (!source.ok) return { error: source.error };
 
+    const { data: duplicate } = await supabase
+      .from("incomes")
+      .select("id")
+      .eq("user_id", user.id)
+      .is("deleted_at", null)
+      .eq("amount", transaction.value.amount)
+      .eq("source", source.value)
+      .eq("date", transaction.value.date)
+      .limit(1)
+      .maybeSingle();
+
+    if (duplicate) {
+      return { error: "This income looks like a duplicate. Adjust it or edit the existing record." };
+    }
+
+    const currency = String(formData.get("currency") || "USD");
     const { error } = await supabase.from("incomes").insert({
       user_id: user.id,
       amount: transaction.value.amount,
@@ -27,6 +43,7 @@ export async function addIncome(formData: FormData) {
       date: transaction.value.date,
       note: transaction.value.note,
       status: transaction.value.status,
+      currency,
     });
 
     if (error) {
@@ -48,7 +65,11 @@ export async function addIncome(formData: FormData) {
  */
 export async function deleteIncome(id: string) {
   const { supabase, user } = await getAuthenticatedClient();
-  const { error } = await supabase.from("incomes").delete().eq("id", id).eq("user_id", user.id);
+  const { error } = await supabase
+    .from("incomes")
+    .update({ deleted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+    .eq("id", id)
+    .eq("user_id", user.id);
 
   if (error) {
     console.error("Error deleting income:", error);
@@ -80,6 +101,8 @@ export async function updateIncome(id: string, formData: FormData) {
         date: transaction.value.date,
         note: transaction.value.note,
         status: transaction.value.status,
+        currency: String(formData.get("currency") || "USD"),
+        updated_at: new Date().toISOString(),
       })
       .eq("id", id)
       .eq("user_id", user.id);
@@ -95,5 +118,17 @@ export async function updateIncome(id: string, formData: FormData) {
     console.error("Error updating income:", error);
     return { error: error instanceof Error ? error.message : "Failed to update income." };
   }
+}
+
+export async function bulkUpdateIncomes(ids: string[], updates: Record<string, string>) {
+  const { supabase, user } = await getAuthenticatedClient();
+  const payload = { ...updates, updated_at: new Date().toISOString() };
+  const { error } = await supabase
+    .from("incomes")
+    .update(payload)
+    .in("id", ids)
+    .eq("user_id", user.id);
+  if (error) throw new Error("Failed to bulk update incomes");
+  revalidateTransactions();
 }
 
