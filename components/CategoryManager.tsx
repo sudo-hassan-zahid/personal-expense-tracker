@@ -48,7 +48,6 @@ export function CategoryManager({
       {/* Type Toggle Slider */}
       <div className="flex justify-center px-4 md:px-0">
         <div className="bg-(--color-canvas-dark) p-1 rounded-xl border border-(--color-hairline-on-dark) flex relative w-full md:max-w-[400px]">
-
           <div
             className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-(--color-primary) rounded-lg transition-all duration-300 ease-out z-0 ${type === "income" ? "translate-x-[calc(100%+4px)]" : "translate-x-0"}`}
           />
@@ -90,7 +89,6 @@ export function CategoryManager({
                     >
                       <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
                         <span className="hidden sm:block text-caption font-bold text-(--color-primary) w-6 opacity-50">
-
                           {(index + 1).toString().padStart(2, "0")}
                         </span>
                         {editingId === cat.id ? (

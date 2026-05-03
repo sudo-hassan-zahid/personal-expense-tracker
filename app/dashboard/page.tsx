@@ -74,7 +74,6 @@ export default async function DashboardPage(props: {
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 py-6 md:py-[40px] flex flex-col gap-6 md:gap-8 flex-1">
-
       {/* Top Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-(--color-surface-card-dark) p-4 md:p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-1">
@@ -90,12 +89,13 @@ export default async function DashboardPage(props: {
           </div>
         </div>
         <div className="bg-(--color-surface-card-dark) p-4 md:p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-3">
-          <div className="text-body-sm md:text-body-md text-(--color-muted) mb-2">Total Expenses</div>
+          <div className="text-body-sm md:text-body-md text-(--color-muted) mb-2">
+            Total Expenses
+          </div>
           <div className="text-display-sm md:text-number-display text-(--color-trading-down) text-center">
             {formatCurrency(totalExpenses, currency)}
           </div>
         </div>
-
       </div>
 
       {/* Chart Section */}
@@ -111,7 +111,6 @@ export default async function DashboardPage(props: {
         <div
           className={`${isWideView ? "lg:col-span-12" : "lg:col-span-8"} bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-4 md:p-6 animate-slide-up stagger-5 transition-all duration-300`}
         >
-
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div className="flex items-center gap-4">
               <h2 className="text-title-lg text-(--color-on-dark)">Recent Transactions</h2>
@@ -158,7 +157,6 @@ export default async function DashboardPage(props: {
         >
           {/* Add Expense Card */}
           <div className="bg-(--color-surface-card-dark) rounded-xl p-4 md:p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
-
             <h2 className="text-title-md mb-4">Quick Add Expense</h2>
             <ActionForm
               action={addExpense}
@@ -203,7 +201,6 @@ export default async function DashboardPage(props: {
 
           {/* Add Income Card */}
           <div className="bg-(--color-surface-card-dark) rounded-xl p-4 md:p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
-
             <h2 className="text-title-md mb-4">Quick Add Income</h2>
             <ActionForm
               action={addIncome}

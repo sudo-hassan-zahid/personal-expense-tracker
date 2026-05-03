@@ -8,4 +8,3 @@ export async function TopNav({ activeTheme }: { activeTheme: "light" | "dark" })
 
   return <TopNavClient user={user} activeTheme={activeTheme} />;
 }
-

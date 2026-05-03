@@ -72,8 +72,7 @@ export function CursorTrail() {
       points.forEach((p) => (p.age += 1));
 
       if (points.length > 1) {
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = "#fcd535";
+        // Optimization: Removed shadowBlur as it's extremely expensive
         ctx.beginPath();
         ctx.moveTo(points[0].x, points[0].y);
 
@@ -81,14 +80,13 @@ export function CursorTrail() {
           const p = points[i];
           const opacity = 1 - p.age / maxAge;
           ctx.strokeStyle = `rgba(252, 213, 53, ${opacity * 0.8})`;
-          ctx.lineWidth = opacity * 12;
+          ctx.lineWidth = opacity * 8; // Slightly thinner for better performance
           ctx.lineCap = "round";
           ctx.lineTo(p.x, p.y);
           ctx.stroke();
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
         }
-        ctx.shadowBlur = 0;
       }
 
       // Draw Sparkles
@@ -103,7 +101,7 @@ export function CursorTrail() {
         ctx.fillStyle = s.color;
         ctx.globalAlpha = opacity;
         ctx.beginPath();
-        ctx.arc(s.x, s.y, 1.5, 0, Math.PI * 2);
+        ctx.arc(s.x, s.y, 1.2, 0, Math.PI * 2);
         ctx.fill();
       });
       ctx.globalAlpha = 1;

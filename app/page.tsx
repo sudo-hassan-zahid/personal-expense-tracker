@@ -36,25 +36,35 @@ export default async function Home() {
               Log In
             </Link>
           </div>
-
         </section>
 
         {/* Info Grid */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 stagger-2 animate-slide-up">
           <div className="glass-dark rounded-2xl p-6 md:p-8 flex flex-col items-center text-center gap-2 md:gap-3 border border-(--color-hairline-on-dark)">
-            <div className="text-display-sm md:text-number-display text-(--color-primary)">256-bit</div>
-            <div className="text-caption md:text-title-sm text-(--color-muted)">Bank-grade encryption</div>
+            <div className="text-display-sm md:text-number-display text-(--color-primary)">
+              256-bit
+            </div>
+            <div className="text-caption md:text-title-sm text-(--color-muted)">
+              Bank-grade encryption
+            </div>
           </div>
           <div className="glass-dark rounded-2xl p-6 md:p-8 flex flex-col items-center text-center gap-2 md:gap-3 border border-(--color-hairline-on-dark)">
-            <div className="text-display-sm md:text-number-display text-(--color-primary)">100%</div>
-            <div className="text-caption md:text-title-sm text-(--color-muted)">Data ownership & privacy</div>
+            <div className="text-display-sm md:text-number-display text-(--color-primary)">
+              100%
+            </div>
+            <div className="text-caption md:text-title-sm text-(--color-muted)">
+              Data ownership & privacy
+            </div>
           </div>
           <div className="glass-dark rounded-2xl p-6 md:p-8 flex flex-col items-center text-center gap-2 md:gap-3 border border-(--color-hairline-on-dark)">
-            <div className="text-display-sm md:text-number-display text-(--color-primary)">24/7</div>
-            <div className="text-caption md:text-title-sm text-(--color-muted)">Uptime & sync reliability</div>
+            <div className="text-display-sm md:text-number-display text-(--color-primary)">
+              24/7
+            </div>
+            <div className="text-caption md:text-title-sm text-(--color-muted)">
+              Uptime & sync reliability
+            </div>
           </div>
         </section>
-
 
         {/* Footer Note */}
         <footer className="text-center stagger-3 animate-slide-up">

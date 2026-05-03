@@ -25,7 +25,6 @@ export default async function SignupPage(props: {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10 animate-slide-up stagger-1">
         <div className="bg-(--color-surface-card-dark)/80 backdrop-blur-xl py-6 md:py-8 px-5 border border-(--color-hairline-on-dark) sm:rounded-2xl sm:px-10 shadow-2xl">
-
           {error && (
             <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-body-sm backdrop-blur-sm">
               {error}

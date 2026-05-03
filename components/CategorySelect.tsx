@@ -88,7 +88,6 @@ export function CategorySelect({
             className="px-4 py-2 border border-(--color-hairline-on-dark) rounded-md text-body-md text-(--color-primary) hover:bg-(--color-surface-elevated-dark) transition-colors shrink-0"
             title="Add new category"
           >
-
             +
           </button>
         </div>
