@@ -59,6 +59,12 @@ export default async function Home() {
           <p className="text-body-md text-(--color-muted)">
             No credit card required. Free forever for individuals.
           </p>
+          <p className="mt-2 text-body-sm text-(--color-muted) opacity-70">
+            Want to see it in action first?{" "}
+            <Link href="/login" className="text-(--color-primary) hover:underline">
+              Try the Demo Account
+            </Link>
+          </p>
         </footer>
       </div>
     </div>
