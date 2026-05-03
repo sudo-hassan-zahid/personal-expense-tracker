@@ -2,8 +2,18 @@
  * Utility/Hook: useTransactions.ts
  */
 import { useState, useMemo, useDeferredValue } from "react";
-import { format, isWithinInterval, startOfDay, endOfDay } from "date-fns";
+import { format, startOfDay, endOfDay } from "date-fns";
 import { Transaction } from "@/types";
+
+type NormalizedTransaction = {
+  transaction: Transaction;
+  amount: number;
+  dateMs: number;
+  createdAtMs: number;
+  categoryText: string;
+  noteText: string;
+  searchText: string;
+};
 
 export function useTransactions(initialTransactions: Transaction[], initialItemsPerPage: number) {
   const [search, setSearch] = useState("");
@@ -17,35 +27,55 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
+  const normalizedTransactions = useMemo<NormalizedTransaction[]>(
+    () =>
+      initialTransactions.map((transaction) => {
+        const categoryText =
+          (transaction.type === "income" ? transaction.source : transaction.category) || "";
+        const amount = Number(transaction.amount);
+        const dateMs = new Date(transaction.date).getTime();
+        const createdAtMs = new Date(transaction.created_at).getTime();
+        const dateText = format(new Date(transaction.date), "MMM d, yyyy").toLowerCase();
+        const noteText = (transaction.note || "").toLowerCase();
+
+        return {
+          transaction,
+          amount,
+          dateMs,
+          createdAtMs,
+          categoryText: categoryText.toLowerCase(),
+          noteText,
+          searchText: [
+            categoryText,
+            amount.toString(),
+            dateText,
+            transaction.note || "",
+            transaction.type,
+          ]
+            .join(" ")
+            .toLowerCase(),
+        };
+      }),
+    [initialTransactions]
+  );
+
   const filteredTransactions = useMemo(() => {
     const searchLower = deferredSearch.toLowerCase();
-    return initialTransactions.filter((t) => {
-      const categoryText = (t.type === "income" ? t.source : t.category) || "";
-      const amount = Number(t.amount);
-      const date = new Date(t.date);
-      const dateText = format(date, "MMM d, yyyy").toLowerCase();
-      const noteText = (t.note || "").toLowerCase();
+    const minAmountValue = minAmount === "" ? null : Number(minAmount);
+    const maxAmountValue = maxAmount === "" ? null : Number(maxAmount);
+    const startMs = startDate ? startOfDay(startDate).getTime() : null;
+    const endMs = endDate ? endOfDay(endDate).getTime() : null;
 
-      const matchesSearch =
-        categoryText.toLowerCase().includes(searchLower) ||
-        amount.toString().includes(searchLower) ||
-        dateText.includes(searchLower) ||
-        noteText.includes(searchLower) ||
-        t.type.includes(searchLower);
-
-      const matchesMinAmount = minAmount === "" || amount >= Number(minAmount);
-      const matchesMaxAmount = maxAmount === "" || amount <= Number(maxAmount);
+    return normalizedTransactions.filter(({ amount, dateMs, searchText }) => {
+      const matchesSearch = searchLower === "" || searchText.includes(searchLower);
+      const matchesMinAmount = minAmountValue === null || amount >= minAmountValue;
+      const matchesMaxAmount = maxAmountValue === null || amount <= maxAmountValue;
       const matchesDateRange =
-        !startDate ||
-        !endDate ||
-        isWithinInterval(date, {
-          start: startOfDay(startDate),
-          end: endOfDay(endDate),
-        });
+        startMs === null || endMs === null || (dateMs >= startMs && dateMs <= endMs);
 
       return matchesSearch && matchesMinAmount && matchesMaxAmount && matchesDateRange;
     });
-  }, [initialTransactions, deferredSearch, minAmount, maxAmount, startDate, endDate]);
+  }, [normalizedTransactions, deferredSearch, minAmount, maxAmount, startDate, endDate]);
 
   const sortedTransactions = useMemo(() => {
     return [...filteredTransactions].sort((a, b) => {
@@ -54,41 +84,39 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
 
       switch (sortField) {
         case "amount":
-          valA = Number(a.amount);
-          valB = Number(b.amount);
+          valA = a.amount;
+          valB = b.amount;
           break;
         case "category":
-          valA = ((a.type === "income" ? a.source : a.category) || "").toLowerCase();
-          valB = ((b.type === "income" ? b.source : b.category) || "").toLowerCase();
+          valA = a.categoryText;
+          valB = b.categoryText;
           break;
         case "note":
-          valA = (a.note || "").toLowerCase();
-          valB = (b.note || "").toLowerCase();
+          valA = a.noteText;
+          valB = b.noteText;
           break;
         case "date":
-          valA = new Date(a.date).getTime();
-          valB = new Date(b.date).getTime();
+          valA = a.dateMs;
+          valB = b.dateMs;
           break;
         case "type":
-          valA = a.type;
-          valB = b.type;
+          valA = a.transaction.type;
+          valB = b.transaction.type;
           break;
         case "status":
-          valA = (a.status || "pending").toLowerCase();
-          valB = (b.status || "pending").toLowerCase();
+          valA = (a.transaction.status || "pending").toLowerCase();
+          valB = (b.transaction.status || "pending").toLowerCase();
           break;
         default:
-          valA = (a as any)[sortField] || "";
-          valB = (b as any)[sortField] || "";
+          valA = (a.transaction as any)[sortField] || "";
+          valB = (b.transaction as any)[sortField] || "";
       }
 
       if (valA < valB) return sortOrder === "asc" ? -1 : 1;
       if (valA > valB) return sortOrder === "asc" ? 1 : -1;
 
-      const timeA = new Date(a.created_at).getTime();
-      const timeB = new Date(b.created_at).getTime();
-      return sortOrder === "asc" ? timeA - timeB : timeB - timeA;
-    });
+      return sortOrder === "asc" ? a.createdAtMs - b.createdAtMs : b.createdAtMs - a.createdAtMs;
+    }).map(({ transaction }) => transaction);
   }, [filteredTransactions, sortField, sortOrder]);
 
   const totalPages =
