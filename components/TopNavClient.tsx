@@ -113,25 +113,26 @@ export function TopNavClient({ user, activeTheme }: { user: any; activeTheme: "l
               <>
                 <Link
                   href="/dashboard"
-                  className="text-title-sm text-(--color-body) hover:text-(--color-primary) py-2 border-b border-(--color-hairline-on-dark)"
+                  className="text-title-sm text-(--color-body) hover:text-(--color-primary) py-2 border-b border-(--color-hairline-on-dark) hover:pl-2 transition-all"
                   onClick={() => setIsOpen(false)}
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/dashboard/categories"
-                  className="text-title-sm text-(--color-body) hover:text-(--color-primary) py-2 border-b border-(--color-hairline-on-dark)"
+                  className="text-title-sm text-(--color-body) hover:text-(--color-primary) py-2 border-b border-(--color-hairline-on-dark) hover:pl-2 transition-all"
                   onClick={() => setIsOpen(false)}
                 >
                   Categories
                 </Link>
                 <Link
                   href="/dashboard/profile"
-                  className="text-title-sm text-(--color-body) hover:text-(--color-primary) py-2 border-b border-(--color-hairline-on-dark)"
+                  className="text-title-sm text-(--color-body) hover:text-(--color-primary) py-2 border-b border-(--color-hairline-on-dark) hover:pl-2 transition-all"
                   onClick={() => setIsOpen(false)}
                 >
                   Profile
                 </Link>
+
                 <form action="/auth/signout" method="post" className="mt-4">
                   <button className="w-full text-button text-white bg-red-600 hover:bg-red-700 px-4 py-3 rounded-md transition-colors">
                     Log Out
