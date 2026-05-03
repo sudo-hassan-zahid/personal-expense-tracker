@@ -1,3 +1,6 @@
+/**
+ * Server actions for category.ts
+ */
 "use server";
 
 import { createClient, getAuthenticatedClient } from "@/lib/supabase";
@@ -142,3 +145,4 @@ export async function deleteCategory(id: string) {
 
   revalidateTag("categories", { expire: 0 });
 }
+

@@ -1,3 +1,6 @@
+/**
+ * Component: DashboardChart.tsx
+ */
 "use client";
 
 import { useState, useMemo, useEffect, memo } from "react";
@@ -57,67 +60,75 @@ export const DashboardChart = memo(
     }, []);
 
     const categories = useMemo(() => {
-      const cats = new Set<string>();
-      transactions.forEach((t) => {
+      const cats = transactions.reduce((acc, t) => {
         const c = t.type === "income" ? t.source : t.category;
-        if (c) cats.add(c.toLowerCase());
-      });
-      return Array.from(cats);
+        if (c) acc.add(c.toLowerCase());
+        return acc;
+      }, new Set<string>());
+      return Array.from(cats).sort();
     }, [transactions]);
 
     const chartData = useMemo(() => {
-      let filtered = transactions;
-      const { start: startDate, end: endDate } = dateRange;
-
-      // Generate all days in range
-      const allDays = eachDayOfInterval({ start: startDate, end: endDate });
-      const chartDataMap = new Map();
-
-      allDays.forEach((day) => {
-        const d = format(day, "yyyy-MM-dd");
-        chartDataMap.set(d, { date: d, income: 0, expense: 0 });
-      });
-
-      // Pre-filter by our precise date range
-      filtered = filtered.filter((t) => {
-        const tDate = new Date(t.date);
-        return tDate >= startOfDay(startDate) && tDate <= endOfDay(endDate);
-      });
-
-      // Type filter
-      if (filterType !== "all") {
-        filtered = filtered.filter((t) => t.type === filterType);
-      }
-
-      // Category filter
-      if (filterCategory !== "all") {
-        filtered = filtered.filter((t) => {
-          const c = t.type === "income" ? t.source : t.category;
-          return c?.toLowerCase() === filterCategory.toLowerCase();
-        });
-      }
-
-      // Status filter: If enabled, only show completed transactions
-      const transactionsToProcess = enableStatusTracking
-        ? filtered.filter((t) => (t as any).status === "done")
-        : filtered;
-
-      transactionsToProcess.forEach((t) => {
-        const dateKey = t.date.includes("T") ? t.date.split("T")[0] : t.date;
-
-        if (chartDataMap.has(dateKey)) {
-          const entry = chartDataMap.get(dateKey);
-          if (t.type === "income") entry.income += Number(t.amount);
-          else entry.expense += Number(t.amount);
+      try {
+        let filtered = transactions;
+        const { start: startDate, end: endDate } = dateRange;
+        if (!startDate || !endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+          return [];
         }
-      });
 
-      return Array.from(chartDataMap.values())
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-        .map((d) => ({
-          ...d,
-          displayDate: format(parseISO(d.date), "MMM dd"),
-        }));
+        // Generate all days in range
+        const allDays = eachDayOfInterval({ start: startDate, end: endDate });
+        const chartDataMap = new Map();
+
+        allDays.forEach((day) => {
+          const d = format(day, "yyyy-MM-dd");
+          chartDataMap.set(d, { date: d, income: 0, expense: 0 });
+        });
+
+        // Pre-filter by our precise date range
+        filtered = filtered.filter((t) => {
+          const tDate = new Date(t.date);
+          return tDate >= startOfDay(startDate) && tDate <= endOfDay(endDate);
+        });
+
+        // Type filter
+        if (filterType !== "all") {
+          filtered = filtered.filter((t) => t.type === filterType);
+        }
+
+        // Category filter
+        if (filterCategory !== "all") {
+          filtered = filtered.filter((t) => {
+            const c = t.type === "income" ? t.source : t.category;
+            return c?.toLowerCase() === filterCategory.toLowerCase();
+          });
+        }
+
+        // Status filter: If enabled, only show completed transactions
+        const transactionsToProcess = enableStatusTracking
+          ? filtered.filter((t) => (t as any).status === "done")
+          : filtered;
+
+        transactionsToProcess.forEach((t) => {
+          const dateKey = t.date.includes("T") ? t.date.split("T")[0] : t.date;
+
+          if (chartDataMap.has(dateKey)) {
+            const entry = chartDataMap.get(dateKey);
+            if (t.type === "income") entry.income += Number(t.amount);
+            else entry.expense += Number(t.amount);
+          }
+        });
+
+        return Array.from(chartDataMap.values())
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+          .map((d) => ({
+            ...d,
+            displayDate: format(parseISO(d.date), "MMM dd"),
+          }));
+      } catch (error) {
+        console.error("Error processing chart data:", error);
+        return [];
+      }
     }, [transactions, dateRange, filterType, filterCategory, enableStatusTracking]);
 
     return (
@@ -129,7 +140,7 @@ export const DashboardChart = memo(
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10 animate-slide-up stagger-1">
           <div>
             <h2 className="text-[20px] md:text-[24px] tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 font-bold mb-1">
-              Dynamic Cashflow Analytics
+              Financial Performance Analytics
             </h2>
             <p className="text-caption text-(--color-muted)">
               Interactive visualization of your financial trends
@@ -179,14 +190,24 @@ export const DashboardChart = memo(
           </div>
         </div>
 
-        <div className="h-[280px] md:h-[380px] w-full relative z-10 animate-slide-up stagger-2 min-h-0 min-w-0">
+        <div 
+          className="h-[280px] md:h-[380px] min-h-[280px] md:min-h-[380px] w-full relative z-10 animate-slide-up stagger-2 min-w-0"
+          role="region"
+          aria-label="Cashflow analytics chart"
+          title="Cashflow Analytics Chart"
+        >
           {chartData.length === 0 ? (
-            <div className="h-full w-full flex flex-col items-center justify-center text-(--color-muted) text-body-md border border-dashed border-(--color-hairline-on-dark) rounded-xl bg-(--color-canvas-dark)/20">
+            <div className="h-full w-full flex flex-col items-center justify-center text-(--color-muted) text-body-md border border-dashed border-(--color-hairline-on-dark) rounded-xl bg-(--color-canvas-dark)/20 animate-fade-in transition-all duration-500">
               <div className="text-4xl mb-2 opacity-50">📊</div>
               No data for selected filters.
             </div>
           ) : isMounted ? (
-            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+            {/* 
+              ResponsiveContainer is wrapped in a div with fixed height to prevent 
+              the 'width(-1) and height(-1)' warning. Added minWidth/minHeight 
+              and debounce to ensure stable rendering during layout transitions.
+            */}
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0} debounce={50}>
               <AreaChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
@@ -300,3 +321,4 @@ export const DashboardChart = memo(
 );
 
 DashboardChart.displayName = "DashboardChart";
+

@@ -1,3 +1,6 @@
+/**
+ * Component: DemoAccountCard.tsx
+ */
 "use client";
 
 import React, { useState } from "react";
@@ -171,3 +174,4 @@ export function DemoAccountCard() {
     </div>
   );
 }
+

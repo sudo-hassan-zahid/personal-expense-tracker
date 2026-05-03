@@ -1,3 +1,6 @@
+/**
+ * Page/Route: route.ts
+ */
 import { createClient } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 
@@ -15,3 +18,4 @@ export async function POST(request: Request) {
     status: 302,
   });
 }
+

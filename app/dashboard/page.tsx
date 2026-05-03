@@ -1,3 +1,6 @@
+/**
+ * Page/Route: page.tsx
+ */
 import { addExpense } from "@/actions/expense";
 import { addIncome } from "@/actions/income";
 import { formatCurrency } from "@/lib/currency";
@@ -247,3 +250,4 @@ export default async function DashboardPage(props: {
     </div>
   );
 }
+

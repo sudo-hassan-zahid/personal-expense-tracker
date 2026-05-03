@@ -1,3 +1,6 @@
+/**
+ * Utility/Hook: date-utils.ts
+ */
 import { format, addHours } from "date-fns";
 
 export const PKT_OFFSET = 5; // GMT+5
@@ -27,3 +30,4 @@ export function formatPKT(date: Date | string, formatStr: string = "yyyy-MM-dd")
 export function getTodayPKT() {
   return format(getCurrentPKTDate(), "yyyy-MM-dd");
 }
+

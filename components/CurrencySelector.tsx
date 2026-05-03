@@ -1,3 +1,6 @@
+/**
+ * Component: CurrencySelector.tsx
+ */
 "use client";
 
 import { SUPPORTED_CURRENCIES } from "@/lib/currency";
@@ -35,3 +38,4 @@ export function CurrencySelector({ currentCurrency }: { currentCurrency: string 
     </select>
   );
 }
+

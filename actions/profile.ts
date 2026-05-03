@@ -1,3 +1,6 @@
+/**
+ * Server actions for profile.ts
+ */
 "use server";
 
 import { createClient, getAuthenticatedClient } from "@/lib/supabase";
@@ -106,3 +109,4 @@ export async function updateProfile(formData: FormData) {
   revalidateTag("profile", { expire: 0 });
   revalidateTag("transactions", { expire: 0 });
 }
+

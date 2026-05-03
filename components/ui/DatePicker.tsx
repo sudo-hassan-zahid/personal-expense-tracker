@@ -1,3 +1,6 @@
+/**
+ * UI component: DatePicker.tsx
+ */
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -67,3 +70,4 @@ export function DatePicker({
     </div>
   );
 }
+

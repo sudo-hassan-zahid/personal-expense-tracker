@@ -1,3 +1,6 @@
+/**
+ * Page/Route: page.tsx
+ */
 import Link from "next/link";
 import { createClient } from "@/lib/supabase";
 import { redirect } from "next/navigation";
@@ -82,3 +85,4 @@ export default async function Home() {
     </div>
   );
 }
+

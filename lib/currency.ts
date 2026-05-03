@@ -1,4 +1,7 @@
 /**
+ * Utility/Hook: currency.ts
+ */
+/**
  * Custom display symbols for currencies where Intl.NumberFormat
  * doesn't output the commonly used symbol.
  * e.g., PKR outputs "PKR 15,000.00" but we want "Rs. 15,000.00"
@@ -60,3 +63,4 @@ export const SUPPORTED_CURRENCIES = [
   { code: "TRY", name: "Turkish Lira", symbol: "₺" },
   { code: "BDT", name: "Bangladeshi Taka", symbol: "৳" },
 ] as const;
+

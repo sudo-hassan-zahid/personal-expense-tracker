@@ -1,4 +1,7 @@
 /**
+ * Page/Route: loading.tsx
+ */
+/**
  * Dashboard loading skeleton for instant perceived performance.
  * Renders immediately while SSR data fetches happen in the background.
  */
@@ -76,3 +79,4 @@ export default function DashboardLoading() {
     </div>
   );
 }
+

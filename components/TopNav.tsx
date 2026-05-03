@@ -1,3 +1,6 @@
+/**
+ * Component: TopNav.tsx
+ */
 import { createClient } from "@/lib/supabase";
 import { TopNavClient } from "./TopNavClient";
 
@@ -8,3 +11,4 @@ export async function TopNav({ activeTheme }: { activeTheme: "light" | "dark" })
 
   return <TopNavClient user={user} activeTheme={activeTheme} />;
 }
+

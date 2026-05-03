@@ -1,3 +1,6 @@
+/**
+ * Page/Route: page.tsx
+ */
 import { createClient } from "@/lib/supabase";
 import { getProfile, updateProfile } from "@/actions/profile";
 import { ActionForm } from "@/components/ActionForm";
@@ -158,3 +161,4 @@ export default async function ProfilePage() {
     </div>
   );
 }
+

@@ -1,3 +1,6 @@
+/**
+ * Page/Route: route.ts
+ */
 import { createClient } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 
@@ -23,3 +26,4 @@ export async function GET(request: Request) {
   // If code exchange fails, redirect to login with error
   return NextResponse.redirect(`${origin}/login?error=Could not verify email`);
 }
+
