@@ -126,7 +126,8 @@ export function DashboardChart({
   }, [transactions, dateRange, filterType, filterCategory]);
 
   return (
-    <div className="w-full bg-(--color-surface-card-dark) p-6 md:p-8 rounded-2xl border border-(--color-hairline-on-dark) flex flex-col gap-8 shadow-2xl relative overflow-hidden animate-slide-up">
+    <div className="w-full bg-(--color-surface-card-dark) p-4 md:p-8 rounded-2xl border border-(--color-hairline-on-dark) flex flex-col gap-8 shadow-2xl relative overflow-hidden animate-slide-up">
+
       {/* Background glow effects */}
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-purple-500/10 rounded-full blur-[80px] pointer-events-none" />
