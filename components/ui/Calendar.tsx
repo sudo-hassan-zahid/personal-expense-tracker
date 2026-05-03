@@ -34,8 +34,9 @@ export function Calendar({
 
   return (
     <div
-      className={`bg-(--color-surface-card-dark) border border-(--color-hairline-on-dark) rounded-xl p-4 w-[300px] shadow-2xl ${className}`}
+      className={`bg-(--color-surface-card-dark) border border-(--color-hairline-on-dark) rounded-xl p-4 w-full max-w-[300px] shadow-2xl ${className}`}
     >
+
       <div className="flex items-center justify-between mb-4">
         <h4 className="text-body-md font-bold text-(--color-on-dark)">
           {format(currentMonth, "MMMM yyyy")}
@@ -78,7 +79,8 @@ export function Calendar({
               key={idx}
               onClick={() => onSelect(day)}
               className={`
-                h-9 w-9 rounded-lg flex items-center justify-center text-body-sm transition-all
+                h-8 md:h-9 w-8 md:w-9 rounded-lg flex items-center justify-center text-body-sm transition-all
+
                 ${!isCurrentMonth ? "text-(--color-muted) opacity-30" : "text-(--color-on-dark)"}
                 ${isSelected ? "bg-(--color-primary) text-white font-bold scale-110 shadow-lg shadow-blue-500/20" : "hover:bg-(--color-surface-elevated-dark)"}
                 ${isToday && !isSelected ? "ring-1 ring-(--color-primary) text-(--color-primary)" : ""}
