@@ -1,3 +1,6 @@
+/**
+ * Page/Route: actions.ts
+ */
 "use server";
 
 import { createClient } from "@/lib/supabase";
@@ -19,3 +22,4 @@ export async function login(formData: FormData) {
 
   redirect("/dashboard");
 }
+
