@@ -1,3 +1,6 @@
+/**
+ * Component: DeleteConfirmationModal.tsx
+ */
 "use client";
 
 import { AlertCircle } from "lucide-react";
@@ -55,3 +58,4 @@ export function DeleteConfirmationModal({
     </div>
   );
 }
+
