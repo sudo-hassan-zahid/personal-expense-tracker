@@ -1,3 +1,6 @@
+/**
+ * UI component: CursorTrail.tsx
+ */
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -121,3 +124,4 @@ export function CursorTrail() {
 
   return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-[9999]" />;
 }
+
