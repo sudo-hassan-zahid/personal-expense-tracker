@@ -5,10 +5,35 @@
 import { toast } from "sonner";
 import { ReactNode } from "react";
 import { useFormStatus } from "react-dom";
+import { LoadingSpinner } from "./ui/LoadingSpinner";
 
-function SubmitButton({ children }: { children: ReactNode }) {
+export function SubmitButton({
+  children,
+  className = "",
+  loadingText,
+}: {
+  children: ReactNode;
+  className?: string;
+  loadingText?: string;
+}) {
   const { pending } = useFormStatus();
-  return <div className={pending ? "opacity-50 pointer-events-none" : ""}>{children}</div>;
+
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className={`relative flex items-center justify-center gap-2 transition-all active:scale-95 disabled:pointer-events-none disabled:opacity-70 ${className}`}
+    >
+      {pending ? (
+        <>
+          <LoadingSpinner size={18} />
+          <span>{loadingText || "Processing..."}</span>
+        </>
+      ) : (
+        children
+      )}
+    </button>
+  );
 }
 
 export function ActionForm({
@@ -16,11 +41,13 @@ export function ActionForm({
   successMessage,
   children,
   className,
+  onSuccess,
 }: {
   action: (formData: FormData) => Promise<any>;
   successMessage: string;
   children: ReactNode;
   className?: string;
+  onSuccess?: () => void;
 }) {
   return (
     <form
@@ -31,6 +58,7 @@ export function ActionForm({
             toast.error((result as any).error);
           } else {
             toast.success(successMessage);
+            if (onSuccess) onSuccess();
           }
         } catch (error: any) {
           toast.error(error.message || "An error occurred");
@@ -38,7 +66,7 @@ export function ActionForm({
       }}
       className={className}
     >
-      <SubmitButton>{children}</SubmitButton>
+      {children}
     </form>
   );
 }

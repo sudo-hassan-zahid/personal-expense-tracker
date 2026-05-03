@@ -9,7 +9,7 @@ import { getDashboardData } from "@/lib/dashboard-data";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { CategorySelect } from "@/components/CategorySelect";
-import { ActionForm } from "@/components/ActionForm";
+import { ActionForm, SubmitButton } from "@/components/ActionForm";
 import { DashboardChart } from "@/components/DashboardChart";
 import { TransactionList } from "@/components/TransactionList";
 import { DatePicker } from "@/components/ui/DatePicker";
@@ -193,12 +193,12 @@ export default async function DashboardPage(props: {
                   placeholder="Optional note"
                 />
               </div>
-              <button
-                type="submit"
+              <SubmitButton
                 className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-md py-3 mt-2 hover:bg-(--color-primary-active) transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-(--color-primary)/20"
+                loadingText="Adding..."
               >
                 Add Expense
-              </button>
+              </SubmitButton>
             </ActionForm>
           </div>
 
@@ -237,12 +237,12 @@ export default async function DashboardPage(props: {
                   placeholder="Optional note"
                 />
               </div>
-              <button
-                type="submit"
+              <SubmitButton
                 className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-md py-3 mt-2 hover:bg-(--color-primary-active) transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-(--color-primary)/20"
+                loadingText="Adding..."
               >
                 Add Income
-              </button>
+              </SubmitButton>
             </ActionForm>
           </div>
         </div>

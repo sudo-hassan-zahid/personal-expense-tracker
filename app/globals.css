@@ -246,6 +246,22 @@
       transform: translateY(0);
     }
   }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+  }
   /* Premium Toast Refinements */
   .premium-toast {
     padding: 16px !important;
@@ -309,10 +325,11 @@
   }
 
   .animate-slide-up {
-    animation: slide-up 0.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: slide-up 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     opacity: 0;
     will-change: transform, opacity;
     transform: translateZ(0);
+    backface-visibility: hidden;
   }
 
   .stagger-1 {

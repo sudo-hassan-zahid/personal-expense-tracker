@@ -28,6 +28,9 @@ export const metadata: Metadata = {
 
 import { cookies } from "next/headers";
 
+import { ProgressBar } from "@/components/ui/ProgressBar";
+import { Suspense } from "react";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -44,6 +47,9 @@ export default async function RootLayout({
       <body
         className={`min-h-full flex flex-col bg-(--color-canvas-dark) text-(--color-body) animate-liquid relative ${themeClass}`}
       >
+        <Suspense fallback={null}>
+          <ProgressBar />
+        </Suspense>
         <div className="glow-mesh" />
         <LazyParticleBackground />
         {profile?.show_cursor_trail !== false && <LazyCursorTrail />}

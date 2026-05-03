@@ -3,7 +3,7 @@
  */
 import { createClient } from "@/lib/supabase";
 import { getProfile, updateProfile } from "@/actions/profile";
-import { ActionForm } from "@/components/ActionForm";
+import { ActionForm, SubmitButton } from "@/components/ActionForm";
 
 export default async function ProfilePage() {
   const supabase = await createClient();
@@ -150,12 +150,12 @@ export default async function ProfilePage() {
             </div>
           </div>
 
-          <button
-            type="submit"
+          <SubmitButton
             className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-md py-3 mt-4 hover:bg-(--color-primary-active) transition-colors"
+            loadingText="Saving Changes..."
           >
             Save Changes
-          </button>
+          </SubmitButton>
         </ActionForm>
       </div>
     </div>

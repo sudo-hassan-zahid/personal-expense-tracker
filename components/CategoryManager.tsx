@@ -5,7 +5,7 @@
 
 import { useState } from "react";
 import { addCategory, deleteCategory, updateCategory } from "@/actions/category";
-import { ActionForm } from "./ActionForm";
+import { ActionForm, SubmitButton } from "./ActionForm";
 import { Trash2, Edit2, Check, X, Plus, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { DeleteButton } from "./DeleteButton";
@@ -172,12 +172,12 @@ export function CategoryManager({
                   className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-lg px-4 py-2.5 text-body-md focus:border-(--color-primary) focus:outline-none transition-all"
                 />
               </div>
-              <button
-                type="submit"
+              <SubmitButton
                 className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-lg py-3 hover:bg-(--color-primary-active) transition-all shadow-lg shadow-blue-500/10"
+                loadingText="Creating..."
               >
                 Create Category
-              </button>
+              </SubmitButton>
             </ActionForm>
           </div>
         </div>

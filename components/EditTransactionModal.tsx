@@ -5,7 +5,7 @@
 
 import { useState } from "react";
 import { X, Save } from "lucide-react";
-import { ActionForm } from "./ActionForm";
+import { ActionForm, SubmitButton } from "./ActionForm";
 import { updateExpense, deleteExpense, addExpense } from "@/actions/expense";
 import { updateIncome, deleteIncome, addIncome } from "@/actions/income";
 import { CategorySelect, Category } from "./CategorySelect";
@@ -172,13 +172,13 @@ export function EditTransactionModal({
               </div>
             )}
 
-            <button
-              type="submit"
+            <SubmitButton
               className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-xl py-4 mt-2 flex items-center justify-center gap-2 hover:bg-(--color-primary-active) transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-(--color-primary)/20"
+              loadingText="Saving Changes..."
             >
               <Save size={18} />
               Save Changes
-            </button>
+            </SubmitButton>
           </ActionForm>
         </div>
       </div>
