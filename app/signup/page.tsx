@@ -1,3 +1,6 @@
+/**
+ * Page/Route: page.tsx
+ */
 import Link from "next/link";
 import { signup } from "./actions";
 
@@ -133,3 +136,4 @@ export default async function SignupPage(props: {
     </div>
   );
 }
+
