@@ -15,7 +15,8 @@ export function SortButton({ field }: { field: string }) {
         else params.set("sort", `${field}_desc`);
         router.push(`?${params.toString()}`, { scroll: false });
       }}
-      className={`text-xs ml-1 hover:text-(--color-on-dark) px-1 rounded ${currentSort?.startsWith(field) ? "text-(--color-primary)" : "text-(--color-muted)"}`}
+      className={`text-xs ml-1 hover:text-(--color-on-dark) px-2 md:px-1 py-1 md:py-0 rounded ${currentSort?.startsWith(field) ? "text-(--color-primary)" : "text-(--color-muted)"}`}
+
       title="Sort"
     >
       {isDesc ? "↓" : "↑"}

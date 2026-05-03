@@ -27,8 +27,9 @@ export function TransactionFilter({
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2">
       {isPending && <Loader2 size={16} className="animate-spin text-(--color-primary)" />}
+
 
       <select
         className={`bg-(--color-canvas-dark) text-(--color-on-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-1.5 text-body-sm focus:ring-1 focus:ring-(--color-primary) outline-none transition-all ${isPending ? "opacity-50" : ""}`}

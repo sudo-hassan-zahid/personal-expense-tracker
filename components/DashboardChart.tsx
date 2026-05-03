@@ -126,14 +126,15 @@ export function DashboardChart({
   }, [transactions, dateRange, filterType, filterCategory]);
 
   return (
-    <div className="w-full bg-(--color-surface-card-dark) p-6 md:p-8 rounded-2xl border border-(--color-hairline-on-dark) flex flex-col gap-8 shadow-2xl relative overflow-hidden animate-slide-up">
+    <div className="w-full bg-(--color-surface-card-dark) p-4 md:p-8 rounded-2xl border border-(--color-hairline-on-dark) flex flex-col gap-8 shadow-2xl relative overflow-hidden animate-slide-up">
+
       {/* Background glow effects */}
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-purple-500/10 rounded-full blur-[80px] pointer-events-none" />
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10 animate-slide-up stagger-1">
         <div>
-          <h2 className="text-[24px] tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 font-bold mb-1">
+          <h2 className="text-[20px] md:text-[24px] tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 font-bold mb-1">
             Dynamic Cashflow Analytics
           </h2>
           <p className="text-caption text-(--color-muted)">
@@ -184,7 +185,8 @@ export function DashboardChart({
         </div>
       </div>
 
-      <div className="h-[380px] w-full relative z-10 animate-slide-up stagger-2 min-h-0 min-w-0">
+      <div className="h-[280px] md:h-[380px] w-full relative z-10 animate-slide-up stagger-2 min-h-0 min-w-0">
+
         {chartData.length === 0 ? (
           <div className="h-full w-full flex flex-col items-center justify-center text-(--color-muted) text-body-md border border-dashed border-(--color-hairline-on-dark) rounded-xl bg-(--color-canvas-dark)/20">
             <div className="text-4xl mb-2 opacity-50">📊</div>
@@ -253,7 +255,9 @@ export function DashboardChart({
                   undefined,
                 ]}
               />
-              <Legend wrapperStyle={{ fontSize: "13px", paddingTop: "20px" }} iconType="circle" />
+              <Legend wrapperStyle={{ fontSize: "12px", paddingTop: "20px" }} iconType="circle" />
+
+
               {(filterType === "all" || filterType === "income") && (
                 <Area
                   type="monotone"

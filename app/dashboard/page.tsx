@@ -73,27 +73,29 @@ export default async function DashboardPage(props: {
   const isWideView = searchParams?.view === "wide";
 
   return (
-    <div className="w-full max-w-[1440px] mx-auto px-6 py-[40px] flex flex-col gap-8 flex-1">
+    <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 py-6 md:py-[40px] flex flex-col gap-6 md:gap-8 flex-1">
+
       {/* Top Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-(--color-surface-card-dark) p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-1">
-          <div className="text-body-md text-(--color-muted) mb-2">Net Balance</div>
-          <div className="text-number-display text-(--color-on-dark) text-center">
+        <div className="bg-(--color-surface-card-dark) p-4 md:p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-1">
+          <div className="text-body-sm md:text-body-md text-(--color-muted) mb-2">Net Balance</div>
+          <div className="text-display-sm md:text-number-display text-(--color-on-dark) text-center">
             {formatCurrency(netBalance, currency)}
           </div>
         </div>
-        <div className="bg-(--color-surface-card-dark) p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-2">
-          <div className="text-body-md text-(--color-muted) mb-2">Total Income</div>
-          <div className="text-number-display text-(--color-trading-up) text-center">
+        <div className="bg-(--color-surface-card-dark) p-4 md:p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-2">
+          <div className="text-body-sm md:text-body-md text-(--color-muted) mb-2">Total Income</div>
+          <div className="text-display-sm md:text-number-display text-(--color-trading-up) text-center">
             {formatCurrency(totalIncome, currency)}
           </div>
         </div>
-        <div className="bg-(--color-surface-card-dark) p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-3">
-          <div className="text-body-md text-(--color-muted) mb-2">Total Expenses</div>
-          <div className="text-number-display text-(--color-trading-down) text-center">
+        <div className="bg-(--color-surface-card-dark) p-4 md:p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-3">
+          <div className="text-body-sm md:text-body-md text-(--color-muted) mb-2">Total Expenses</div>
+          <div className="text-display-sm md:text-number-display text-(--color-trading-down) text-center">
             {formatCurrency(totalExpenses, currency)}
           </div>
         </div>
+
       </div>
 
       {/* Chart Section */}
@@ -107,8 +109,9 @@ export default async function DashboardPage(props: {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Col - 8 or 12 - Transactions Table */}
         <div
-          className={`${isWideView ? "lg:col-span-12" : "lg:col-span-8"} bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-6 animate-slide-up stagger-5 transition-all duration-300`}
+          className={`${isWideView ? "lg:col-span-12" : "lg:col-span-8"} bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-4 md:p-6 animate-slide-up stagger-5 transition-all duration-300`}
         >
+
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div className="flex items-center gap-4">
               <h2 className="text-title-lg text-(--color-on-dark)">Recent Transactions</h2>
@@ -154,7 +157,8 @@ export default async function DashboardPage(props: {
           className={`${isWideView ? "lg:col-span-12 grid grid-cols-1 md:grid-cols-2" : "lg:col-span-4 flex flex-col"} gap-6 animate-slide-up stagger-5 transition-all duration-300`}
         >
           {/* Add Expense Card */}
-          <div className="bg-(--color-surface-card-dark) rounded-xl p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
+          <div className="bg-(--color-surface-card-dark) rounded-xl p-4 md:p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
+
             <h2 className="text-title-md mb-4">Quick Add Expense</h2>
             <ActionForm
               action={addExpense}
@@ -198,7 +202,8 @@ export default async function DashboardPage(props: {
           </div>
 
           {/* Add Income Card */}
-          <div className="bg-(--color-surface-card-dark) rounded-xl p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
+          <div className="bg-(--color-surface-card-dark) rounded-xl p-4 md:p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
+
             <h2 className="text-title-md mb-4">Quick Add Income</h2>
             <ActionForm
               action={addIncome}
