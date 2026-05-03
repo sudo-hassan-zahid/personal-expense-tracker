@@ -1,3 +1,6 @@
+/**
+ * Component: TransactionList.tsx
+ */
 "use client";
 
 import { useState, useEffect, useMemo, memo } from "react";
@@ -466,3 +469,4 @@ export function TransactionList({
     </div>
   );
 }
+
