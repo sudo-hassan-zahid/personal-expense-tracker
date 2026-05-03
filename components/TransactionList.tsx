@@ -81,7 +81,7 @@ export function TransactionList({
     totalItems,
     totalPages,
     displayedTransactions,
-  } = useTransactions(initialTransactions, itemsPerPage);
+  } = useTransactions(initialTransactions, paginationEnabled ? itemsPerPage : 0);
 
   const [newlyAddedId, setNewlyAddedId] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
