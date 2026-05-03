@@ -1,3 +1,6 @@
+/**
+ * Utility/Hook: dashboard-data.ts
+ */
 import { createClient } from "@/lib/supabase";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import { getCurrentPKTDate } from "@/lib/date-utils";
@@ -68,3 +71,4 @@ export async function getDashboardData(cookieStore?: unknown) {
     profile: profileRes.data,
   };
 }
+
