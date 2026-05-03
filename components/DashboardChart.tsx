@@ -191,6 +191,7 @@ export const DashboardChart = memo(
           className="h-[280px] md:h-[380px] min-h-[280px] md:min-h-[380px] w-full relative z-10 animate-slide-up stagger-2 min-w-0"
           role="region"
           aria-label="Cashflow analytics chart"
+          title="Cashflow Analytics Chart"
         >
           {chartData.length === 0 ? (
             <div className="h-full w-full flex flex-col items-center justify-center text-(--color-muted) text-body-md border border-dashed border-(--color-hairline-on-dark) rounded-xl bg-(--color-canvas-dark)/20 animate-fade-in transition-all duration-500">
