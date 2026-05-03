@@ -99,6 +99,7 @@ export function CategorySelect({
               value={newCategoryName}
               onChange={(e) => setNewCategoryName(e.target.value)}
               placeholder="New category name"
+              title="New category name"
               className="flex-1 bg-transparent border border-(--color-primary) rounded-md px-3 py-2 text-body-md text-(--color-on-dark) focus:outline-none"
               autoFocus
               onKeyDown={(e) => {
