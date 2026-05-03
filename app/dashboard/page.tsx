@@ -157,7 +157,8 @@ export default async function DashboardPage(props: {
           className={`${isWideView ? "lg:col-span-12 grid grid-cols-1 md:grid-cols-2" : "lg:col-span-4 flex flex-col"} gap-6 animate-slide-up stagger-5 transition-all duration-300`}
         >
           {/* Add Expense Card */}
-          <div className="bg-(--color-surface-card-dark) rounded-xl p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
+          <div className="bg-(--color-surface-card-dark) rounded-xl p-4 md:p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
+
             <h2 className="text-title-md mb-4">Quick Add Expense</h2>
             <ActionForm
               action={addExpense}
