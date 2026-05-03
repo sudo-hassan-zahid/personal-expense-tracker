@@ -1,3 +1,6 @@
+/**
+ * Utility/Hook: supabase.ts
+ */
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
@@ -46,3 +49,4 @@ export async function getAuthenticatedClient() {
   }
   return { supabase, user };
 }
+
