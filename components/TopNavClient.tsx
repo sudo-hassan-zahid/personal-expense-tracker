@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "react-navigation"; // This is wrong, should be next/link
+import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 
