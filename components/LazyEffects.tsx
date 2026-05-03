@@ -1,3 +1,6 @@
+/**
+ * Component: LazyEffects.tsx
+ */
 "use client";
 
 import dynamic from "next/dynamic";
@@ -26,3 +29,4 @@ export function LazyParticleBackground() {
 export function LazyCursorTrail() {
   return <CursorTrailLazy />;
 }
+
