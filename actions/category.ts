@@ -5,6 +5,7 @@
 
 import { createClient, getAuthenticatedClient } from "@/lib/supabase";
 import { revalidateTag, revalidatePath } from "next/cache";
+import { revalidateAll } from "@/lib/revalidate";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
@@ -55,8 +56,7 @@ export async function addCategory(formData: FormData) {
     throw new Error("Failed to add category");
   }
 
-  revalidateTag("categories", { expire: 0 });
-  revalidatePath("/", "layout");
+  revalidateAll();
 }
 
 export async function updateCategory(id: string, name: string) {
@@ -96,9 +96,7 @@ export async function updateCategory(id: string, name: string) {
     }
   }
 
-  revalidateTag("categories", { expire: 0 });
-  revalidatePath("/", "layout");
-  revalidateTag("transactions", { expire: 0 });
+  revalidateAll();
 }
 
 export async function deleteCategory(id: string) {
@@ -145,7 +143,6 @@ export async function deleteCategory(id: string) {
     throw new Error("Failed to delete category");
   }
 
-  revalidateTag("categories", { expire: 0 });
-  revalidatePath("/", "layout");
+  revalidateAll();
 }
 
