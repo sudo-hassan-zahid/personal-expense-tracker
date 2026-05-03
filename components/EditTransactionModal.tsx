@@ -11,6 +11,7 @@ import { updateIncome, deleteIncome, addIncome } from "@/actions/income";
 import { Transaction, Category, Expense, Income } from "@/types";
 import { CategorySelect } from "./CategorySelect";
 import { DatePicker } from "./ui/DatePicker";
+import { HelpLabel, HelpTip } from "./HelpTip";
 
 
 /**
@@ -44,7 +45,12 @@ export function EditTransactionModal({
       {/* Modal */}
       <div className="relative w-full max-w-lg bg-(--color-surface-card-dark)/80 backdrop-blur-2xl border border-(--color-hairline-on-dark) rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
         <div className="flex items-center justify-between p-6 border-b border-(--color-hairline-on-dark)">
-          <h2 className="text-title-md text-(--color-on-dark)">Edit Transaction</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-title-md text-(--color-on-dark)">Edit Transaction</h2>
+            <HelpTip label="Edit transaction help">
+              Update the details for this record. Switching type moves it between income and expenses.
+            </HelpTip>
+          </div>
           <button
             onClick={onClose}
             className="p-2 text-(--color-muted) hover:text-(--color-on-dark) transition-colors"
@@ -81,7 +87,9 @@ export function EditTransactionModal({
           >
             {/* Type Switcher */}
             <div>
-              <label className="block text-body-sm mb-1 text-(--color-muted)">Type</label>
+              <HelpLabel help="Switches whether this record is treated as income or an expense." className="mb-1">
+                Type
+              </HelpLabel>
               <div className="flex gap-2 p-1 bg-(--color-canvas-dark)/50 rounded-lg border border-(--color-hairline-on-dark)">
                 <button
                   type="button"
@@ -102,7 +110,9 @@ export function EditTransactionModal({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-body-sm mb-1 text-(--color-muted)">Amount</label>
+                <HelpLabel help="The transaction value in your selected profile currency." className="mb-1">
+                  Amount
+                </HelpLabel>
                 <input
                   required
                   type="number"
@@ -113,7 +123,12 @@ export function EditTransactionModal({
                 />
               </div>
 
-              <DatePicker name="date" defaultValue={transaction.date.split("T")[0]} label="Date" />
+              <DatePicker
+                name="date"
+                defaultValue={transaction.date.split("T")[0]}
+                label="Date"
+                help="The day this transaction should appear under."
+              />
             </div>
 
             <CategorySelect
@@ -121,6 +136,11 @@ export function EditTransactionModal({
               type={type}
               name={type === "income" ? "source" : "category"}
               label={type === "income" ? "Source" : "Category"}
+              help={
+                type === "income"
+                  ? "Where the income came from, used for reports and filters."
+                  : "The spending bucket for this expense, used for reports and budgets."
+              }
               defaultValue={
                 type === transaction.type
                   ? type === "income"
@@ -131,7 +151,9 @@ export function EditTransactionModal({
             />
 
             <div>
-              <label className="block text-body-sm mb-1 text-(--color-muted)">Note</label>
+              <HelpLabel help="Optional description that also helps search results." className="mb-1">
+                Note
+              </HelpLabel>
               <input
                 type="text"
                 name="note"
@@ -142,7 +164,9 @@ export function EditTransactionModal({
 
             {showStatusTracking && (
               <div>
-                <label className="block text-body-sm mb-1 text-(--color-muted)">Status</label>
+                <HelpLabel help="Done counts in totals. Pending stays visible but is excluded from summaries." className="mb-1">
+                  Status
+                </HelpLabel>
                 <input type="hidden" name="status" value={status} />
                 <div className="flex gap-2 p-1 bg-(--color-canvas-dark)/50 rounded-lg border border-(--color-hairline-on-dark)">
                   <button
