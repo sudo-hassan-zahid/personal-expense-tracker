@@ -368,8 +368,12 @@ export function TransactionList({
         </div>
 
         {displayedTransactions.length === 0 && (
-          <div className="py-12 text-center text-body-md text-(--color-muted) bg-(--color-canvas-dark)/20 rounded-xl border border-dashed border-(--color-hairline-on-dark)">
-            No transactions found matching your criteria.
+          <div className="py-16 text-center text-body-md text-(--color-muted) bg-(--color-canvas-dark)/20 rounded-2xl border border-dashed border-(--color-hairline-on-dark) flex flex-col items-center gap-3 animate-fade-in">
+            <div className="w-12 h-12 rounded-full bg-(--color-surface-elevated-dark) flex items-center justify-center mb-2">
+              <Search size={24} className="opacity-20" />
+            </div>
+            <p className="font-medium">No transactions found</p>
+            <p className="text-caption opacity-70">Try adjusting your filters or search query.</p>
           </div>
         )}
 
