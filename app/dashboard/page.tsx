@@ -202,7 +202,8 @@ export default async function DashboardPage(props: {
           </div>
 
           {/* Add Income Card */}
-          <div className="bg-(--color-surface-card-dark) rounded-xl p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
+          <div className="bg-(--color-surface-card-dark) rounded-xl p-4 md:p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
+
             <h2 className="text-title-md mb-4">Quick Add Income</h2>
             <ActionForm
               action={addIncome}
