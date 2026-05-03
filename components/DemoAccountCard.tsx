@@ -97,7 +97,7 @@ export function DemoAccountCard() {
               title="Copy password"
             >
               {copiedPassword ? (
-                <span className="text-[10px] text-green-400 font-medium">Copied!</span>
+                <span className="text-[10px] text-green-400 font-medium animate-pulse">Copied!</span>
               ) : null}
               <svg
                 className={`w-3.5 h-3.5 ${copiedPassword ? "text-green-400" : ""}`}
