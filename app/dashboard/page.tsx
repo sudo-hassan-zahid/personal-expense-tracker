@@ -193,6 +193,19 @@ export default async function DashboardPage(props: {
                   placeholder="Optional note"
                 />
               </div>
+              {isStatusTrackingEnabled && (
+                <div>
+                  <label className="block text-body-sm mb-1 text-(--color-muted)">Status</label>
+                  <select
+                    name="status"
+                    defaultValue="done"
+                    className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none"
+                  >
+                    <option value="done">Done</option>
+                    <option value="pending">Pending</option>
+                  </select>
+                </div>
+              )}
               <SubmitButton
                 className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-md py-3 mt-2 hover:bg-(--color-primary-active) transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-(--color-primary)/20"
                 loadingText="Adding..."
@@ -237,6 +250,19 @@ export default async function DashboardPage(props: {
                   placeholder="Optional note"
                 />
               </div>
+              {isStatusTrackingEnabled && (
+                <div>
+                  <label className="block text-body-sm mb-1 text-(--color-muted)">Status</label>
+                  <select
+                    name="status"
+                    defaultValue="done"
+                    className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none"
+                  >
+                    <option value="done">Done</option>
+                    <option value="pending">Pending</option>
+                  </select>
+                </div>
+              )}
               <SubmitButton
                 className="w-full bg-(--color-primary) text-(--color-on-primary) text-button rounded-md py-3 mt-2 hover:bg-(--color-primary-active) transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-(--color-primary)/20"
                 loadingText="Adding..."
