@@ -8,7 +8,21 @@ export function DemoAccountCard() {
           <div className="w-full border-t border-(--color-hairline-on-dark)" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="bg-(--color-canvas-dark) px-4 text-(--color-muted) font-medium">
+          <span className="bg-(--color-canvas-dark) px-4 text-(--color-muted) font-medium flex items-center gap-2">
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
+            </svg>
             Try Demo Account
           </span>
         </div>
