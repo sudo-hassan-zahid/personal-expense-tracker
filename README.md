@@ -14,13 +14,13 @@ Live Demo: [https://expense-tracker-by-hassan.vercel.app](https://expense-tracke
 
 ## Tech Stack
 
-Framework: Next.js (App Router)
-Package Manager: pnpm
-Backend & Auth: Supabase (PostgreSQL + Auth)
-Styling: Tailwind CSS v4
-Icons: Lucide React
-Date Parsing: Date-fns
-Formatting: Prettier
+- **Framework**: Next.js (App Router)
+- **Package Manager**: pnpm
+- **Backend & Auth**: Supabase (PostgreSQL + Auth)
+- **Styling**: Tailwind CSS v4
+- **Icons**: Lucide React
+- **Date Parsing**: Date-fns
+- **Formatting**: Prettier
 
 ## Code Formatting
 
@@ -48,7 +48,7 @@ pnpm install
 
 ### 2. Configure Environment Variables
 
-Create a .env.local file in the root directory (you can copy from .env.example):
+Create a `.env.local` file in the root directory (you can copy from `.env.example`):
 
 ```bash
 cp .env.example .env.local
@@ -78,9 +78,9 @@ pnpm run dev
 
 ### 5. Test the Application
 
-Open http://localhost:3000 in your browser.
+Open `http://localhost:3000` in your browser.
 
 1. Click Sign Up to create an account.
-2. Observe how the Next.js middleware.ts automatically redirects you to the /dashboard.
+2. Observe how the Next.js middleware.ts automatically redirects you to the `/dashboard.`
 3. Quick-add an Income and Expense using the forms on the right.
 4. Try filtering transactions using the dropdown in the Recent Transactions table.
