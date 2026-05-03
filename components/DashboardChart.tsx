@@ -202,115 +202,117 @@ export const DashboardChart = memo(
               No data for selected filters.
             </div>
           ) : isMounted ? (
-            {/* 
-              ResponsiveContainer is wrapped in a div with fixed height to prevent 
-              the 'width(-1) and height(-1)' warning. Added minWidth/minHeight 
-              and debounce to ensure stable rendering during layout transitions.
-            */}
-            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0} debounce={50}>
-              <AreaChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.5} />
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.5} />
-                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid
-                  strokeDasharray="4 4"
-                  vertical={false}
-                  stroke="var(--color-hairline-on-dark)"
-                  opacity={0.4}
-                />
-                <XAxis
-                  dataKey="displayDate"
-                  stroke="var(--color-muted)"
-                  fontSize={12}
-                  tickLine={false}
-                  axisLine={false}
-                  dy={15}
-                  tick={{ fill: "var(--color-muted)" }}
-                />
-                <YAxis
-                  stroke="var(--color-muted)"
-                  fontSize={12}
-                  tickLine={false}
-                  axisLine={false}
-                  tickFormatter={(val) => compactNumberFormatter.format(val)}
-                  dx={-10}
-                  tick={{ fill: "var(--color-muted)" }}
-                />
-
-                <Tooltip
-                  cursor={{
-                    stroke: "var(--color-primary)",
-                    strokeWidth: 1,
-                    strokeDasharray: "4 4",
-                    fill: "transparent",
-                  }}
-                  contentStyle={{
-                    backgroundColor: "rgba(23, 23, 23, 0.85)",
-                    border: "1px solid var(--color-hairline-on-dark)",
-                    borderRadius: "12px",
-                    boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
-                    backdropFilter: "blur(12px)",
-                  }}
-                  itemStyle={{ fontWeight: 600 }}
-                  labelStyle={{ color: "var(--color-muted)", marginBottom: "4px" }}
-                  formatter={(value: any) => [
-                    formatCurrency(Number(value) || 0, currency),
-                    undefined,
-                  ]}
-                />
-                <Legend wrapperStyle={{ fontSize: "12px", paddingTop: "20px" }} iconType="circle" />
-
-                {(filterType === "all" || filterType === "income") && (
-                  <Area
-                    type="monotone"
-                    dataKey="income"
-                    stroke="#10b981"
-                    strokeWidth={3}
-                    fillOpacity={1}
-                    fill="url(#colorIncome)"
-                    name="Income"
-                    activeDot={{
-                      r: 6,
-                      strokeWidth: 2,
-                      stroke: "#10b981",
-                      fill: "var(--color-canvas-dark)",
-                    }}
-                    isAnimationActive={true}
-                    animationDuration={500}
-                    animationBegin={100}
-                    animationEasing="ease-in-out"
+            <>
+              {/* 
+                ResponsiveContainer is wrapped in a div with fixed height to prevent 
+                the 'width(-1) and height(-1)' warning. Added minWidth/minHeight 
+                and debounce to ensure stable rendering during layout transitions.
+              */}
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0} debounce={50}>
+                <AreaChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.5} />
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.5} />
+                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid
+                    strokeDasharray="4 4"
+                    vertical={false}
+                    stroke="var(--color-hairline-on-dark)"
+                    opacity={0.4}
                   />
-                )}
-                {(filterType === "all" || filterType === "expense") && (
-                  <Area
-                    type="monotone"
-                    dataKey="expense"
-                    stroke="#ef4444"
-                    strokeWidth={3}
-                    fillOpacity={1}
-                    fill="url(#colorExpense)"
-                    name="Expense"
-                    activeDot={{
-                      r: 6,
-                      strokeWidth: 2,
-                      stroke: "#ef4444",
-                      fill: "var(--color-canvas-dark)",
-                    }}
-                    isAnimationActive={true}
-                    animationDuration={500}
-                    animationBegin={200}
-                    animationEasing="ease-in-out"
+                  <XAxis
+                    dataKey="displayDate"
+                    stroke="var(--color-muted)"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                    dy={15}
+                    tick={{ fill: "var(--color-muted)" }}
                   />
-                )}
-              </AreaChart>
-            </ResponsiveContainer>
+                  <YAxis
+                    stroke="var(--color-muted)"
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(val) => compactNumberFormatter.format(val)}
+                    dx={-10}
+                    tick={{ fill: "var(--color-muted)" }}
+                  />
+  
+                  <Tooltip
+                    cursor={{
+                      stroke: "var(--color-primary)",
+                      strokeWidth: 1,
+                      strokeDasharray: "4 4",
+                      fill: "transparent",
+                    }}
+                    contentStyle={{
+                      backgroundColor: "rgba(23, 23, 23, 0.85)",
+                      border: "1px solid var(--color-hairline-on-dark)",
+                      borderRadius: "12px",
+                      boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+                      backdropFilter: "blur(12px)",
+                    }}
+                    itemStyle={{ fontWeight: 600 }}
+                    labelStyle={{ color: "var(--color-muted)", marginBottom: "4px" }}
+                    formatter={(value: any) => [
+                      formatCurrency(Number(value) || 0, currency),
+                      undefined,
+                    ]}
+                  />
+                  <Legend wrapperStyle={{ fontSize: "12px", paddingTop: "20px" }} iconType="circle" />
+  
+                  {(filterType === "all" || filterType === "income") && (
+                    <Area
+                      type="monotone"
+                      dataKey="income"
+                      stroke="#10b981"
+                      strokeWidth={3}
+                      fillOpacity={1}
+                      fill="url(#colorIncome)"
+                      name="Income"
+                      activeDot={{
+                        r: 6,
+                        strokeWidth: 2,
+                        stroke: "#10b981",
+                        fill: "var(--color-canvas-dark)",
+                      }}
+                      isAnimationActive={true}
+                      animationDuration={500}
+                      animationBegin={100}
+                      animationEasing="ease-in-out"
+                    />
+                  )}
+                  {(filterType === "all" || filterType === "expense") && (
+                    <Area
+                      type="monotone"
+                      dataKey="expense"
+                      stroke="#ef4444"
+                      strokeWidth={3}
+                      fillOpacity={1}
+                      fill="url(#colorExpense)"
+                      name="Expense"
+                      activeDot={{
+                        r: 6,
+                        strokeWidth: 2,
+                        stroke: "#ef4444",
+                        fill: "var(--color-canvas-dark)",
+                      }}
+                      isAnimationActive={true}
+                      animationDuration={500}
+                      animationBegin={200}
+                      animationEasing="ease-in-out"
+                    />
+                  )}
+                </AreaChart>
+              </ResponsiveContainer>
+            </>
           ) : (
             <div className="h-full w-full bg-(--color-canvas-dark)/10 animate-pulse rounded-xl" />
           )}
