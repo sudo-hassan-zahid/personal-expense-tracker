@@ -1,3 +1,6 @@
+/**
+ * UI component: ParticleBackground.tsx
+ */
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -205,3 +208,4 @@ export function ParticleBackground() {
 
   return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0 opacity-40" />;
 }
+
