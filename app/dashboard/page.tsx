@@ -46,11 +46,17 @@ export default async function DashboardPage(props: {
 
   const netBalance = totalIncome - totalExpenses;
 
-  // Combine transactions
-  const allTransactions = [
+  // Combine and Filter transactions
+  let filteredTransactions = [
     ...expenses.map((e: any) => ({ ...e, type: "expense" as const })),
     ...incomes.map((i: any) => ({ ...i, type: "income" as const })),
-  ].sort((a, b) => {
+  ];
+
+  if (filterType && filterType !== "all") {
+    filteredTransactions = filteredTransactions.filter((t) => t.type === filterType);
+  }
+
+  const allTransactions = filteredTransactions.sort((a, b) => {
     const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
     if (dateDiff !== 0) return dateDiff;
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();

@@ -100,6 +100,14 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
     });
   }, [filteredTransactions, sortField, sortOrder]);
 
+  const totalPages = initialItemsPerPage > 0 ? Math.ceil(sortedTransactions.length / initialItemsPerPage) : 1;
+  const displayedTransactions = initialItemsPerPage > 0
+    ? sortedTransactions.slice(
+      (currentPage - 1) * initialItemsPerPage,
+      currentPage * initialItemsPerPage
+    )
+    : sortedTransactions;
+
   return {
     search,
     setSearch,
@@ -119,10 +127,8 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
     setEndDate,
     sortedTransactions,
     totalItems: filteredTransactions.length,
-    totalPages: Math.ceil(sortedTransactions.length / initialItemsPerPage),
-    displayedTransactions: sortedTransactions.slice(
-      (currentPage - 1) * initialItemsPerPage,
-      currentPage * initialItemsPerPage
-    ),
+    totalPages,
+    displayedTransactions,
   };
 }
+
