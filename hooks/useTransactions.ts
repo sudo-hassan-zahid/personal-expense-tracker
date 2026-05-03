@@ -100,13 +100,15 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
     });
   }, [filteredTransactions, sortField, sortOrder]);
 
-  const totalPages = initialItemsPerPage > 0 ? Math.ceil(sortedTransactions.length / initialItemsPerPage) : 1;
-  const displayedTransactions = initialItemsPerPage > 0
-    ? sortedTransactions.slice(
-      (currentPage - 1) * initialItemsPerPage,
-      currentPage * initialItemsPerPage
-    )
-    : sortedTransactions;
+  const totalPages =
+    initialItemsPerPage > 0 ? Math.ceil(sortedTransactions.length / initialItemsPerPage) : 1;
+  const displayedTransactions =
+    initialItemsPerPage > 0
+      ? sortedTransactions.slice(
+          (currentPage - 1) * initialItemsPerPage,
+          currentPage * initialItemsPerPage
+        )
+      : sortedTransactions;
 
   return {
     search,
@@ -131,4 +133,3 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
     displayedTransactions,
   };
 }
-

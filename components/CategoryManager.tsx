@@ -191,8 +191,11 @@ export function CategoryManager({
               <div>
                 <h3 className="text-title-md text-(--color-on-dark) mb-2">Delete Category?</h3>
                 <p className="text-body-sm text-(--color-muted)">
-                  Are you sure you want to delete <span className="text-(--color-on-dark) font-semibold">"{categoryToDelete.name}"</span>?
-                  This will also affect transactions using this category.
+                  Are you sure you want to delete{" "}
+                  <span className="text-(--color-on-dark) font-semibold">
+                    "{categoryToDelete.name}"
+                  </span>
+                  ? This will also affect transactions using this category.
                 </p>
               </div>
               <div className="flex w-full gap-3 mt-4">

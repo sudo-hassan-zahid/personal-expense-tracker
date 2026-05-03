@@ -20,6 +20,7 @@ export default async function DashboardPage(props: {
   // searchParams is dynamic — must be outside of 'use cache'
   const searchParams = await props.searchParams;
   const filterType = searchParams?.type as string | undefined;
+  const filterStatus = searchParams?.status as string | undefined;
 
   // Get cookies outside of 'use cache' scope
   const cookieStore = await cookies();
@@ -54,6 +55,12 @@ export default async function DashboardPage(props: {
 
   if (filterType && filterType !== "all") {
     filteredTransactions = filteredTransactions.filter((t) => t.type === filterType);
+  }
+
+  if (filterStatus && filterStatus !== "all") {
+    filteredTransactions = filteredTransactions.filter(
+      (t) => (t.status || "done") === filterStatus
+    );
   }
 
   const allTransactions = filteredTransactions.sort((a, b) => {
@@ -123,7 +130,11 @@ export default async function DashboardPage(props: {
                 )}
               </Link>
             </div>
-            <TransactionFilter defaultType={filterType || "all"} />
+            <TransactionFilter
+              defaultType={filterType || "all"}
+              defaultStatus={filterStatus || "all"}
+              showStatusFilter={isStatusTrackingEnabled}
+            />
           </div>
 
           <TransactionList
