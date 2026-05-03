@@ -1,3 +1,6 @@
+/**
+ * Server actions for expense.ts
+ */
 "use server";
 
 import { createClient, getAuthenticatedClient } from "@/lib/supabase";
@@ -72,3 +75,4 @@ export async function updateExpense(id: string, formData: FormData) {
 
   revalidateTag("transactions", { expire: 0 });
 }
+
