@@ -254,7 +254,8 @@ export function DashboardChart({
                   undefined,
                 ]}
               />
-              <Legend wrapperStyle={{ fontSize: "13px", paddingTop: "20px" }} iconType="circle" />
+              <Legend wrapperStyle={{ fontSize: "11px", md: { fontSize: "13px" }, paddingTop: "20px" }} iconType="circle" />
+
               {(filterType === "all" || filterType === "income") && (
                 <Area
                   type="monotone"
