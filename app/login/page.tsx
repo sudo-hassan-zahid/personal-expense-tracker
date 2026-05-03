@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { login } from "./actions";
+import { DemoAccountCard } from "@/components/DemoAccountCard";
 
 export default async function LoginPage(props: {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
