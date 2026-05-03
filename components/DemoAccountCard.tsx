@@ -20,6 +20,12 @@ export function DemoAccountCard() {
           </span>
           <span className="text-body-sm text-(--color-on-dark)">demo@test.com</span>
         </div>
+        <div className="glass-dark rounded-xl p-4 border border-(--color-hairline-on-dark) flex flex-col gap-1">
+          <span className="text-[10px] uppercase tracking-wider text-(--color-muted) font-semibold">
+            Password
+          </span>
+          <span className="text-body-sm text-(--color-on-dark)">12345678</span>
+        </div>
       </div>
     </div>
   );
