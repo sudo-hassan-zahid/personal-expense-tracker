@@ -37,8 +37,9 @@ export function PaginationControls({
         Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
         {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center justify-center gap-4">
         <div className="flex items-center gap-2">
+
           <span className="text-caption text-(--color-muted)">Per page:</span>
           <select
             value={itemsPerPage}
