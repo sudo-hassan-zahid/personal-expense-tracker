@@ -58,7 +58,7 @@ export async function getDashboardData(cookieStore?: unknown) {
       .order("name", { ascending: true }),
     supabase
       .from("profiles")
-      .select("id, currency, pagination_enabled, enable_status_tracking")
+      .select("id, currency, pagination_enabled, enable_status_tracking, theme, show_cursor_trail, name")
       .eq("id", userId)
       .maybeSingle(),
   ]);

@@ -113,23 +113,13 @@ const TransactionRow = memo(
           <div className="text-number-sm text-(--color-muted) truncate">
             {format(new Date(t.date), "MMM d, yyyy")}
           </div>
-          <div className="flex items-center gap-3">
-            <div className="text-body-sm capitalize flex justify-center">
-              <span
-                className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.type === "income" ? "bg-green-500/10 text-green-500 border border-green-500/20" : "bg-red-500/10 text-red-500 border border-red-500/20"}`}
-              >
-                {t.type}
-              </span>
-            </div>
-            {enableStatusTracking && (
-              <div className="text-center">
-                <span
-                  className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.status === "done" ? "bg-green-500/10 text-green-500 border border-green-500/20" : "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"}`}
-                >
-                  {t.status || "done"}
-                </span>
-              </div>
-            )}
+
+          <div className="text-body-sm capitalize flex justify-center">
+            <span
+              className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.type === "income" ? "bg-green-500/10 text-green-500 border border-green-500/20" : "bg-red-500/10 text-red-500 border border-red-500/20"}`}
+            >
+              {t.type}
+            </span>
           </div>
 
           <div
@@ -138,6 +128,18 @@ const TransactionRow = memo(
             {t.type === "income" ? "+" : "-"}
             {formatCurrency(Number(t.amount), currency).replace(/^[^\d]*/, "")}
           </div>
+
+          {enableStatusTracking ? (
+            <div className="text-center">
+              <span
+                className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.status === "done" ? "bg-green-500/10 text-green-500 border border-green-500/20" : "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"}`}
+              >
+                {t.status || "done"}
+              </span>
+            </div>
+          ) : (
+            <div className="hidden md:block" />
+          )}
 
           <div className="text-right flex justify-end gap-1 pr-2">
             <button
