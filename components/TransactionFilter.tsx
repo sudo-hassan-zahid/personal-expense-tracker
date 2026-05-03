@@ -3,11 +3,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { Loader2 } from "lucide-react";
 
-export function TransactionFilter({ 
-  defaultType, 
+export function TransactionFilter({
+  defaultType,
   defaultStatus,
-  showStatusFilter = false 
-}: { 
+  showStatusFilter = false,
+}: {
   defaultType: string;
   defaultStatus?: string;
   showStatusFilter?: boolean;
@@ -20,7 +20,7 @@ export function TransactionFilter({
     const params = new URLSearchParams(searchParams.toString());
     if (value === "all") params.delete(key);
     else params.set(key, value);
-    
+
     startTransition(() => {
       router.push(`?${params.toString()}`, { scroll: false });
     });
@@ -29,7 +29,7 @@ export function TransactionFilter({
   return (
     <div className="flex items-center gap-2">
       {isPending && <Loader2 size={16} className="animate-spin text-(--color-primary)" />}
-      
+
       <select
         className={`bg-(--color-canvas-dark) text-(--color-on-dark) border border-(--color-hairline-on-dark) rounded-lg px-3 py-1.5 text-body-sm focus:ring-1 focus:ring-(--color-primary) outline-none transition-all ${isPending ? "opacity-50" : ""}`}
         defaultValue={defaultType}
