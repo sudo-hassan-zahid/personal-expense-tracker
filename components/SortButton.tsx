@@ -1,3 +1,6 @@
+/**
+ * Component: SortButton.tsx
+ */
 "use client";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -22,3 +25,4 @@ export function SortButton({ field }: { field: string }) {
     </button>
   );
 }
+
