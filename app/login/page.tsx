@@ -107,6 +107,8 @@ export default async function LoginPage(props: {
               </Link>
             </div>
           </div>
+
+          <DemoAccountCard />
         </div>
       </div>
     </div>
