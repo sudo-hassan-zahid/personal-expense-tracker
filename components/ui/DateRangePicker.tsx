@@ -1,3 +1,6 @@
+/**
+ * UI component: DateRangePicker.tsx
+ */
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -73,3 +76,4 @@ export function DateRangePicker({
     </div>
   );
 }
+
