@@ -26,19 +26,8 @@ import { DateRangePicker } from "./ui/DateRangePicker";
 import { toast } from "sonner";
 import { useTransactions } from "@/hooks/useTransactions";
 import { EditTransactionModal } from "./EditTransactionModal";
-import { Category } from "./CategorySelect";
+import { Transaction, Category } from "@/types";
 
-interface Transaction {
-  id: string;
-  amount: number | string;
-  category?: string;
-  source?: string;
-  date: string;
-  note: string;
-  type: "expense" | "income";
-  status?: string;
-  created_at: string;
-}
 
 // Memoized Row Component for maximum performance
 const TransactionRow = memo(
@@ -172,7 +161,8 @@ export function TransactionList({
   expenseCategories,
   incomeCategories,
   enableStatusTracking,
-  onOptimisticDelete?: (id: string) => void;
+  isWideView = false,
+  onOptimisticDelete,
 }: {
   initialTransactions: Transaction[];
   currency: string;

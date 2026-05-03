@@ -7,16 +7,17 @@ import { addExpense } from "@/actions/expense";
 import { addIncome } from "@/actions/income";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { CategorySelect, Category } from "./CategorySelect";
+import { CategorySelect } from "./CategorySelect";
 import { ActionForm, SubmitButton } from "./ActionForm";
 import { DashboardChart } from "./DashboardChart";
 import { TransactionList } from "./TransactionList";
 import { DatePicker } from "./ui/DatePicker";
 import { TransactionFilter } from "./TransactionFilter";
+import { Transaction, Expense, Income, Category } from "@/types";
 
 interface DashboardContentProps {
-  expenses: any[];
-  incomes: any[];
+  expenses: Expense[];
+  incomes: Income[];
   expenseCategories: Category[];
   incomeCategories: Category[];
   profile: any;
@@ -27,7 +28,7 @@ interface DashboardContentProps {
   filterType?: string;
   filterStatus?: string;
   isWideView: boolean;
-  searchParams: any;
+  searchParams: Record<string, string | string[] | undefined>;
 }
 
 export function DashboardContent({
@@ -142,7 +143,16 @@ export function DashboardContent({
             <div className="flex items-center gap-4">
               <h2 className="text-title-lg text-(--color-on-dark)">Recent Transactions</h2>
               <Link
-                href={`/dashboard?${new URLSearchParams({ ...Object.fromEntries(Object.entries(searchParams || {})), view: isWideView ? "standard" : "wide" }).toString()}`}
+                href={`/dashboard?${(() => {
+                  const params = new URLSearchParams();
+                  if (searchParams) {
+                    Object.entries(searchParams).forEach(([key, value]) => {
+                      if (value) params.set(key, Array.isArray(value) ? value[0] : value);
+                    });
+                  }
+                  params.set("view", isWideView ? "standard" : "wide");
+                  return params.toString();
+                })()}`}
                 className="p-2 hover:bg-(--color-canvas-dark) rounded-lg transition-colors text-(--color-muted) hover:text-(--color-on-dark) border border-transparent hover:border-(--color-hairline-on-dark)"
                 title={isWideView ? "Standard View" : "Expand Table"}
               >

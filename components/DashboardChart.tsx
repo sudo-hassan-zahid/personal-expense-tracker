@@ -17,17 +17,7 @@ import {
 import { format, parseISO, eachDayOfInterval, startOfMonth, startOfDay, endOfDay } from "date-fns";
 import { formatCurrency } from "@/lib/currency";
 import { DateRangePicker } from "./ui/DateRangePicker";
-
-type Transaction = {
-  id: string;
-  amount: number | string;
-  date: string;
-  type: "income" | "expense";
-  note?: string;
-  category?: string;
-  source?: string;
-  status?: string;
-};
+import { Transaction } from "@/types";
 
 const compactNumberFormatter = new Intl.NumberFormat("en-US", {
   notation: "compact",

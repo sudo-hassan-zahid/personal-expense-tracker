@@ -8,19 +8,10 @@ import { X, Save } from "lucide-react";
 import { ActionForm, SubmitButton } from "./ActionForm";
 import { updateExpense, deleteExpense, addExpense } from "@/actions/expense";
 import { updateIncome, deleteIncome, addIncome } from "@/actions/income";
-import { CategorySelect, Category } from "./CategorySelect";
+import { Transaction, Category, Expense, Income } from "@/types";
+import { CategorySelect } from "./CategorySelect";
 import { DatePicker } from "./ui/DatePicker";
 
-interface Transaction {
-  id: string;
-  amount: number | string;
-  category?: string;
-  source?: string;
-  date: string;
-  note: string;
-  type: "expense" | "income";
-  status?: string;
-}
 
 /**
  * Modal component for editing an existing transaction (expense or income).
@@ -133,8 +124,8 @@ export function EditTransactionModal({
               defaultValue={
                 type === transaction.type
                   ? type === "income"
-                    ? transaction.source
-                    : transaction.category
+                    ? (transaction as Income).source
+                    : (transaction as Expense).category
                   : ""
               }
             />
