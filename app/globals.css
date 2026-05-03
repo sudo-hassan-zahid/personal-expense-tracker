@@ -56,6 +56,11 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    background-color: var(--color-canvas-dark);
+  }
+
   body {
     background-color: var(--color-canvas-dark);
     color: var(--color-body);
@@ -63,6 +68,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color-scheme: dark;
+    min-height: 100vh;
   }
 
   h1,
@@ -361,7 +367,9 @@
       var(--bg-liquid-3)
     );
     background-size: 400% 400%;
+    background-attachment: fixed;
     animation: liquid-glow 15s ease infinite;
+    will-change: background-position;
   }
 
   .glow-mesh {
