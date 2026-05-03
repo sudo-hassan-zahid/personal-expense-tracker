@@ -4,7 +4,7 @@
 "use server";
 
 import { createClient, getAuthenticatedClient } from "@/lib/supabase";
-import { revalidateTag } from "next/cache";
+import { revalidateTag, revalidatePath } from "next/cache";
 
 /**
  * Adds a new expense record to the database.
@@ -32,6 +32,7 @@ export async function addExpense(formData: FormData) {
   }
 
   revalidateTag("transactions", { expire: 0 });
+  revalidatePath("/", "layout");
 }
 
 /**
@@ -48,6 +49,7 @@ export async function deleteExpense(id: string) {
   }
 
   revalidateTag("transactions", { expire: 0 });
+  revalidatePath("/", "layout");
 }
 
 /**
@@ -74,5 +76,6 @@ export async function updateExpense(id: string, formData: FormData) {
   }
 
   revalidateTag("transactions", { expire: 0 });
+  revalidatePath("/", "layout");
 }
 
