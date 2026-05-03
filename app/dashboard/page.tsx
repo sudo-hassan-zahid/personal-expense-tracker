@@ -1,7 +1,6 @@
-import { createClient } from "@/lib/supabase";
 import { getDashboardData } from "@/lib/dashboard-data";
-import { cookies } from "next/headers";
 import { DashboardContent } from "@/components/DashboardContent";
+import { getRequestAuth } from "@/lib/request-data";
 
 export default async function DashboardPage(props: {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -11,12 +10,7 @@ export default async function DashboardPage(props: {
   const filterType = searchParams?.type as string | undefined;
   const filterStatus = searchParams?.status as string | undefined;
 
-  // Get cookies outside of 'use cache' scope
-  const cookieStore = await cookies();
-  const allCookies = cookieStore.getAll();
-
-  const supabase = await createClient(allCookies);
-  const { data: { user } } = await supabase.auth.getUser();
+  const { allCookies, user } = await getRequestAuth();
   const userId = user?.id ?? "";
 
   // Cached data fetching — all 5 queries run in parallel, result is cached

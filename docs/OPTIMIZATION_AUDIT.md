@@ -19,6 +19,9 @@ Branch: `optimize/prod-performance-pass`
 - The homepage repeated an auth lookup that proxy already needed for signed-in redirects.
 - Recharts emitted `width(-1)` / `height(-1)` warnings before the responsive container measured.
 - Next dev warned that `.next/dev` was on a slow filesystem under `J:`.
+- Layout, top navigation, and dashboard rendering repeated authenticated user/profile lookups during the same request.
+- Dashboard Supabase reads relied on RLS without explicit `user_id` filters, leaving query intent less aligned with user-scoped indexes.
+- Decorative visual effects were dynamically imported but still requested immediately after hydration.
 
 ## Prod-Grade Practices Applied
 
@@ -49,6 +52,9 @@ Branch: `optimize/prod-performance-pass`
 - Moved signed-in homepage redirects into proxy and removed the duplicate homepage auth call.
 - Added a proxy no-cookie fast path for public routes and protected-route redirects.
 - Set Recharts `initialDimension` to avoid negative first-measure warnings.
+- Added request-scoped auth/profile helpers so layout, navigation, and dashboard rendering share the same server auth result.
+- Added explicit `user_id` predicates to dashboard expense, income, and category queries to match composite indexes.
+- Idle-gated particle and cursor effect loading, with reduced-motion and pointer checks, so decorative client chunks wait until after first interaction-critical work.
 
 ## Remaining Opportunities
 

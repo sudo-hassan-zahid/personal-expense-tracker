@@ -7,6 +7,7 @@ import { createClient, getAuthenticatedClient } from "@/lib/supabase";
 import { cookies } from "next/headers";
 import { revalidateProfile } from "@/lib/revalidate";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { getRequestAuth, getRequestProfile } from "@/lib/request-data";
 
 type ProfileUpdate = {
   name: string;
@@ -34,11 +35,15 @@ function hasSupabaseAuthCookie(allCookies: { name: string }[]) {
  * @returns The profile object or null if not found.
  */
 export async function getProfile(client?: SupabaseClient) {
+  if (!client) {
+    return getRequestProfile();
+  }
+
   const cookieStore = await cookies();
   const allCookies = cookieStore.getAll();
   if (!hasSupabaseAuthCookie(allCookies)) return null;
 
-  const supabase = client || (await createClient(allCookies));
+  const supabase = client;
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -52,6 +57,11 @@ export async function getProfile(client?: SupabaseClient) {
  * Inner function to fetch profile data directly from DB.
  */
 async function fetchProfile(userId: string, cookieStore?: unknown) {
+  if (!cookieStore) {
+    const { allCookies } = await getRequestAuth();
+    cookieStore = allCookies;
+  }
+
   const supabase = await createClient(cookieStore);
   const { data, error } = await supabase
     .from("profiles")

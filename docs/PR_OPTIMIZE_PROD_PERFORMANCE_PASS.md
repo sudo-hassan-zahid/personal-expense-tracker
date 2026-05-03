@@ -21,6 +21,9 @@ This branch performs a production-grade optimization pass over the personal expe
 - Dynamically loaded the Recharts dashboard chart.
 - Added stable Recharts initial dimensions to avoid `width(-1)` / `height(-1)` warnings.
 - Paused decorative particle rendering for reduced-motion users and hidden tabs.
+- Shared request-scoped auth/profile data across layout, top nav, and dashboard rendering.
+- Added explicit user-scoped dashboard filters so Supabase queries line up with composite indexes.
+- Deferred decorative particle/cursor chunks until browser idle, skipping cursor effects on non-pointer devices.
 - Added composite query-pattern indexes for dashboard ordering and category listing.
 - Resolved lint blockers across the app.
 - Added optimization audit documentation.

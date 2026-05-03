@@ -4,7 +4,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { TopNav } from "@/components/TopNav";
-import { getProfile } from "@/actions/profile";
+import { getRequestProfile } from "@/lib/request-data";
 import { Toaster } from "sonner";
 import { LazyParticleBackground, LazyCursorTrail } from "@/components/LazyEffects";
 import "./globals.css";
@@ -36,7 +36,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const profile = await getProfile();
+  const profile = await getRequestProfile();
   const cookieStore = await cookies();
   const cookieTheme = cookieStore.get("theme")?.value;
   const activeTheme = cookieTheme || profile?.theme || "dark";

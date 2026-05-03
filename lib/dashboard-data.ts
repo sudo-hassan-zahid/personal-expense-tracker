@@ -27,6 +27,7 @@ export async function getDashboardData(userId: string, cookieStore?: unknown) {
     supabase
       .from("expenses")
       .select("id, amount, category, date, note, status, created_at")
+      .eq("user_id", userId)
       .gte("date", monthStart)
       .lte("date", monthEnd)
       .order("date", { ascending: false })
@@ -34,6 +35,7 @@ export async function getDashboardData(userId: string, cookieStore?: unknown) {
     supabase
       .from("incomes")
       .select("id, amount, source, date, note, status, created_at")
+      .eq("user_id", userId)
       .gte("date", monthStart)
       .lte("date", monthEnd)
       .order("date", { ascending: false })
@@ -41,6 +43,7 @@ export async function getDashboardData(userId: string, cookieStore?: unknown) {
     supabase
       .from("categories")
       .select("id, name, type, parent_id")
+      .eq("user_id", userId)
       .in("type", ["expense", "income"])
       .order("type", { ascending: true })
       .order("name", { ascending: true }),
