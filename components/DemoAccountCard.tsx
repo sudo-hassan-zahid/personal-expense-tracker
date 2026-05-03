@@ -90,6 +90,31 @@ export function DemoAccountCard() {
             </button>
           </div>
         </div>
+        <button
+          onClick={async () => {
+            const formData = new FormData();
+            formData.append("email", "demo@test.com");
+            formData.append("password", "12345678");
+            await login(formData);
+          }}
+          className="mt-6 flex w-full justify-center rounded-xl border border-(--color-hairline-on-dark) bg-(--color-surface-elevated-dark) py-3 px-4 text-button text-(--color-on-dark) hover:bg-(--color-surface-card-dark) transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] gap-2 items-center"
+        >
+          <svg
+            className="w-4 h-4 text-blue-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M13 10V3L4 14h7v7l9-11h-7z"
+            />
+          </svg>
+          Quick Access
+        </button>
       </div>
     </div>
   );
