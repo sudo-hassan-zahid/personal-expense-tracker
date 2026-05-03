@@ -47,7 +47,7 @@ export function ActionForm({
   successMessage: string;
   children: ReactNode;
   className?: string;
-  onSuccess?: () => void;
+  onSuccess?: (formData: FormData) => void;
 }) {
   return (
     <form
@@ -58,7 +58,7 @@ export function ActionForm({
             toast.error((result as any).error);
           } else {
             toast.success(successMessage);
-            if (onSuccess) onSuccess();
+            if (onSuccess) onSuccess(formData);
           }
         } catch (error: any) {
           toast.error(error.message || "An error occurred");
