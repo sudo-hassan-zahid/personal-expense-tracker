@@ -1,3 +1,6 @@
+/**
+ * Utility/Hook: useTransactions.ts
+ */
 import { useState, useMemo, useDeferredValue } from "react";
 import { format, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 
@@ -134,3 +137,4 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
     displayedTransactions,
   };
 }
+
