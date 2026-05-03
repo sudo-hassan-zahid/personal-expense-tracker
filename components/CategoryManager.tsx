@@ -88,8 +88,9 @@ export function CategoryManager({
                       className="flex items-center justify-between p-4 hover:bg-(--color-surface-elevated-dark) transition-colors animate-in fade-in slide-in-from-left-2"
                       style={{ animationDelay: `${index * 50}ms` }}
                     >
-                      <div className="flex items-center gap-4 flex-1">
-                        <span className="text-caption font-bold text-(--color-primary) w-6 opacity-50">
+                      <div className="flex items-center gap-2 md:gap-4 flex-1 min-w-0">
+                        <span className="hidden sm:block text-caption font-bold text-(--color-primary) w-6 opacity-50">
+
                           {(index + 1).toString().padStart(2, "0")}
                         </span>
                         {editingId === cat.id ? (
