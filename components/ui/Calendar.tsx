@@ -1,3 +1,6 @@
+/**
+ * UI component: Calendar.tsx
+ */
 "use client";
 
 import { useState } from "react";
@@ -93,3 +96,4 @@ export function Calendar({
     </div>
   );
 }
+
