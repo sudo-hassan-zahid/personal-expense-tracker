@@ -4,10 +4,13 @@
 "use server";
 
 import { createClient, getAuthenticatedClient } from "@/lib/supabase";
-import { revalidateTag, revalidatePath, cacheTag } from "next/cache";
 import { cookies } from "next/headers";
-import { revalidateAll } from "@/lib/revalidate";
+import { revalidateProfile } from "@/lib/revalidate";
 import type { SupabaseClient } from "@supabase/supabase-js";
+
+function hasSupabaseAuthCookie(allCookies: { name: string }[]) {
+  return allCookies.some((cookie) => cookie.name.startsWith("sb-"));
+}
 
 /**
  * Fetches the current user's profile from the database.
@@ -18,6 +21,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 export async function getProfile(client?: SupabaseClient) {
   const cookieStore = await cookies();
   const allCookies = cookieStore.getAll();
+  if (!hasSupabaseAuthCookie(allCookies)) return null;
 
   const supabase = client || (await createClient(allCookies));
   const {
@@ -65,7 +69,7 @@ export async function updateCurrency(formData: FormData) {
 
     if (error) throw error;
 
-    revalidateAll();
+    revalidateProfile(user.id);
     return { success: true };
   } catch (error: any) {
     console.error("Error updating currency:", error);
@@ -125,12 +129,7 @@ export async function updateProfile(formData: FormData) {
       cookieStore.set("theme", theme, { path: "/", maxAge: 31536000 });
     }
 
-    revalidateAll();
-    revalidateTag(`profile-${user.id}`, { expire: 0 });
-    revalidateTag(user.id, { expire: 0 });
-    revalidatePath("/", "layout");
-    revalidatePath("/dashboard", "layout");
-    revalidatePath("/dashboard/profile", "layout");
+    revalidateProfile(user.id);
     
     return { success: true };
   } catch (error: any) {
