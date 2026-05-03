@@ -101,6 +101,7 @@ export function ParticleBackground() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -108,6 +109,7 @@ export function ParticleBackground() {
     let particles: Particle[] = [];
     let mouse = { x: 0, y: 0 };
     let animationFrameId: number;
+    let isVisible = document.visibilityState === "visible";
     const CONNECTION_DIST = 100;
 
     // Spatial grid for O(n) neighbor checks instead of O(n²)
@@ -115,17 +117,23 @@ export function ParticleBackground() {
 
     const init = () => {
       particles = [];
+      const width = window.innerWidth;
+      const height = window.innerHeight;
       // Reduced particle density: /25000 instead of /15000
-      const count = Math.floor((canvas.width * canvas.height) / 25000);
+      const count = Math.floor((width * height) / 25000);
       for (let i = 0; i < count; i++) {
-        particles.push(new Particle(canvas.width, canvas.height));
+        particles.push(new Particle(width, height));
       }
-      grid = new SpatialGrid(canvas.width, canvas.height, CONNECTION_DIST);
+      grid = new SpatialGrid(width, height, CONNECTION_DIST);
     };
 
     const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.5);
+      canvas.width = Math.floor(window.innerWidth * pixelRatio);
+      canvas.height = Math.floor(window.innerHeight * pixelRatio);
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
       init();
     };
 
@@ -146,18 +154,21 @@ export function ParticleBackground() {
     const animate = (time: number) => {
       animationFrameId = requestAnimationFrame(animate);
 
+      if (!isVisible) return;
       if (time - lastFrame < FRAME_INTERVAL) return;
       lastFrame = time;
 
       if (!ctx) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      ctx.clearRect(0, 0, width, height);
 
       // Rebuild spatial grid each frame
       grid.clear();
       particles.forEach((p) => grid.insert(p));
 
       particles.forEach((p) => {
-        p.update(canvas.width, canvas.height);
+        p.update(width, height);
         p.draw(ctx);
 
         // O(n) neighbor check via spatial grid instead of O(n²)
@@ -194,14 +205,21 @@ export function ParticleBackground() {
       });
     };
 
+    const onVisibilityChange = () => {
+      isVisible = document.visibilityState === "visible";
+      lastFrame = performance.now();
+    };
+
     window.addEventListener("resize", resize);
     window.addEventListener("mousemove", onMouseMove, { passive: true });
+    document.addEventListener("visibilitychange", onVisibilityChange);
     resize();
     animationFrameId = requestAnimationFrame(animate);
 
     return () => {
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
