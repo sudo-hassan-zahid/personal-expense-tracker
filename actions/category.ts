@@ -4,7 +4,7 @@
 "use server";
 
 import { createClient, getAuthenticatedClient } from "@/lib/supabase";
-import { revalidateTag } from "next/cache";
+import { revalidateTag, revalidatePath } from "next/cache";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
@@ -56,6 +56,7 @@ export async function addCategory(formData: FormData) {
   }
 
   revalidateTag("categories", { expire: 0 });
+  revalidatePath("/", "layout");
 }
 
 export async function updateCategory(id: string, name: string) {
@@ -96,6 +97,7 @@ export async function updateCategory(id: string, name: string) {
   }
 
   revalidateTag("categories", { expire: 0 });
+  revalidatePath("/", "layout");
   revalidateTag("transactions", { expire: 0 });
 }
 
@@ -144,5 +146,6 @@ export async function deleteCategory(id: string) {
   }
 
   revalidateTag("categories", { expire: 0 });
+  revalidatePath("/", "layout");
 }
 
