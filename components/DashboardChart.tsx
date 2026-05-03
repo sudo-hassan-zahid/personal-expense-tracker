@@ -1,3 +1,6 @@
+/**
+ * Component: DashboardChart.tsx
+ */
 "use client";
 
 import { useState, useMemo, useEffect, memo } from "react";
@@ -318,3 +321,4 @@ export const DashboardChart = memo(
 );
 
 DashboardChart.displayName = "DashboardChart";
+
