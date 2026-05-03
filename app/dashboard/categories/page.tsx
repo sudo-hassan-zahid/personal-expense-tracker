@@ -1,3 +1,6 @@
+/**
+ * Page/Route: page.tsx
+ */
 import { getCategories } from "@/actions/category";
 import { CategoryManager } from "@/components/CategoryManager";
 
@@ -27,3 +30,4 @@ export default async function CategoriesPage() {
     </div>
   );
 }
+
