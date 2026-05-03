@@ -172,7 +172,7 @@ export function TransactionList({
   expenseCategories,
   incomeCategories,
   enableStatusTracking,
-  isWideView = false,
+  onOptimisticDelete?: (id: string) => void;
 }: {
   initialTransactions: Transaction[];
   currency: string;
@@ -182,12 +182,10 @@ export function TransactionList({
   incomeCategories: Category[];
   enableStatusTracking: boolean;
   isWideView?: boolean;
+  onOptimisticDelete?: (id: string) => void;
 }) {
   const [isPending, startTransition] = useTransition();
-  const [optimisticTransactions, removeOptimisticTransaction] = useOptimistic(
-    initialTransactions,
-    (state, id: string) => state.filter((t) => t.id !== id)
-  );
+  const optimisticTransactions = initialTransactions;
 
   const {
     search,
@@ -471,9 +469,11 @@ export function TransactionList({
                     setIsDeleting(true);
                     
                     // Optimistic UI removal
-                    startTransition(() => {
-                      removeOptimisticTransaction(idToRemove);
-                    });
+                    if (onOptimisticDelete) {
+                      startTransition(() => {
+                        onOptimisticDelete(idToRemove);
+                      });
+                    }
 
                     try {
                       if (transactionToDelete.type === "income")
