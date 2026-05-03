@@ -39,7 +39,7 @@ export function DemoAccountCard() {
           Explore the dashboard and features with our pre-configured demo account.
         </p>
       </div>
-      <div className="mt-6 grid grid-cols-1 gap-4">
+      <div className="mt-6 grid grid-cols-1 gap-5">
         <div className="glass-dark rounded-xl p-4 border border-(--color-hairline-on-dark) flex flex-col gap-1">
           <span className="text-[10px] uppercase tracking-wider text-(--color-muted) font-semibold">
             Email
