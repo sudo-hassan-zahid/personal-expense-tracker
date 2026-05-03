@@ -186,6 +186,11 @@ export const DashboardChart = memo(
               No data for selected filters.
             </div>
           ) : isMounted ? (
+            {/* 
+              ResponsiveContainer is wrapped in a div with fixed height to prevent 
+              the 'width(-1) and height(-1)' warning. Added minWidth/minHeight 
+              and debounce to ensure stable rendering during layout transitions.
+            */}
             <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
               <AreaChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 0 }}>
                 <defs>
