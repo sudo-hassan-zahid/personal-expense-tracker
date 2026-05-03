@@ -197,8 +197,9 @@ export function TransactionList({
       <div className="flex flex-col gap-2">
         {/* Table Header */}
         <div
-          className={`grid ${enableStatusTracking ? "grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}
+          className={`hidden md:grid ${enableStatusTracking ? "grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}
         >
+
           <div className="pl-2">#</div>
           <div
             className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1"
