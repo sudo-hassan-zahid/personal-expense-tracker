@@ -193,7 +193,7 @@ export const DashboardChart = memo(
           aria-label="Cashflow analytics chart"
         >
           {chartData.length === 0 ? (
-            <div className="h-full w-full flex flex-col items-center justify-center text-(--color-muted) text-body-md border border-dashed border-(--color-hairline-on-dark) rounded-xl bg-(--color-canvas-dark)/20">
+            <div className="h-full w-full flex flex-col items-center justify-center text-(--color-muted) text-body-md border border-dashed border-(--color-hairline-on-dark) rounded-xl bg-(--color-canvas-dark)/20 animate-fade-in transition-all duration-500">
               <div className="text-4xl mb-2 opacity-50">📊</div>
               No data for selected filters.
             </div>
