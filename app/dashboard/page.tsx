@@ -199,10 +199,10 @@ export default async function DashboardPage(props: {
                   <select
                     name="status"
                     defaultValue="done"
-                    className="w-full bg-transparent border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none"
+                    className="w-full bg-(--color-canvas-dark) border border-(--color-hairline-on-dark) rounded-md px-3 py-2 text-body-md focus:border-(--color-primary) focus:outline-none text-(--color-on-dark)"
                   >
-                    <option value="done">Done</option>
-                    <option value="pending">Pending</option>
+                    <option value="done" className="bg-(--color-surface-card-dark)">Done</option>
+                    <option value="pending" className="bg-(--color-surface-card-dark)">Pending</option>
                   </select>
                 </div>
               )}
