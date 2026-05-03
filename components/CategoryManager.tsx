@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { addCategory, deleteCategory, updateCategory } from "@/actions/category";
 import { ActionForm } from "./ActionForm";
-import { Trash2, Edit2, Check, X, Plus } from "lucide-react";
+import { Trash2, Edit2, Check, X, Plus, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { DeleteButton } from "./DeleteButton";
 
@@ -23,6 +23,8 @@ export function CategoryManager({
   const [type, setType] = useState<"expense" | "income">("expense");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const categories = type === "expense" ? initialExpenses : initialIncomes;
 
@@ -127,14 +129,7 @@ export function CategoryManager({
                                 <Edit2 size={16} />
                               </button>
                               <DeleteButton
-                                onClick={async () => {
-                                  try {
-                                    await deleteCategory(cat.id);
-                                    toast.success("Category deleted successfully");
-                                  } catch (error: any) {
-                                    toast.error(error.message || "Failed to delete category");
-                                  }
-                                }}
+                                onClick={() => setCategoryToDelete(cat)}
                                 className="p-2 text-(--color-muted) hover:text-(--color-trading-down) hover:bg-(--color-trading-down)/10 rounded-md transition-all"
                               >
                                 <Trash2 size={16} />
@@ -184,6 +179,55 @@ export function CategoryManager({
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {categoryToDelete && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="bg-(--color-surface-card-dark) border border-(--color-hairline-on-dark) rounded-2xl p-6 w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="flex flex-col items-center text-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 mb-2">
+                <AlertCircle size={24} />
+              </div>
+              <div>
+                <h3 className="text-title-md text-(--color-on-dark) mb-2">Delete Category?</h3>
+                <p className="text-body-sm text-(--color-muted)">
+                  Are you sure you want to delete <span className="text-(--color-on-dark) font-semibold">"{categoryToDelete.name}"</span>?
+                  This will also affect transactions using this category.
+                </p>
+              </div>
+              <div className="flex w-full gap-3 mt-4">
+                <button
+                  type="button"
+                  onClick={() => setCategoryToDelete(null)}
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2 rounded-xl border border-(--color-hairline-on-dark) text-(--color-on-dark) hover:bg-(--color-surface-elevated-dark) transition-colors disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setIsDeleting(true);
+                    try {
+                      await deleteCategory(categoryToDelete.id);
+                      toast.success("Category deleted successfully");
+                      setCategoryToDelete(null);
+                    } catch (error: any) {
+                      toast.error(error.message || "Failed to delete category");
+                    } finally {
+                      setIsDeleting(false);
+                    }
+                  }}
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20 disabled:opacity-50 flex items-center justify-center"
+                >
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
