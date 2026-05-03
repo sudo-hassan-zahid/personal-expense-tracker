@@ -18,6 +18,7 @@ import { AnalyticsSummary } from "./AnalyticsSummary";
 import { BudgetProgress } from "./BudgetProgress";
 import type { MonthlyBudget } from "@/types";
 import { SplitExpenseForm } from "./SplitExpenseForm";
+import { HelpLabel, HelpTip } from "./HelpTip";
 
 const DashboardChart = dynamic(
   () => import("./DashboardChart").then((module) => ({ default: module.DashboardChart })),
@@ -136,20 +137,33 @@ export function DashboardContent({
       {/* Top Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-(--color-surface-card-dark) p-4 md:p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-1">
-          <div className="text-body-sm md:text-body-md text-(--color-muted) mb-2">Net Balance</div>
+          <div className="flex items-center justify-center md:justify-start gap-1.5 text-body-sm md:text-body-md text-(--color-muted) mb-2">
+            <span>Net Balance</span>
+            <HelpTip label="Net balance help">
+              Income minus completed expenses for the current view.
+            </HelpTip>
+          </div>
           <div className="text-display-sm md:text-number-display text-(--color-on-dark) text-center">
             {formatCurrency(netBalance, currency)}
           </div>
         </div>
         <div className="bg-(--color-surface-card-dark) p-4 md:p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-2">
-          <div className="text-body-sm md:text-body-md text-(--color-muted) mb-2">Total Income</div>
+          <div className="flex items-center justify-center md:justify-start gap-1.5 text-body-sm md:text-body-md text-(--color-muted) mb-2">
+            <span>Total Income</span>
+            <HelpTip label="Total income help">
+              Sum of income transactions. Pending items are ignored when status tracking is on.
+            </HelpTip>
+          </div>
           <div className="text-display-sm md:text-number-display text-(--color-trading-up) text-center">
             {formatCurrency(totalIncome, currency)}
           </div>
         </div>
         <div className="bg-(--color-surface-card-dark) p-4 md:p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-3">
-          <div className="text-body-sm md:text-body-md text-(--color-muted) mb-2">
-            Total Expenses
+          <div className="flex items-center justify-center md:justify-start gap-1.5 text-body-sm md:text-body-md text-(--color-muted) mb-2">
+            <span>Total Expenses</span>
+            <HelpTip label="Total expenses help">
+              Sum of expense transactions. Pending items are ignored when status tracking is on.
+            </HelpTip>
           </div>
           <div className="text-display-sm md:text-number-display text-(--color-trading-down) text-center">
             {formatCurrency(totalExpenses, currency)}
@@ -180,7 +194,12 @@ export function DashboardContent({
         >
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <div className="flex items-center gap-4">
-              <h2 className="text-title-lg text-(--color-on-dark)">Recent Transactions</h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-title-lg text-(--color-on-dark)">Recent Transactions</h2>
+                <HelpTip label="Recent transactions help">
+                  Review, search, filter, edit, attach, or delete your income and expense records.
+                </HelpTip>
+              </div>
               <Link
                 href={`/dashboard/export?${(() => {
                   const params = new URLSearchParams();
@@ -249,7 +268,12 @@ export function DashboardContent({
         >
           {/* Add Expense Card */}
           <div className="bg-(--color-surface-card-dark) rounded-xl p-4 md:p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
-            <h2 className="text-title-md mb-4">Quick Add Expense</h2>
+            <div className="mb-4 flex items-center gap-2">
+              <h2 className="text-title-md">Quick Add Expense</h2>
+              <HelpTip label="Quick add expense help">
+                Add money you spent without leaving the dashboard.
+              </HelpTip>
+            </div>
             <ActionForm
               action={addExpense}
               onSuccess={(formData) => {
@@ -277,7 +301,9 @@ export function DashboardContent({
               className="flex flex-col gap-4"
             >
               <div>
-                <label className="block text-body-sm mb-1 text-(--color-muted)">Amount</label>
+                <HelpLabel help="The expense value in your selected profile currency." className="mb-1">
+                  Amount
+                </HelpLabel>
                 <input
                   required
                   type="number"
@@ -292,10 +318,18 @@ export function DashboardContent({
                 type="expense"
                 name="category"
                 label="Category"
+                help="The spending bucket for this expense, used in reports and budgets."
               />
-              <DatePicker name="date" defaultValue={getTodayPKT()} label="Date" />
+              <DatePicker
+                name="date"
+                defaultValue={getTodayPKT()}
+                label="Date"
+                help="The day the expense happened."
+              />
               <div>
-                <label className="block text-body-sm mb-1 text-(--color-muted)">Note</label>
+                <HelpLabel help="Optional detail that makes this transaction easier to search later." className="mb-1">
+                  Note
+                </HelpLabel>
                 <input
                   type="text"
                   name="note"
@@ -305,7 +339,9 @@ export function DashboardContent({
               </div>
               {isStatusTrackingEnabled && (
                 <div>
-                  <label className="block text-body-sm mb-1 text-(--color-muted)">Status</label>
+                  <HelpLabel help="Done counts in totals now. Pending keeps the item visible but out of summaries." className="mb-1">
+                    Status
+                  </HelpLabel>
                   <select
                     name="status"
                     defaultValue="done"
@@ -327,7 +363,12 @@ export function DashboardContent({
 
           {/* Add Income Card */}
           <div className="bg-(--color-surface-card-dark) rounded-xl p-4 md:p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
-            <h2 className="text-title-md mb-4">Quick Add Income</h2>
+            <div className="mb-4 flex items-center gap-2">
+              <h2 className="text-title-md">Quick Add Income</h2>
+              <HelpTip label="Quick add income help">
+                Add salary, freelance payments, refunds, or any money coming in.
+              </HelpTip>
+            </div>
             <ActionForm
               action={addIncome}
               onSuccess={(formData) => {
@@ -355,7 +396,9 @@ export function DashboardContent({
               className="flex flex-col gap-4"
             >
               <div>
-                <label className="block text-body-sm mb-1 text-(--color-muted)">Amount</label>
+                <HelpLabel help="The income value in your selected profile currency." className="mb-1">
+                  Amount
+                </HelpLabel>
                 <input
                   required
                   type="number"
@@ -370,10 +413,18 @@ export function DashboardContent({
                 type="income"
                 name="source"
                 label="Source"
+                help="Where this money came from, used in income reports and filters."
               />
-              <DatePicker name="date" defaultValue={getTodayPKT()} label="Date" />
+              <DatePicker
+                name="date"
+                defaultValue={getTodayPKT()}
+                label="Date"
+                help="The day the income was received or recorded."
+              />
               <div>
-                <label className="block text-body-sm mb-1 text-(--color-muted)">Note</label>
+                <HelpLabel help="Optional context, invoice reference, or reminder for this income." className="mb-1">
+                  Note
+                </HelpLabel>
                 <input
                   type="text"
                   name="note"
@@ -383,7 +434,9 @@ export function DashboardContent({
               </div>
               {isStatusTrackingEnabled && (
                 <div>
-                  <label className="block text-body-sm mb-1 text-(--color-muted)">Status</label>
+                  <HelpLabel help="Done counts in totals now. Pending keeps the item visible but out of summaries." className="mb-1">
+                    Status
+                  </HelpLabel>
                   <select
                     name="status"
                     defaultValue="done"
