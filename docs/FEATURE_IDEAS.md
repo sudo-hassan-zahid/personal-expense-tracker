@@ -14,9 +14,6 @@ This document lists practical features that can be added next to the Personal Ex
 | --- | --- | --- |
 | P0 | Edit income records | Add full update support for income entries, matching the expense edit workflow. |
 | P0 | Delete income records | Let users remove incorrect income entries from their account. |
-| P0 | Date range filters | Support custom start and end date filtering on the dashboard and transaction lists. |
-| P0 | Month selector | Add a fast month-based view for common monthly budgeting workflows. |
-| P0 | Amount range filters | Allow users to filter transactions by minimum and maximum amount. |
 | P1 | Recurring transactions | Let users define repeating income or expense records such as salary, rent, subscriptions, and bills. |
 | P1 | Transaction attachments | Allow receipts or supporting files to be attached to expenses using Supabase Storage. |
 | P1 | Custom categories | Let users create, rename, reorder, and delete their own income and expense categories. |
@@ -73,7 +70,6 @@ This document lists practical features that can be added next to the Personal Ex
 | P0 | User profile settings | Let users manage display name and account preferences. |
 | P1 | Currency preference | Allow users to choose a default currency symbol and formatting style. |
 | P1 | Theme preference | Persist light or dark theme choice per user. |
-| P1 | Default dashboard period | Let users choose whether the dashboard opens to this month, last 30 days, or all time. |
 | P2 | Multi-currency support | Track income and expenses in more than one currency with optional exchange rates. |
 
 ## Security And Reliability
@@ -101,7 +97,7 @@ This document lists practical features that can be added next to the Personal Ex
 ### Phase 1: Complete The Core
 
 - Edit and delete income records.
-- Add date range, month, amount range, and sorting filters.
+- Keep transaction sorting and search fast for larger accounts.
 - Add stronger server-side validation.
 - Add empty, loading, and error states.
 - Add transaction pagination and database indexes.
