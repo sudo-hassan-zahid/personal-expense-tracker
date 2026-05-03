@@ -137,7 +137,7 @@ export const DashboardChart = memo(
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10 animate-slide-up stagger-1">
           <div>
             <h2 className="text-[20px] md:text-[24px] tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 font-bold mb-1">
-              Dynamic Cashflow Analytics
+              Financial Performance Analytics
             </h2>
             <p className="text-caption text-(--color-muted)">
               Interactive visualization of your financial trends
