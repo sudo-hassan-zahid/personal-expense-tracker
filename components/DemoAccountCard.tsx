@@ -29,6 +29,9 @@ export function DemoAccountCard() {
                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
               />
             </svg>
+            <span className="bg-blue-500/10 text-blue-400 text-[10px] px-2 py-0.5 rounded-full border border-blue-500/20 uppercase tracking-tighter font-bold">
+              Demo
+            </span>
             Try Demo Account
           </span>
         </div>
