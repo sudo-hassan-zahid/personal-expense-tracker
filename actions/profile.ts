@@ -16,25 +16,28 @@ import type { SupabaseClient } from "@supabase/supabase-js";
  * @returns The profile object or null if not found.
  */
 export async function getProfile(client?: SupabaseClient) {
-  const supabase = client || (await createClient());
+  const cookieStore = await cookies();
+  const allCookies = cookieStore.getAll();
+
+  const supabase = client || (await createClient(allCookies));
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) return null;
 
-  return getCachedProfile(user.id);
+  return getCachedProfile(user.id, allCookies);
 }
 
 /**
  * Inner cached function to fetch profile data.
  * Keyed by userId to prevent cross-user data leakage.
  */
-async function getCachedProfile(userId: string) {
+async function getCachedProfile(userId: string, cookieStore?: any) {
   "use cache";
   cacheTag("profile");
 
-  const supabase = await createClient();
+  const supabase = await createClient(cookieStore);
   const { data, error } = await supabase
     .from("profiles")
     .select(
