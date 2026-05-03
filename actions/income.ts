@@ -18,12 +18,14 @@ export async function addIncome(formData: FormData) {
   const date = formData.get("date") as string;
   const note = formData.get("note") as string;
 
+  const status = (formData.get("status") as string) || "done";
   const { error } = await supabase.from("incomes").insert({
     user_id: user.id,
     amount,
     source,
     date,
     note,
+    status,
   });
 
   if (error) {
