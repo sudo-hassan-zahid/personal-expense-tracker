@@ -31,15 +31,17 @@ export function TransactionFilter({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <span className="text-caption text-(--color-muted) mr-1">Filter by:</span>
-      <HelpTip label="Transaction filters help">
-        Narrow the table by transaction type or status without changing the saved data.
-      </HelpTip>
-      {isPending && <Loader2 size={16} className="animate-spin text-(--color-primary)" />}
+    <div className="grid w-full grid-cols-2 gap-2 md:flex md:w-auto md:flex-wrap md:items-center">
+      <div className="col-span-2 flex items-center gap-2 md:col-span-1">
+        <span className="text-caption text-(--color-muted)">Filter by:</span>
+        <HelpTip label="Transaction filters help">
+          Narrow the table by transaction type or status without changing the saved data.
+        </HelpTip>
+        {isPending && <Loader2 size={16} className="animate-spin text-(--color-primary)" />}
+      </div>
 
       <select
-        className={`form-control form-control-compact ${isPending ? "opacity-50" : ""}`}
+        className={`form-control form-control-compact min-w-0 ${isPending ? "opacity-50" : ""}`}
         defaultValue={defaultType}
         disabled={isPending}
         onChange={(e) => updateFilter("type", e.target.value)}
@@ -51,7 +53,7 @@ export function TransactionFilter({
 
       {showStatusFilter && (
         <select
-          className={`form-control form-control-compact ${isPending ? "opacity-50" : ""}`}
+          className={`form-control form-control-compact min-w-0 ${isPending ? "opacity-50" : ""}`}
           defaultValue={defaultStatus || "all"}
           disabled={isPending}
           onChange={(e) => updateFilter("status", e.target.value)}
