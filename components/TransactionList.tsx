@@ -3,7 +3,7 @@
  */
 "use client";
 
-import { useState, useEffect, memo, useMemo, useTransition } from "react";
+import { useState, useEffect, memo, useMemo, useRef, useTransition } from "react";
 import {
   ArrowUpRight,
   ArrowDownRight,
@@ -16,6 +16,7 @@ import {
   AlertCircle,
   Loader2,
   Paperclip,
+  ChevronDown,
 } from "lucide-react";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/currency";
@@ -174,6 +175,134 @@ const TransactionRow = memo(
 );
 
 TransactionRow.displayName = "TransactionRow";
+
+type CategoryFilterOption = {
+  key: string;
+  name: string;
+};
+
+function CategoryFilterDropdown({
+  value,
+  expenseOptions,
+  incomeOptions,
+  onChange,
+}: {
+  value: string;
+  expenseOptions: CategoryFilterOption[];
+  incomeOptions: CategoryFilterOption[];
+  onChange: (value: string) => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const allOptions = [...expenseOptions, ...incomeOptions];
+  const selectedOption = allOptions.find((option) => option.key === value);
+  const label = selectedOption?.name || "All categories and sources";
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      if (!containerRef.current?.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [isOpen]);
+
+  const choose = (nextValue: string) => {
+    onChange(nextValue);
+    setIsOpen(false);
+  };
+
+  return (
+    <div ref={containerRef} className="relative">
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        onClick={() => setIsOpen((current) => !current)}
+        className="form-control form-control-compact flex w-full min-w-0 items-center justify-between gap-2 text-left"
+      >
+        <span className="min-w-0 truncate">{label}</span>
+        <ChevronDown
+          size={16}
+          className={`shrink-0 text-(--color-muted) transition-transform ${isOpen ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {isOpen && (
+        <div
+          role="listbox"
+          className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 max-h-72 overflow-y-auto rounded-xl border border-(--color-hairline-on-dark) bg-(--color-surface-card-dark) p-1 shadow-2xl shadow-black/40"
+        >
+          <button
+            type="button"
+            role="option"
+            aria-selected={value === ""}
+            onClick={() => choose("")}
+            className={`w-full rounded-lg px-3 py-2 text-left text-body-sm transition-colors ${
+              value === ""
+                ? "bg-(--color-primary) text-(--color-on-primary)"
+                : "text-(--color-on-dark) hover:bg-(--color-surface-elevated-dark)"
+            }`}
+          >
+            All categories and sources
+          </button>
+
+          {expenseOptions.length > 0 && (
+            <div className="mt-1">
+              <div className="px-3 py-1.5 text-caption font-semibold uppercase tracking-wide text-(--color-muted)">
+                Expense categories
+              </div>
+              {expenseOptions.map((option) => (
+                <button
+                  key={option.key}
+                  type="button"
+                  role="option"
+                  aria-selected={value === option.key}
+                  onClick={() => choose(option.key)}
+                  className={`w-full rounded-lg px-3 py-2 text-left text-body-sm transition-colors ${
+                    value === option.key
+                      ? "bg-(--color-primary) text-(--color-on-primary)"
+                      : "text-(--color-on-dark) hover:bg-(--color-surface-elevated-dark)"
+                  }`}
+                >
+                  {option.name}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {incomeOptions.length > 0 && (
+            <div className="mt-1 border-t border-(--color-hairline-on-dark) pt-1">
+              <div className="px-3 py-1.5 text-caption font-semibold uppercase tracking-wide text-(--color-muted)">
+                Income sources
+              </div>
+              {incomeOptions.map((option) => (
+                <button
+                  key={option.key}
+                  type="button"
+                  role="option"
+                  aria-selected={value === option.key}
+                  onClick={() => choose(option.key)}
+                  className={`w-full rounded-lg px-3 py-2 text-left text-body-sm transition-colors ${
+                    value === option.key
+                      ? "bg-(--color-primary) text-(--color-on-primary)"
+                      : "text-(--color-on-dark) hover:bg-(--color-surface-elevated-dark)"
+                  }`}
+                >
+                  {option.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function TransactionList({
   initialTransactions,
@@ -436,34 +565,15 @@ export function TransactionList({
               >
                 Category or Source
               </HelpLabel>
-              <select
+              <CategoryFilterDropdown
                 value={categoryFilter}
-                onChange={(e) => {
-                  setCategoryFilter(e.target.value);
+                expenseOptions={categoryFilterOptions.expenses}
+                incomeOptions={categoryFilterOptions.incomes}
+                onChange={(nextValue) => {
+                  setCategoryFilter(nextValue);
                   setCurrentPage(1);
                 }}
-                className="form-control form-control-compact w-full"
-              >
-                <option value="">All categories and sources</option>
-                {categoryFilterOptions.expenses.length > 0 && (
-                  <optgroup label="Expense categories">
-                    {categoryFilterOptions.expenses.map((category) => (
-                      <option key={category.key} value={category.key}>
-                        {category.name}
-                      </option>
-                    ))}
-                  </optgroup>
-                )}
-                {categoryFilterOptions.incomes.length > 0 && (
-                  <optgroup label="Income sources">
-                    {categoryFilterOptions.incomes.map((category) => (
-                      <option key={category.key} value={category.key}>
-                        {category.name}
-                      </option>
-                    ))}
-                  </optgroup>
-                )}
-              </select>
+              />
             </div>
 
             <div className="flex flex-col gap-1.5">
