@@ -190,55 +190,59 @@ export function DashboardContent({
         <div
           className={`${isWideView ? "lg:col-span-12" : "lg:col-span-8"} bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-4 md:p-6 animate-slide-up stagger-5 transition-all duration-300`}
         >
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <h2 className="text-title-lg text-(--color-on-dark)">Recent Transactions</h2>
+          <div className="flex flex-col gap-4 mb-6 md:flex-row md:justify-between md:items-center">
+            <div className="flex w-full items-start justify-between gap-3 md:w-auto md:items-center md:justify-start">
+              <div className="flex min-w-0 items-center gap-2">
+                <h2 className="text-title-md md:text-title-lg text-(--color-on-dark)">
+                  Recent Transactions
+                </h2>
                 <HelpTip label="Recent transactions help">
                   Review, search, filter, edit, attach, or delete your income and expense records.
                 </HelpTip>
               </div>
-              <Link
-                href={`/dashboard/export?${(() => {
-                  const params = new URLSearchParams();
-                  if (searchParams) {
-                    Object.entries(searchParams).forEach(([key, value]) => {
-                      if (value) params.set(key, Array.isArray(value) ? value[0] : value);
-                    });
-                  }
-                  return params.toString();
-                })()}`}
-                className="p-2 hover:bg-(--color-canvas-dark) rounded-lg transition-colors text-(--color-muted) hover:text-(--color-on-dark) border border-transparent hover:border-(--color-hairline-on-dark)"
-                title="Export CSV"
-              >
-                <Download size={16} />
-              </Link>
-              <Link
-                href={`/dashboard?${(() => {
-                  const params = new URLSearchParams();
-                  if (searchParams) {
-                    Object.entries(searchParams).forEach(([key, value]) => {
-                      if (value) params.set(key, Array.isArray(value) ? value[0] : value);
-                    });
-                  }
-                  params.set("view", isWideView ? "standard" : "wide");
-                  return params.toString();
-                })()}`}
-                className="p-2 hover:bg-(--color-canvas-dark) rounded-lg transition-colors text-(--color-muted) hover:text-(--color-on-dark) border border-transparent hover:border-(--color-hairline-on-dark)"
-                title={isWideView ? "Standard View" : "Expand Table"}
-              >
-                {isWideView ? (
-                  <div className="flex items-center gap-2 text-caption font-medium uppercase tracking-wider">
-                    <ChevronLeft size={16} />
-                    Collapse
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 text-caption font-medium uppercase tracking-wider">
-                    Expand
-                    <ChevronRight size={16} />
-                  </div>
-                )}
-              </Link>
+              <div className="flex shrink-0 items-center gap-1">
+                <Link
+                  href={`/dashboard/export?${(() => {
+                    const params = new URLSearchParams();
+                    if (searchParams) {
+                      Object.entries(searchParams).forEach(([key, value]) => {
+                        if (value) params.set(key, Array.isArray(value) ? value[0] : value);
+                      });
+                    }
+                    return params.toString();
+                  })()}`}
+                  className="p-2 hover:bg-(--color-canvas-dark) rounded-lg transition-colors text-(--color-muted) hover:text-(--color-on-dark) border border-transparent hover:border-(--color-hairline-on-dark)"
+                  title="Export CSV"
+                >
+                  <Download size={16} />
+                </Link>
+                <Link
+                  href={`/dashboard?${(() => {
+                    const params = new URLSearchParams();
+                    if (searchParams) {
+                      Object.entries(searchParams).forEach(([key, value]) => {
+                        if (value) params.set(key, Array.isArray(value) ? value[0] : value);
+                      });
+                    }
+                    params.set("view", isWideView ? "standard" : "wide");
+                    return params.toString();
+                  })()}`}
+                  className="hidden sm:flex p-2 hover:bg-(--color-canvas-dark) rounded-lg transition-colors text-(--color-muted) hover:text-(--color-on-dark) border border-transparent hover:border-(--color-hairline-on-dark)"
+                  title={isWideView ? "Standard View" : "Expand Table"}
+                >
+                  {isWideView ? (
+                    <div className="flex items-center gap-2 text-caption font-medium uppercase tracking-wider">
+                      <ChevronLeft size={16} />
+                      Collapse
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 text-caption font-medium uppercase tracking-wider">
+                      Expand
+                      <ChevronRight size={16} />
+                    </div>
+                  )}
+                </Link>
+              </div>
             </div>
             <TransactionFilter
               defaultType={filterType || "all"}
