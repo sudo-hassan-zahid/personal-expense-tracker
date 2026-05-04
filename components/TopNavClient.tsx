@@ -35,7 +35,11 @@ export function TopNavClient({
             className="group flex items-center gap-2 text-primary font-bold text-xl tracking-tight hover:text-primary-active transition-colors"
             onClick={() => setIsOpen(false)}
           >
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6 transition-transform duration-500 group-hover:rotate-180">
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-6 h-6 transition-transform duration-500 group-hover:rotate-180"
+            >
               <path d="M12 2L2 12l10 10 10-10L12 2zm0 4.8l5.2 5.2-5.2 5.2-5.2-5.2L12 6.8z" />
             </svg>
             <span className="text-(--color-primary)">TRACKER</span>
@@ -208,4 +212,3 @@ export function TopNavClient({
     </>
   );
 }
-
