@@ -42,4 +42,3 @@ export async function signup(formData: FormData) {
   // Otherwise, email confirmation is enabled — show success page
   redirect("/signup/success");
 }
-
