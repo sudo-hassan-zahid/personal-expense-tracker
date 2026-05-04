@@ -23,7 +23,9 @@ export async function getDashboardData(
 
   let expenseQuery = supabase
     .from("expenses")
-    .select("id, amount, category, date, note, status, created_at, updated_at, deleted_at, attachment_url, currency")
+    .select(
+      "id, amount, category, date, note, status, created_at, updated_at, deleted_at, attachment_url, currency"
+    )
     .eq("user_id", userId)
     .is("deleted_at", null);
 
@@ -61,12 +63,8 @@ export async function getDashboardData(
 
   // Keep independent dashboard reads parallel while avoiding duplicate category round trips.
   const [expensesRes, incomesRes, categoriesRes, profileRes, budgetsRes] = await Promise.all([
-    expenseQuery
-      .order("date", { ascending: false })
-      .order("created_at", { ascending: false }),
-    incomeQuery
-      .order("date", { ascending: false })
-      .order("created_at", { ascending: false }),
+    expenseQuery.order("date", { ascending: false }).order("created_at", { ascending: false }),
+    incomeQuery.order("date", { ascending: false }).order("created_at", { ascending: false }),
     supabase
       .from("categories")
       .select("id, name, type, parent_id")
@@ -76,7 +74,9 @@ export async function getDashboardData(
       .order("name", { ascending: true }),
     supabase
       .from("profiles")
-      .select("id, currency, pagination_enabled, enable_status_tracking, theme, show_cursor_trail, name")
+      .select(
+        "id, currency, pagination_enabled, enable_status_tracking, theme, show_cursor_trail, name"
+      )
       .eq("id", userId)
       .maybeSingle(),
     supabase
@@ -98,4 +98,3 @@ export async function getDashboardData(
     budgets: budgetsRes.data || [],
   };
 }
-
