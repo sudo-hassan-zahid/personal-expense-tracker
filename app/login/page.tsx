@@ -76,9 +76,29 @@ export default async function LoginPage(props: {
                   autoComplete="current-password"
                   required
                   className="block w-full appearance-none rounded-xl border border-(--color-hairline-on-dark) bg-(--color-canvas-dark)/50 px-4 py-3 text-(--color-on-dark) placeholder-(--color-muted) focus:border-(--color-primary) focus:outline-none focus:ring-1 focus:ring-(--color-primary) sm:text-body-md transition-all"
-                  placeholder="••••••••"
+                  placeholder="........"
                 />
               </div>
+            </div>
+
+            <div className="flex items-center justify-between gap-4 text-body-sm">
+              <label className="flex items-center gap-2 text-(--color-muted)">
+                <input type="hidden" name="remember" value="off" />
+                <input
+                  type="checkbox"
+                  name="remember"
+                  value="on"
+                  defaultChecked
+                  className="h-4 w-4 rounded border-(--color-hairline-on-dark) accent-(--color-primary)"
+                />
+                Remember me
+              </label>
+              <Link
+                href="/forgot-password"
+                className="font-medium text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                Forgot password?
+              </Link>
             </div>
 
             <div>
