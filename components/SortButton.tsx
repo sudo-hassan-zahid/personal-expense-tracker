@@ -25,4 +25,3 @@ export function SortButton({ field }: { field: string }) {
     </button>
   );
 }
-
