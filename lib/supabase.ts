@@ -35,9 +35,7 @@ export async function createClient(cookieStore?: unknown) {
           if (isCookieStoreLike(effectiveCookies) && typeof effectiveCookies.set === "function") {
             try {
               const setCookie = effectiveCookies.set;
-              cookiesToSet.forEach(({ name, value, options }) =>
-                setCookie(name, value, options)
-              );
+              cookiesToSet.forEach(({ name, value, options }) => setCookie(name, value, options));
             } catch {
               // Ignore set errors in server components
             }
@@ -64,4 +62,3 @@ export async function getAuthenticatedClient() {
   }
   return { supabase, user };
 }
-
