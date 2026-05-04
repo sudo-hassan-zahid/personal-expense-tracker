@@ -7,7 +7,8 @@ import { validateRequiredText } from "@/lib/form-validation";
 
 function positiveNumber(formData: FormData, key: string, label: string) {
   const value = Number(formData.get(key));
-  if (!Number.isFinite(value) || value <= 0) return { error: `${label} must be greater than zero.` };
+  if (!Number.isFinite(value) || value <= 0)
+    return { error: `${label} must be greater than zero.` };
   return { value };
 }
 
@@ -77,7 +78,11 @@ export async function saveBudget(formData: FormData) {
 
 export async function deleteBudget(id: string) {
   const { supabase, user } = await getAuthenticatedClient();
-  const { error } = await supabase.from("monthly_budgets").delete().eq("id", id).eq("user_id", user.id);
+  const { error } = await supabase
+    .from("monthly_budgets")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
   if (error) throw new Error("Failed to delete budget");
   revalidatePlanning();
 }
@@ -91,7 +96,8 @@ export async function saveSavingsGoal(formData: FormData) {
 
   if (!name.ok) return { error: name.error };
   if ("error" in target) return target;
-  if (!Number.isFinite(current) || current < 0) return { error: "Current amount cannot be negative." };
+  if (!Number.isFinite(current) || current < 0)
+    return { error: "Current amount cannot be negative." };
 
   const { error } = await supabase.from("savings_goals").insert({
     user_id: user.id,
@@ -108,7 +114,11 @@ export async function saveSavingsGoal(formData: FormData) {
 
 export async function deleteSavingsGoal(id: string) {
   const { supabase, user } = await getAuthenticatedClient();
-  const { error } = await supabase.from("savings_goals").delete().eq("id", id).eq("user_id", user.id);
+  const { error } = await supabase
+    .from("savings_goals")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", user.id);
   if (error) throw new Error("Failed to delete savings goal");
   revalidatePlanning();
 }
@@ -124,7 +134,8 @@ export async function saveRecurringTransaction(formData: FormData) {
 
   if ("error" in amount) return amount;
   if (!category.ok) return { error: category.error };
-  if (!["weekly", "monthly", "yearly"].includes(frequency)) return { error: "Choose a valid frequency." };
+  if (!["weekly", "monthly", "yearly"].includes(frequency))
+    return { error: "Choose a valid frequency." };
   if (!nextDate) return { error: "Next date is required." };
 
   const { error } = await supabase.from("recurring_transactions").insert({
@@ -170,8 +181,20 @@ export async function postDueRecurringTransactions() {
     const table = item.type === "income" ? "incomes" : "expenses";
     const payload =
       item.type === "income"
-        ? { user_id: user.id, amount: item.amount, source: item.category_or_source, date: item.next_date, note: item.note || "" }
-        : { user_id: user.id, amount: item.amount, category: item.category_or_source, date: item.next_date, note: item.note || "" };
+        ? {
+            user_id: user.id,
+            amount: item.amount,
+            source: item.category_or_source,
+            date: item.next_date,
+            note: item.note || "",
+          }
+        : {
+            user_id: user.id,
+            amount: item.amount,
+            category: item.category_or_source,
+            date: item.next_date,
+            note: item.note || "",
+          };
     await supabase.from(table).insert(payload);
 
     const current = new Date(`${item.next_date}T00:00:00`);
