@@ -57,4 +57,3 @@ export function LazyCursorTrail() {
 
   return <CursorTrailLazy />;
 }
-
