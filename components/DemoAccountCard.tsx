@@ -51,7 +51,11 @@ export function DemoAccountCard() {
                   Copied!
                 </span>
               ) : null}
-              {copiedEmail ? <Check size={14} className="text-green-400" /> : <Clipboard size={14} />}
+              {copiedEmail ? (
+                <Check size={14} className="text-green-400" />
+              ) : (
+                <Clipboard size={14} />
+              )}
             </button>
           </div>
         </div>

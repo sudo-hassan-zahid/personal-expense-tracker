@@ -19,7 +19,5 @@ export async function sendPasswordReset(formData: FormData) {
     redirect(`/forgot-password?error=${encodeURIComponent(error.message)}`);
   }
 
-  redirect(
-    `/login?message=${encodeURIComponent("Password reset email sent. Check your inbox.")}`
-  );
+  redirect(`/login?message=${encodeURIComponent("Password reset email sent. Check your inbox.")}`);
 }
