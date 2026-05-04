@@ -171,7 +171,10 @@ export function CategoryManager({
             >
               <input type="hidden" name="type" value={type} />
               <div>
-                <HelpLabel help="Use a short, clear name like Groceries, Rent, Salary, or Freelance." className="mb-1.5">
+                <HelpLabel
+                  help="Use a short, clear name like Groceries, Rent, Salary, or Freelance."
+                  className="mb-1.5"
+                >
                   Category Name
                 </HelpLabel>
                 <input
@@ -248,4 +251,3 @@ export function CategoryManager({
     </div>
   );
 }
-
