@@ -17,8 +17,17 @@ import {
 import { importTransactions } from "@/actions/import";
 import { formatCurrency } from "@/lib/currency";
 import { DatePicker } from "@/components/ui/DatePicker";
+import { DeleteConfirmationModal } from "@/components/DeleteConfirmationModal";
 import { HelpLabel, HelpTip } from "@/components/HelpTip";
 import type { Category, MonthlyBudget, RecurringTransaction, SavingsGoal } from "@/types";
+
+type PlanningDeleteTarget = {
+  key: string;
+  title: string;
+  description: string;
+  action: () => Promise<unknown>;
+  successMessage: string;
+};
 
 export function PlanningPanel({
   budgets,
@@ -40,6 +49,7 @@ export function PlanningPanel({
   const router = useRouter();
   const [, startRefreshTransition] = useTransition();
   const [pendingAction, setPendingAction] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<PlanningDeleteTarget | null>(null);
   const allCategoryNames = useMemo(
     () => [...expenseCategories.map((c) => c.name), ...incomeCategories.map((c) => c.name)],
     [expenseCategories, incomeCategories]
@@ -174,11 +184,13 @@ export function PlanningPanel({
                 </div>
                 <button
                   onClick={() =>
-                    runPlanningAction(
-                      `budget-${budget.id}`,
-                      () => deleteBudget(budget.id),
-                      "Budget deleted"
-                    )
+                    setDeleteTarget({
+                      key: `budget-${budget.id}`,
+                      title: "Delete Budget?",
+                      description: `Delete the ${budget.category} budget for ${month}? This cannot be undone.`,
+                      action: () => deleteBudget(budget.id),
+                      successMessage: "Budget deleted",
+                    })
                   }
                   disabled={pendingAction !== null}
                   className="p-2 text-(--color-muted) hover:text-(--color-trading-down) disabled:opacity-50 disabled:cursor-wait"
@@ -264,11 +276,13 @@ export function PlanningPanel({
                     <span className="text-body-sm">{goal.name}</span>
                     <button
                       onClick={() =>
-                        runPlanningAction(
-                          `goal-${goal.id}`,
-                          () => deleteSavingsGoal(goal.id),
-                          "Goal deleted"
-                        )
+                        setDeleteTarget({
+                          key: `goal-${goal.id}`,
+                          title: "Delete Savings Goal?",
+                          description: `Delete the "${goal.name}" savings goal? This cannot be undone.`,
+                          action: () => deleteSavingsGoal(goal.id),
+                          successMessage: "Goal deleted",
+                        })
                       }
                       disabled={pendingAction !== null}
                       className="text-(--color-muted) hover:text-(--color-trading-down) disabled:opacity-50 disabled:cursor-wait"
@@ -408,11 +422,13 @@ export function PlanningPanel({
               </div>
               <button
                 onClick={() =>
-                  runPlanningAction(
-                    `recurring-${item.id}`,
-                    () => deleteRecurringTransaction(item.id),
-                    "Recurring item deleted"
-                  )
+                  setDeleteTarget({
+                    key: `recurring-${item.id}`,
+                    title: "Delete Recurring Item?",
+                    description: `Delete the ${item.frequency} ${item.category_or_source} recurring item? This cannot be undone.`,
+                    action: () => deleteRecurringTransaction(item.id),
+                    successMessage: "Recurring item deleted",
+                  })
                 }
                 disabled={pendingAction !== null}
                 className="p-2 text-(--color-muted) hover:text-(--color-trading-down) disabled:opacity-50 disabled:cursor-wait"
@@ -436,23 +452,107 @@ export function PlanningPanel({
             Upload a CSV export from your bank or spreadsheet to import transactions in bulk.
           </HelpTip>
         </div>
-        <ActionForm
-          action={importTransactions}
-          successMessage="Import completed"
-          className="flex flex-col md:flex-row gap-3"
-        >
-          <input
-            required
-            name="file"
-            type="file"
-            accept=".csv,text/csv"
-            className="form-control flex-1"
-          />
-          <SubmitButton className="bg-(--color-primary) text-(--color-on-primary) rounded-lg px-5 py-2 text-button">
-            Import CSV
-          </SubmitButton>
-        </ActionForm>
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.8fr)]">
+          <div>
+            <ActionForm
+              action={importTransactions}
+              successMessage="Import completed"
+              className="flex flex-col md:flex-row gap-3"
+            >
+              <input
+                required
+                name="file"
+                type="file"
+                accept=".csv,text/csv"
+                className="form-control flex-1"
+              />
+              <SubmitButton className="bg-(--color-primary) text-(--color-on-primary) rounded-lg px-5 py-2 text-button">
+                Import CSV
+              </SubmitButton>
+            </ActionForm>
+            <p className="mt-3 text-caption text-(--color-muted)">
+              Use a comma-separated CSV with a header row. Quoted cells are supported for notes that
+              contain commas.
+            </p>
+          </div>
+
+          <div className="rounded-lg border border-(--color-hairline-on-dark) bg-(--color-canvas-dark)/30 p-4">
+            <h3 className="text-body-sm font-semibold text-(--color-on-dark)">Accepted CSV format</h3>
+            <div className="mt-3 grid gap-2 text-caption text-(--color-muted)">
+              <p>
+                Required columns: <span className="text-(--color-muted-strong)">type</span>,{" "}
+                <span className="text-(--color-muted-strong)">amount</span>,{" "}
+                <span className="text-(--color-muted-strong)">date</span>, and either{" "}
+                <span className="text-(--color-muted-strong)">category_or_source</span>,{" "}
+                <span className="text-(--color-muted-strong)">category</span>, or{" "}
+                <span className="text-(--color-muted-strong)">source</span>.
+              </p>
+              <p>
+                Optional columns: <span className="text-(--color-muted-strong)">note</span> and{" "}
+                <span className="text-(--color-muted-strong)">status</span>. Status defaults to done.
+              </p>
+              <p>
+                Values: type must be income or expense, date should be YYYY-MM-DD, amount should be a
+                positive number, and status can be done or pending.
+              </p>
+            </div>
+            <div className="mt-4 overflow-hidden rounded-md border border-(--color-hairline-on-dark)">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[520px] text-left text-caption">
+                  <thead className="bg-(--color-surface-elevated-dark) text-(--color-muted-strong)">
+                    <tr>
+                      <th className="px-3 py-2 font-semibold">type</th>
+                      <th className="px-3 py-2 font-semibold">amount</th>
+                      <th className="px-3 py-2 font-semibold">date</th>
+                      <th className="px-3 py-2 font-semibold">category_or_source</th>
+                      <th className="px-3 py-2 font-semibold">note</th>
+                      <th className="px-3 py-2 font-semibold">status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="text-(--color-muted)">
+                    <tr className="border-t border-(--color-hairline-on-dark)">
+                      <td className="px-3 py-2">expense</td>
+                      <td className="px-3 py-2">1250</td>
+                      <td className="px-3 py-2">2026-05-04</td>
+                      <td className="px-3 py-2">Rent</td>
+                      <td className="px-3 py-2">May rent</td>
+                      <td className="px-3 py-2">done</td>
+                    </tr>
+                    <tr className="border-t border-(--color-hairline-on-dark)">
+                      <td className="px-3 py-2">income</td>
+                      <td className="px-3 py-2">5000</td>
+                      <td className="px-3 py-2">2026-05-01</td>
+                      <td className="px-3 py-2">Salary</td>
+                      <td className="px-3 py-2">Monthly pay</td>
+                      <td className="px-3 py-2">done</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
+
+      {deleteTarget && (
+        <DeleteConfirmationModal
+          isOpen={true}
+          onClose={() => {
+            if (!pendingAction) setDeleteTarget(null);
+          }}
+          onConfirm={async () => {
+            await runPlanningAction(
+              deleteTarget.key,
+              deleteTarget.action,
+              deleteTarget.successMessage
+            );
+            setDeleteTarget(null);
+          }}
+          title={deleteTarget.title}
+          description={deleteTarget.description}
+          isDeleting={pendingAction === deleteTarget.key}
+        />
+      )}
     </div>
   );
 }

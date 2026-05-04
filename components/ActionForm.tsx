@@ -3,9 +3,10 @@
  */
 "use client";
 import { toast } from "sonner";
-import { ReactNode, useRef, useTransition } from "react";
+import { ReactNode, useRef, useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
 import { LoadingSpinner } from "./ui/LoadingSpinner";
+import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
 
 import { useRouter } from "next/navigation";
 
@@ -46,53 +47,90 @@ export function ActionForm({
   children,
   className,
   onSuccess,
+  confirmation,
 }: {
   action: (formData: FormData) => Promise<ActionResult>;
   successMessage: string;
   children: ReactNode;
   className?: string;
   onSuccess?: (formData: FormData) => void;
+  confirmation?: {
+    title?: string;
+    description?: string;
+    confirmLabel?: string;
+    loadingLabel?: string;
+  };
 }) {
   const router = useRouter();
   const [, startRefreshTransition] = useTransition();
   const slowToastRef = useRef<string | number | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const submitConfirmedRef = useRef(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   return (
-    <form
-      action={async (formData) => {
-        const slowToastTimer = window.setTimeout(() => {
-          slowToastRef.current = toast.loading("Still working...", {
-            description: "Waiting on the database. Your click was received.",
-          });
-        }, 600);
+    <>
+      <form
+        ref={formRef}
+        onSubmit={(event) => {
+          if (!confirmation || submitConfirmedRef.current) return;
 
-        try {
-          const result = await action(formData);
-          window.clearTimeout(slowToastTimer);
+          event.preventDefault();
+          setIsConfirmOpen(true);
+        }}
+        action={async (formData) => {
+          const slowToastTimer = window.setTimeout(() => {
+            slowToastRef.current = toast.loading("Still working...", {
+              description: "Waiting on the database. Your click was received.",
+            });
+          }, 600);
 
-          if (result?.error) {
-            toast.error(result.error, slowToastRef.current ? { id: slowToastRef.current } : {});
-          } else {
-            toast.success(
-              successMessage,
+          try {
+            const result = await action(formData);
+            window.clearTimeout(slowToastTimer);
+
+            if (result?.error) {
+              toast.error(result.error, slowToastRef.current ? { id: slowToastRef.current } : {});
+            } else {
+              toast.success(
+                successMessage,
+                slowToastRef.current ? { id: slowToastRef.current } : {}
+              );
+              startRefreshTransition(() => router.refresh());
+              if (onSuccess) onSuccess(formData);
+            }
+          } catch (error) {
+            window.clearTimeout(slowToastTimer);
+            toast.error(
+              error instanceof Error ? error.message : "An error occurred",
               slowToastRef.current ? { id: slowToastRef.current } : {}
             );
-            startRefreshTransition(() => router.refresh());
-            if (onSuccess) onSuccess(formData);
+          } finally {
+            slowToastRef.current = null;
+            submitConfirmedRef.current = false;
           }
-        } catch (error) {
-          window.clearTimeout(slowToastTimer);
-          toast.error(
-            error instanceof Error ? error.message : "An error occurred",
-            slowToastRef.current ? { id: slowToastRef.current } : {}
-          );
-        } finally {
-          slowToastRef.current = null;
-        }
-      }}
-      className={className}
-    >
-      {children}
-    </form>
+        }}
+        className={className}
+      >
+        {children}
+      </form>
+
+      {confirmation && (
+        <DeleteConfirmationModal
+          isOpen={isConfirmOpen}
+          onClose={() => setIsConfirmOpen(false)}
+          onConfirm={async () => {
+            submitConfirmedRef.current = true;
+            setIsConfirmOpen(false);
+            formRef.current?.requestSubmit();
+          }}
+          title={confirmation.title}
+          description={confirmation.description}
+          isDeleting={false}
+          confirmLabel={confirmation.confirmLabel}
+          loadingLabel={confirmation.loadingLabel}
+        />
+      )}
+    </>
   );
 }

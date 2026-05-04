@@ -209,6 +209,12 @@ export default async function ProfilePage() {
           action={deleteAccountData}
           successMessage="Account data deleted"
           className="flex flex-col md:flex-row gap-3"
+          confirmation={{
+            title: "Delete Account Data?",
+            description:
+              "This permanently removes your transactions, categories, budgets, savings goals, and recurring rules. Your login account stays active.",
+            confirmLabel: "Delete Data",
+          }}
         >
           <input
             name="confirmation"

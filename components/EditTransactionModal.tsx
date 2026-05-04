@@ -84,6 +84,17 @@ export function EditTransactionModal({
             }}
             successMessage="Transaction updated successfully!"
             className="flex flex-col gap-5"
+            confirmation={
+              type !== transaction.type
+                ? {
+                    title: "Change Transaction Type?",
+                    description:
+                      "This moves the record between income and expense storage. The current record is removed from its original table and recreated with the new type.",
+                    confirmLabel: "Change Type",
+                    loadingLabel: "Saving...",
+                  }
+                : undefined
+            }
           >
             {/* Type Switcher */}
             <div>

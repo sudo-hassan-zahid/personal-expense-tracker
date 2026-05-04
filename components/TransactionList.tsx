@@ -31,6 +31,7 @@ import { DateRangePicker } from "./ui/DateRangePicker";
 import { toast } from "sonner";
 import { useTransactions } from "@/hooks/useTransactions";
 import { EditTransactionModal } from "./EditTransactionModal";
+import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
 import { Transaction, Category } from "@/types";
 import { HelpLabel, HelpTip } from "./HelpTip";
 
@@ -61,7 +62,7 @@ const TransactionRow = memo(
   }) => {
     return (
       <div
-        className={`flex flex-col md:grid ${enableStatusTracking ? "md:grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "md:grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-2 md:gap-4 items-start md:items-center py-4 md:py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-200 px-3 md:px-2 -mx-3 md:-mx-2 rounded-xl md:rounded-lg ${index < 10 ? "animate-slide-up" : "opacity-100"} ${index < 5 ? `stagger-${index + 1}` : ""} ${newlyAddedId === t.id ? "bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse" : ""}`}
+        className={`flex flex-col md:grid ${enableStatusTracking ? "md:grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "md:grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-2 md:gap-4 items-start md:items-center py-4 md:py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-200 px-3 md:px-2 -mx-3 md:mx-0 rounded-xl md:rounded-lg ${index < 10 ? "animate-slide-up" : "opacity-100"} ${index < 5 ? `stagger-${index + 1}` : ""} ${newlyAddedId === t.id ? "bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse" : ""}`}
       >
         <div className="hidden md:block text-number-sm text-(--color-muted) pl-2">
           <input
@@ -356,6 +357,7 @@ export function TransactionList({
   const [showFilters, setShowFilters] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
+  const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [selectedTransactions, setSelectedTransactions] = useState<Transaction[]>([]);
   const [bulkDate, setBulkDate] = useState("");
@@ -476,6 +478,7 @@ export function TransactionList({
       }
       toast.success("Selected transactions deleted", { id: toastId });
       setSelectedTransactions([]);
+      setIsBulkDeleteOpen(false);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Bulk delete failed", { id: toastId });
     } finally {
@@ -660,7 +663,7 @@ export function TransactionList({
               {bulkAction === "update" ? "Applying..." : "Apply"}
             </button>
             <button
-              onClick={bulkDelete}
+              onClick={() => setIsBulkDeleteOpen(true)}
               disabled={bulkAction !== null}
               className="px-4 py-2 rounded-lg bg-(--color-trading-down) text-white text-button disabled:opacity-60 disabled:cursor-wait flex items-center justify-center gap-2"
             >
@@ -678,7 +681,7 @@ export function TransactionList({
         </div>
       )}
 
-      <div className="relative -mx-2 overflow-x-auto px-2 md:mx-0 md:px-0">
+      <div className="relative -mx-2 overflow-x-hidden px-2 md:mx-0 md:px-0">
         <div className="flex flex-col gap-2 md:min-w-[720px]">
         {/* Sorting header */}
         <div
@@ -797,6 +800,17 @@ export function TransactionList({
           onClose={() => setEditingTransaction(null)}
         />
       )}
+
+      <DeleteConfirmationModal
+        isOpen={isBulkDeleteOpen}
+        onClose={() => {
+          if (bulkAction !== "delete") setIsBulkDeleteOpen(false);
+        }}
+        onConfirm={bulkDelete}
+        title="Delete Selected Transactions?"
+        description={`Delete ${selectedTransactions.length} selected transaction(s)? This action cannot be undone.`}
+        isDeleting={bulkAction === "delete"}
+      />
 
       {transactionToDelete && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">

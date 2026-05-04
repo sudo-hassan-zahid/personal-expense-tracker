@@ -12,6 +12,8 @@ interface DeleteConfirmationModalProps {
   title?: string;
   description?: string;
   isDeleting: boolean;
+  confirmLabel?: string;
+  loadingLabel?: string;
 }
 
 export function DeleteConfirmationModal({
@@ -21,6 +23,8 @@ export function DeleteConfirmationModal({
   title = "Confirm Deletion",
   description = "Are you sure you want to delete this? This action cannot be undone.",
   isDeleting,
+  confirmLabel = "Delete",
+  loadingLabel = "Deleting...",
 }: DeleteConfirmationModalProps) {
   if (!isOpen) return null;
 
@@ -50,7 +54,7 @@ export function DeleteConfirmationModal({
               disabled={isDeleting}
               className="flex-1 px-4 py-2 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20 disabled:opacity-50 flex items-center justify-center"
             >
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting ? loadingLabel : confirmLabel}
             </button>
           </div>
         </div>
