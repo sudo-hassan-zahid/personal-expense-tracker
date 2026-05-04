@@ -401,8 +401,8 @@ export function TransactionList({
       </div>
 
       {showFilters && (
-        <div className="bg-(--color-canvas-dark)/30 border border-(--color-hairline-on-dark) rounded-xl p-4 animate-in slide-in-from-top-4 duration-300">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-(--color-canvas-dark)/30 border border-(--color-hairline-on-dark) rounded-xl p-3 sm:p-4 animate-in slide-in-from-top-4 duration-300">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-[minmax(210px,0.9fr)_minmax(240px,1.1fr)_minmax(220px,1fr)_auto] xl:items-end">
             <div className="flex flex-col gap-1.5">
               <HelpLabel
                 help="Show only transactions between the minimum and maximum amount."
@@ -410,7 +410,7 @@ export function TransactionList({
               >
                 Amount Range
               </HelpLabel>
-              <div className="flex items-center gap-2">
+              <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
                 <input
                   type="number"
                   placeholder="Min"
@@ -474,6 +474,7 @@ export function TransactionList({
                 Date Range
               </HelpLabel>
               <DateRangePicker
+                className="w-full"
                 onRangeChange={(start, end) => {
                   setStartDate(start);
                   setEndDate(end);
@@ -481,7 +482,7 @@ export function TransactionList({
               />
             </div>
 
-            <div className="flex items-end justify-end">
+            <div className="flex items-end justify-stretch sm:col-span-2 xl:col-span-1 xl:justify-end">
               <button
                 onClick={() => {
                   setMinAmount("");
@@ -491,7 +492,7 @@ export function TransactionList({
                   setStartDate(null);
                   setEndDate(null);
                 }}
-                className="text-caption text-(--color-muted) hover:text-red-500 flex items-center gap-1 transition-colors"
+                className="flex w-full items-center justify-center gap-1 rounded-lg border border-(--color-hairline-on-dark) px-3 py-2 text-caption text-(--color-muted) transition-colors hover:border-red-500/40 hover:text-red-500 xl:w-auto xl:border-transparent"
               >
                 <CloseIcon size={14} />
                 Clear All Filters
@@ -567,7 +568,8 @@ export function TransactionList({
         </div>
       )}
 
-      <div className="flex flex-col gap-2 relative">
+      <div className="relative -mx-2 overflow-x-auto px-2 md:mx-0 md:px-0">
+        <div className="flex flex-col gap-2 md:min-w-[720px]">
         {/* Sorting header */}
         <div
           className={`hidden md:grid ${enableStatusTracking ? "grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}
@@ -662,6 +664,7 @@ export function TransactionList({
               onToggleSelected={toggleSelected}
             />
           ))}
+        </div>
         </div>
       </div>
 
