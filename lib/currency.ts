@@ -63,4 +63,3 @@ export const SUPPORTED_CURRENCIES = [
   { code: "TRY", name: "Turkish Lira", symbol: "₺" },
   { code: "BDT", name: "Bangladeshi Taka", symbol: "৳" },
 ] as const;
-
