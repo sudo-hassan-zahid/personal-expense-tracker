@@ -95,4 +95,3 @@ export function Calendar({
     </div>
   );
 }
-
