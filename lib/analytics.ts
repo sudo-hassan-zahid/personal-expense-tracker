@@ -33,7 +33,10 @@ export function getTopExpenseCategories(transactions: Transaction[], limit = 3):
 
   transactions.forEach((transaction) => {
     if (transaction.type !== "expense") return;
-    totals.set(transaction.category, (totals.get(transaction.category) || 0) + Number(transaction.amount));
+    totals.set(
+      transaction.category,
+      (totals.get(transaction.category) || 0) + Number(transaction.amount)
+    );
   });
 
   return Array.from(totals.entries())
@@ -44,7 +47,10 @@ export function getTopExpenseCategories(transactions: Transaction[], limit = 3):
 
 export function getAverageDailySpend(transactions: Transaction[]) {
   const expenseTransactions = transactions.filter((transaction) => transaction.type === "expense");
-  const total = expenseTransactions.reduce((sum, transaction) => sum + Number(transaction.amount), 0);
+  const total = expenseTransactions.reduce(
+    (sum, transaction) => sum + Number(transaction.amount),
+    0
+  );
 
   if (expenseTransactions.length === 0) return 0;
 
@@ -73,7 +79,8 @@ export function getYearlyComparison(transactions: Transaction[]) {
     if (year === currentYear && transaction.type === "income") totals.currentIncome += amount;
     if (year === currentYear && transaction.type === "expense") totals.currentExpense += amount;
     if (year === currentYear - 1 && transaction.type === "income") totals.previousIncome += amount;
-    if (year === currentYear - 1 && transaction.type === "expense") totals.previousExpense += amount;
+    if (year === currentYear - 1 && transaction.type === "expense")
+      totals.previousExpense += amount;
   });
 
   return totals;
