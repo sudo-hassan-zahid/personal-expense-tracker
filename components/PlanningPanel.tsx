@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
-import { Trash2, Repeat, Target, WalletCards, Upload, Play } from "lucide-react";
+import { useMemo, useState, useTransition } from "react";
+import { Loader2, Trash2, Repeat, Target, WalletCards, Upload, Play } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { ActionForm, SubmitButton } from "@/components/ActionForm";
 import {
@@ -36,10 +37,47 @@ export function PlanningPanel({
   month: string;
   currency: string;
 }) {
+  const router = useRouter();
+  const [, startRefreshTransition] = useTransition();
+  const [pendingAction, setPendingAction] = useState<string | null>(null);
   const allCategoryNames = useMemo(
     () => [...expenseCategories.map((c) => c.name), ...incomeCategories.map((c) => c.name)],
     [expenseCategories, incomeCategories]
   );
+
+  const runPlanningAction = async (
+    key: string,
+    action: () => Promise<unknown>,
+    successMessage: string
+  ) => {
+    if (pendingAction) return;
+
+    setPendingAction(key);
+    const toastId = window.setTimeout(() => {
+      toast.loading("Still working...", {
+        id: key,
+        description: "Supabase is taking a moment. The action is still running.",
+      });
+    }, 600);
+
+    try {
+      const result = await action();
+      window.clearTimeout(toastId);
+
+      if (result && typeof result === "object" && "error" in result) {
+        toast.error(String(result.error), { id: key });
+        return;
+      }
+
+      toast.success(successMessage, { id: key });
+      startRefreshTransition(() => router.refresh());
+    } catch (error) {
+      window.clearTimeout(toastId);
+      toast.error(error instanceof Error ? error.message : "Action failed", { id: key });
+    } finally {
+      setPendingAction(null);
+    }
+  };
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
@@ -135,13 +173,21 @@ export function PlanningPanel({
                   </div>
                 </div>
                 <button
-                  onClick={async () => {
-                    await deleteBudget(budget.id);
-                    toast.success("Budget deleted");
-                  }}
-                  className="p-2 text-(--color-muted) hover:text-(--color-trading-down)"
+                  onClick={() =>
+                    runPlanningAction(
+                      `budget-${budget.id}`,
+                      () => deleteBudget(budget.id),
+                      "Budget deleted"
+                    )
+                  }
+                  disabled={pendingAction !== null}
+                  className="p-2 text-(--color-muted) hover:text-(--color-trading-down) disabled:opacity-50 disabled:cursor-wait"
                 >
-                  <Trash2 size={16} />
+                  {pendingAction === `budget-${budget.id}` ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Trash2 size={16} />
+                  )}
                 </button>
               </div>
             ))
@@ -217,13 +263,21 @@ export function PlanningPanel({
                   <div className="flex justify-between gap-3">
                     <span className="text-body-sm">{goal.name}</span>
                     <button
-                      onClick={async () => {
-                        await deleteSavingsGoal(goal.id);
-                        toast.success("Goal deleted");
-                      }}
-                      className="text-(--color-muted) hover:text-(--color-trading-down)"
+                      onClick={() =>
+                        runPlanningAction(
+                          `goal-${goal.id}`,
+                          () => deleteSavingsGoal(goal.id),
+                          "Goal deleted"
+                        )
+                      }
+                      disabled={pendingAction !== null}
+                      className="text-(--color-muted) hover:text-(--color-trading-down) disabled:opacity-50 disabled:cursor-wait"
                     >
-                      <Trash2 size={16} />
+                      {pendingAction === `goal-${goal.id}` ? (
+                        <Loader2 size={16} className="animate-spin" />
+                      ) : (
+                        <Trash2 size={16} />
+                      )}
                     </button>
                   </div>
                   <div className="mt-2 h-2 bg-(--color-canvas-dark) rounded-full overflow-hidden">
@@ -251,15 +305,22 @@ export function PlanningPanel({
             </HelpTip>
           </div>
           <button
-            onClick={async () => {
-              const result = await postDueRecurringTransactions();
-              if (result?.error) toast.error(result.error);
-              else toast.success("Due recurring items posted");
-            }}
-            className="p-2 rounded-lg border border-(--color-hairline-on-dark) text-(--color-muted) hover:text-(--color-on-dark)"
+            onClick={() =>
+              runPlanningAction(
+                "post-recurring",
+                postDueRecurringTransactions,
+                "Due recurring items posted"
+              )
+            }
+            disabled={pendingAction !== null}
+            className="p-2 rounded-lg border border-(--color-hairline-on-dark) text-(--color-muted) hover:text-(--color-on-dark) disabled:opacity-50 disabled:cursor-wait"
             title="Post due recurring transactions"
           >
-            <Play size={16} />
+            {pendingAction === "post-recurring" ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Play size={16} />
+            )}
           </button>
         </div>
         <ActionForm
@@ -346,13 +407,21 @@ export function PlanningPanel({
                 </div>
               </div>
               <button
-                onClick={async () => {
-                  await deleteRecurringTransaction(item.id);
-                  toast.success("Recurring item deleted");
-                }}
-                className="p-2 text-(--color-muted) hover:text-(--color-trading-down)"
+                onClick={() =>
+                  runPlanningAction(
+                    `recurring-${item.id}`,
+                    () => deleteRecurringTransaction(item.id),
+                    "Recurring item deleted"
+                  )
+                }
+                disabled={pendingAction !== null}
+                className="p-2 text-(--color-muted) hover:text-(--color-trading-down) disabled:opacity-50 disabled:cursor-wait"
               >
-                <Trash2 size={16} />
+                {pendingAction === `recurring-${item.id}` ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <Trash2 size={16} />
+                )}
               </button>
             </div>
           ))}

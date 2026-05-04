@@ -230,6 +230,7 @@ export function TransactionList({
   const [bulkDate, setBulkDate] = useState("");
   const [bulkCategory, setBulkCategory] = useState("");
   const [bulkStatus, setBulkStatus] = useState("");
+  const [bulkAction, setBulkAction] = useState<"update" | "delete" | null>(null);
 
   const [prevCount, setPrevCount] = useState(initialTransactions.length);
   useEffect(() => {
@@ -270,36 +271,51 @@ export function TransactionList({
   };
 
   const applyBulkUpdate = async () => {
+    if (bulkAction) return;
+
     const expenseIds = selectedTransactions.filter((t) => t.type === "expense").map((t) => t.id);
     const incomeIds = selectedTransactions.filter((t) => t.type === "income").map((t) => t.id);
     const sharedUpdates: Record<string, string> = {};
     if (bulkDate) sharedUpdates.date = bulkDate;
     if (bulkStatus) sharedUpdates.status = bulkStatus;
 
+    setBulkAction("update");
+    const toastId = toast.loading(`Updating ${selectedTransactions.length} transaction(s)...`);
+
     try {
-      if (expenseIds.length > 0) {
-        await bulkUpdateExpenses(expenseIds, {
-          ...sharedUpdates,
-          ...(bulkCategory ? { category: bulkCategory } : {}),
-        });
-      }
-      if (incomeIds.length > 0) {
-        await bulkUpdateIncomes(incomeIds, {
-          ...sharedUpdates,
-          ...(bulkCategory ? { source: bulkCategory } : {}),
-        });
-      }
-      toast.success("Bulk update complete");
+      await Promise.all([
+        expenseIds.length > 0
+          ? bulkUpdateExpenses(expenseIds, {
+              ...sharedUpdates,
+              ...(bulkCategory ? { category: bulkCategory } : {}),
+            })
+          : Promise.resolve(),
+        incomeIds.length > 0
+          ? bulkUpdateIncomes(incomeIds, {
+              ...sharedUpdates,
+              ...(bulkCategory ? { source: bulkCategory } : {}),
+            })
+          : Promise.resolve(),
+      ]);
+      toast.success("Bulk update complete", { id: toastId });
       setSelectedTransactions([]);
       setBulkDate("");
       setBulkCategory("");
       setBulkStatus("");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Bulk update failed");
+      toast.error(error instanceof Error ? error.message : "Bulk update failed", { id: toastId });
+    } finally {
+      setBulkAction(null);
     }
   };
 
   const bulkDelete = async () => {
+    if (bulkAction) return;
+
+    setBulkAction("delete");
+    const idsToRemove = selectedTransactions.map((transaction) => transaction.id);
+    const toastId = toast.loading(`Deleting ${selectedTransactions.length} transaction(s)...`);
+
     try {
       await Promise.all(
         selectedTransactions.map((transaction) =>
@@ -308,10 +324,17 @@ export function TransactionList({
             : deleteExpense(transaction.id)
         )
       );
-      toast.success("Selected transactions deleted");
+      if (onOptimisticDelete) {
+        startTransition(() => {
+          idsToRemove.forEach((id) => onOptimisticDelete(id));
+        });
+      }
+      toast.success("Selected transactions deleted", { id: toastId });
       setSelectedTransactions([]);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Bulk delete failed");
+      toast.error(error instanceof Error ? error.message : "Bulk delete failed", { id: toastId });
+    } finally {
+      setBulkAction(null);
     }
   };
 
@@ -464,19 +487,24 @@ export function TransactionList({
           <div className="flex gap-2 lg:ml-auto">
             <button
               onClick={applyBulkUpdate}
-              className="px-4 py-2 rounded-lg bg-(--color-primary) text-(--color-on-primary) text-button"
+              disabled={bulkAction !== null}
+              className="px-4 py-2 rounded-lg bg-(--color-primary) text-(--color-on-primary) text-button disabled:opacity-60 disabled:cursor-wait flex items-center justify-center gap-2"
             >
-              Apply
+              {bulkAction === "update" && <Loader2 size={16} className="animate-spin" />}
+              {bulkAction === "update" ? "Applying..." : "Apply"}
             </button>
             <button
               onClick={bulkDelete}
-              className="px-4 py-2 rounded-lg bg-(--color-trading-down) text-white text-button"
+              disabled={bulkAction !== null}
+              className="px-4 py-2 rounded-lg bg-(--color-trading-down) text-white text-button disabled:opacity-60 disabled:cursor-wait flex items-center justify-center gap-2"
             >
-              Delete
+              {bulkAction === "delete" && <Loader2 size={16} className="animate-spin" />}
+              {bulkAction === "delete" ? "Deleting..." : "Delete"}
             </button>
             <button
               onClick={() => setSelectedTransactions([])}
-              className="px-4 py-2 rounded-lg border border-(--color-hairline-on-dark) text-button"
+              disabled={bulkAction !== null}
+              className="px-4 py-2 rounded-lg border border-(--color-hairline-on-dark) text-button disabled:opacity-60 disabled:cursor-wait"
             >
               Clear
             </button>
