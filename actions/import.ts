@@ -40,7 +40,10 @@ export async function importTransactions(formData: FormData) {
   let imported = 0;
   for (const record of records) {
     const type = record[indexOf("type")]?.toLowerCase();
-    const category = record[indexOf("category_or_source")] || record[indexOf("category")] || record[indexOf("source")];
+    const category =
+      record[indexOf("category_or_source")] ||
+      record[indexOf("category")] ||
+      record[indexOf("source")];
     const row = new FormData();
     row.set("amount", record[indexOf("amount")] || "");
     row.set("date", record[indexOf("date")] || "");
