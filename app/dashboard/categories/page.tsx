@@ -1,7 +1,7 @@
 /**
  * Page/Route: page.tsx
  */
-import { getCategories } from "@/actions/category";
+import { getUserCategories } from "@/actions/category";
 import { CategoryManager } from "@/components/CategoryManager";
 
 export const metadata = {
@@ -10,10 +10,9 @@ export const metadata = {
 };
 
 export default async function CategoriesPage() {
-  const [expenses, incomes] = await Promise.all([
-    getCategories("expense"),
-    getCategories("income"),
-  ]);
+  const categories = await getUserCategories();
+  const expenses = categories.filter((category) => category.type === "expense");
+  const incomes = categories.filter((category) => category.type === "income");
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-6 py-[40px] flex flex-col gap-8 flex-1">

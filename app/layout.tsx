@@ -53,7 +53,7 @@ export default async function RootLayout({
         <div className="glow-mesh" />
         <LazyParticleBackground />
         {profile?.show_cursor_trail !== false && <LazyCursorTrail />}
-        <TopNav activeTheme={activeTheme as "light" | "dark"} />
+        <TopNav activeTheme={activeTheme as "light" | "dark"} profile={profile} />
         <main className="flex-1 flex flex-col relative z-10">{children}</main>
         <Toaster
           richColors

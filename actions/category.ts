@@ -7,6 +7,7 @@ import { getAuthenticatedClient } from "@/lib/supabase";
 import { revalidateCategories, revalidateTransactions } from "@/lib/revalidate";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase";
+import { getRequestAuth } from "@/lib/request-data";
 
 /**
  * Fetches categories for a given type.
@@ -14,12 +15,41 @@ import { createClient } from "@/lib/supabase";
  * when called alongside other queries (e.g. in dashboard Promise.all).
  */
 export async function getCategories(type: "expense" | "income", client?: SupabaseClient) {
+  if (!client) {
+    const categories = await getUserCategories();
+    return categories.filter((category) => category.type === type);
+  }
+
   const supabase = client || (await createClient());
 
   const { data, error } = await supabase
     .from("categories")
     .select("id, name, type, parent_id")
     .eq("type", type)
+    .order("name", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching categories:", error);
+    return [];
+  }
+
+  return data || [];
+}
+
+export async function getUserCategories(client?: SupabaseClient, userId?: string) {
+  const auth = client && userId ? null : await getRequestAuth();
+  const effectiveUserId = userId || auth?.user?.id;
+
+  if (!effectiveUserId) return [];
+
+  const supabase = client || (await createClient(auth?.allCookies));
+
+  const { data, error } = await supabase
+    .from("categories")
+    .select("id, name, type, parent_id")
+    .eq("user_id", effectiveUserId)
+    .in("type", ["expense", "income"])
+    .order("type", { ascending: true })
     .order("name", { ascending: true });
 
   if (error) {
