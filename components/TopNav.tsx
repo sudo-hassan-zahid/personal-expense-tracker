@@ -19,4 +19,3 @@ export async function TopNav({ activeTheme }: { activeTheme: "light" | "dark" })
     />
   );
 }
-
