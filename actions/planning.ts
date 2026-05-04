@@ -43,6 +43,56 @@ export async function getPlanningData() {
   };
 }
 
+export async function getPlanningPageData() {
+  const { supabase, user } = await getAuthenticatedClient();
+  const month = format(new Date(), "yyyy-MM-01");
+
+  const [budgets, goals, recurring, categories, profile] = await Promise.all([
+    supabase
+      .from("monthly_budgets")
+      .select("id, category, month, limit_amount, alert_threshold, rollover_amount")
+      .eq("user_id", user.id)
+      .eq("month", month)
+      .order("category"),
+    supabase
+      .from("savings_goals")
+      .select("id, name, target_amount, current_amount, target_date")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("recurring_transactions")
+      .select("id, type, amount, category_or_source, note, frequency, next_date, end_date, status")
+      .eq("user_id", user.id)
+      .order("next_date", { ascending: true }),
+    supabase
+      .from("categories")
+      .select("id, name, type, parent_id")
+      .eq("user_id", user.id)
+      .in("type", ["expense", "income"])
+      .order("type", { ascending: true })
+      .order("name", { ascending: true }),
+    supabase
+      .from("profiles")
+      .select("id, currency")
+      .eq("id", user.id)
+      .maybeSingle(),
+  ]);
+
+  const categoryData = categories.data || [];
+
+  return {
+    planning: {
+      budgets: budgets.data || [],
+      goals: goals.data || [],
+      recurring: recurring.data || [],
+      month,
+    },
+    expenseCategories: categoryData.filter((category) => category.type === "expense"),
+    incomeCategories: categoryData.filter((category) => category.type === "income"),
+    profile: profile.data,
+  };
+}
+
 export async function saveBudget(formData: FormData) {
   const { supabase, user } = await getAuthenticatedClient();
   const category = validateRequiredText(formData.get("category"), "Category");
@@ -177,38 +227,61 @@ export async function postDueRecurringTransactions() {
 
   if (error) return { error: "Failed to load recurring transactions." };
 
-  for (const item of data || []) {
-    const table = item.type === "income" ? "incomes" : "expenses";
-    const payload =
-      item.type === "income"
-        ? {
-            user_id: user.id,
-            amount: item.amount,
-            source: item.category_or_source,
-            date: item.next_date,
-            note: item.note || "",
-          }
-        : {
-            user_id: user.id,
-            amount: item.amount,
-            category: item.category_or_source,
-            date: item.next_date,
-            note: item.note || "",
-          };
-    await supabase.from(table).insert(payload);
+  const dueItems = data || [];
+  if (dueItems.length === 0) return { success: true };
 
-    const current = new Date(`${item.next_date}T00:00:00`);
-    const next =
-      item.frequency === "weekly"
-        ? addWeeks(current, 1)
-        : item.frequency === "yearly"
-          ? addYears(current, 1)
-          : addMonths(current, 1);
-    await supabase
-      .from("recurring_transactions")
-      .update({ next_date: format(next, "yyyy-MM-dd"), updated_at: new Date().toISOString() })
-      .eq("id", item.id)
-      .eq("user_id", user.id);
+  const incomeRows = dueItems
+    .filter((item) => item.type === "income")
+    .map((item) => ({
+      user_id: user.id,
+      amount: item.amount,
+      source: item.category_or_source,
+      date: item.next_date,
+      note: item.note || "",
+    }));
+
+  const expenseRows = dueItems
+    .filter((item) => item.type === "expense")
+    .map((item) => ({
+      user_id: user.id,
+      amount: item.amount,
+      category: item.category_or_source,
+      date: item.next_date,
+      note: item.note || "",
+    }));
+
+  const insertResults = await Promise.all([
+    incomeRows.length > 0
+      ? supabase.from("incomes").insert(incomeRows)
+      : Promise.resolve({ error: null }),
+    expenseRows.length > 0
+      ? supabase.from("expenses").insert(expenseRows)
+      : Promise.resolve({ error: null }),
+  ]);
+
+  if (insertResults.some((result) => result.error)) {
+    return { error: "Failed to post one or more recurring transactions." };
+  }
+
+  const updateResults = await Promise.all(
+    dueItems.map((item) => {
+      const current = new Date(`${item.next_date}T00:00:00`);
+      const next =
+        item.frequency === "weekly"
+          ? addWeeks(current, 1)
+          : item.frequency === "yearly"
+            ? addYears(current, 1)
+            : addMonths(current, 1);
+      return supabase
+        .from("recurring_transactions")
+        .update({ next_date: format(next, "yyyy-MM-dd"), updated_at: new Date().toISOString() })
+        .eq("id", item.id)
+        .eq("user_id", user.id);
+    })
+  );
+
+  if (updateResults.some((result) => result.error)) {
+    return { error: "Transactions were posted, but recurring schedules failed to advance." };
   }
 
   revalidateTransactions();

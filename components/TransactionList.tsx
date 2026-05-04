@@ -3,7 +3,7 @@
  */
 "use client";
 
-import { useState, useEffect, memo, useTransition } from "react";
+import { useState, useEffect, memo, useMemo, useRef, useTransition } from "react";
 import {
   ArrowUpRight,
   ArrowDownRight,
@@ -16,6 +16,7 @@ import {
   AlertCircle,
   Loader2,
   Paperclip,
+  ChevronDown,
 } from "lucide-react";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/currency";
@@ -175,6 +176,134 @@ const TransactionRow = memo(
 
 TransactionRow.displayName = "TransactionRow";
 
+type CategoryFilterOption = {
+  key: string;
+  name: string;
+};
+
+function CategoryFilterDropdown({
+  value,
+  expenseOptions,
+  incomeOptions,
+  onChange,
+}: {
+  value: string;
+  expenseOptions: CategoryFilterOption[];
+  incomeOptions: CategoryFilterOption[];
+  onChange: (value: string) => void;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const allOptions = [...expenseOptions, ...incomeOptions];
+  const selectedOption = allOptions.find((option) => option.key === value);
+  const label = selectedOption?.name || "All categories and sources";
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      if (!containerRef.current?.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    return () => document.removeEventListener("pointerdown", handlePointerDown);
+  }, [isOpen]);
+
+  const choose = (nextValue: string) => {
+    onChange(nextValue);
+    setIsOpen(false);
+  };
+
+  return (
+    <div ref={containerRef} className="relative">
+      <button
+        type="button"
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        onClick={() => setIsOpen((current) => !current)}
+        className="form-control form-control-compact flex w-full min-w-0 items-center justify-between gap-2 text-left"
+      >
+        <span className="min-w-0 truncate">{label}</span>
+        <ChevronDown
+          size={16}
+          className={`shrink-0 text-(--color-muted) transition-transform ${isOpen ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {isOpen && (
+        <div
+          role="listbox"
+          className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 max-h-72 overflow-y-auto rounded-xl border border-(--color-hairline-on-dark) bg-(--color-surface-card-dark) p-1 shadow-2xl shadow-black/40"
+        >
+          <button
+            type="button"
+            role="option"
+            aria-selected={value === ""}
+            onClick={() => choose("")}
+            className={`w-full rounded-lg px-3 py-2 text-left text-body-sm transition-colors ${
+              value === ""
+                ? "bg-(--color-primary) text-(--color-on-primary)"
+                : "text-(--color-on-dark) hover:bg-(--color-surface-elevated-dark)"
+            }`}
+          >
+            All categories and sources
+          </button>
+
+          {expenseOptions.length > 0 && (
+            <div className="mt-1">
+              <div className="px-3 py-1.5 text-caption font-semibold uppercase tracking-wide text-(--color-muted)">
+                Expense categories
+              </div>
+              {expenseOptions.map((option) => (
+                <button
+                  key={option.key}
+                  type="button"
+                  role="option"
+                  aria-selected={value === option.key}
+                  onClick={() => choose(option.key)}
+                  className={`w-full rounded-lg px-3 py-2 text-left text-body-sm transition-colors ${
+                    value === option.key
+                      ? "bg-(--color-primary) text-(--color-on-primary)"
+                      : "text-(--color-on-dark) hover:bg-(--color-surface-elevated-dark)"
+                  }`}
+                >
+                  {option.name}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {incomeOptions.length > 0 && (
+            <div className="mt-1 border-t border-(--color-hairline-on-dark) pt-1">
+              <div className="px-3 py-1.5 text-caption font-semibold uppercase tracking-wide text-(--color-muted)">
+                Income sources
+              </div>
+              {incomeOptions.map((option) => (
+                <button
+                  key={option.key}
+                  type="button"
+                  role="option"
+                  aria-selected={value === option.key}
+                  onClick={() => choose(option.key)}
+                  className={`w-full rounded-lg px-3 py-2 text-left text-body-sm transition-colors ${
+                    value === option.key
+                      ? "bg-(--color-primary) text-(--color-on-primary)"
+                      : "text-(--color-on-dark) hover:bg-(--color-surface-elevated-dark)"
+                  }`}
+                >
+                  {option.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function TransactionList({
   initialTransactions,
   currency,
@@ -212,6 +341,8 @@ export function TransactionList({
     setMinAmount,
     maxAmount,
     setMaxAmount,
+    categoryFilter,
+    setCategoryFilter,
     startDate,
     setStartDate,
     endDate,
@@ -230,6 +361,21 @@ export function TransactionList({
   const [bulkDate, setBulkDate] = useState("");
   const [bulkCategory, setBulkCategory] = useState("");
   const [bulkStatus, setBulkStatus] = useState("");
+  const [bulkAction, setBulkAction] = useState<"update" | "delete" | null>(null);
+
+  const categoryFilterOptions = useMemo(
+    () => ({
+      expenses: expenseCategories.map((category) => ({
+        key: `expense:${category.name.toLowerCase()}`,
+        name: category.name,
+      })),
+      incomes: incomeCategories.map((category) => ({
+        key: `income:${category.name.toLowerCase()}`,
+        name: category.name,
+      })),
+    }),
+    [expenseCategories, incomeCategories]
+  );
 
   const [prevCount, setPrevCount] = useState(initialTransactions.length);
   useEffect(() => {
@@ -270,36 +416,51 @@ export function TransactionList({
   };
 
   const applyBulkUpdate = async () => {
+    if (bulkAction) return;
+
     const expenseIds = selectedTransactions.filter((t) => t.type === "expense").map((t) => t.id);
     const incomeIds = selectedTransactions.filter((t) => t.type === "income").map((t) => t.id);
     const sharedUpdates: Record<string, string> = {};
     if (bulkDate) sharedUpdates.date = bulkDate;
     if (bulkStatus) sharedUpdates.status = bulkStatus;
 
+    setBulkAction("update");
+    const toastId = toast.loading(`Updating ${selectedTransactions.length} transaction(s)...`);
+
     try {
-      if (expenseIds.length > 0) {
-        await bulkUpdateExpenses(expenseIds, {
-          ...sharedUpdates,
-          ...(bulkCategory ? { category: bulkCategory } : {}),
-        });
-      }
-      if (incomeIds.length > 0) {
-        await bulkUpdateIncomes(incomeIds, {
-          ...sharedUpdates,
-          ...(bulkCategory ? { source: bulkCategory } : {}),
-        });
-      }
-      toast.success("Bulk update complete");
+      await Promise.all([
+        expenseIds.length > 0
+          ? bulkUpdateExpenses(expenseIds, {
+              ...sharedUpdates,
+              ...(bulkCategory ? { category: bulkCategory } : {}),
+            })
+          : Promise.resolve(),
+        incomeIds.length > 0
+          ? bulkUpdateIncomes(incomeIds, {
+              ...sharedUpdates,
+              ...(bulkCategory ? { source: bulkCategory } : {}),
+            })
+          : Promise.resolve(),
+      ]);
+      toast.success("Bulk update complete", { id: toastId });
       setSelectedTransactions([]);
       setBulkDate("");
       setBulkCategory("");
       setBulkStatus("");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Bulk update failed");
+      toast.error(error instanceof Error ? error.message : "Bulk update failed", { id: toastId });
+    } finally {
+      setBulkAction(null);
     }
   };
 
   const bulkDelete = async () => {
+    if (bulkAction) return;
+
+    setBulkAction("delete");
+    const idsToRemove = selectedTransactions.map((transaction) => transaction.id);
+    const toastId = toast.loading(`Deleting ${selectedTransactions.length} transaction(s)...`);
+
     try {
       await Promise.all(
         selectedTransactions.map((transaction) =>
@@ -308,10 +469,17 @@ export function TransactionList({
             : deleteExpense(transaction.id)
         )
       );
-      toast.success("Selected transactions deleted");
+      if (onOptimisticDelete) {
+        startTransition(() => {
+          idsToRemove.forEach((id) => onOptimisticDelete(id));
+        });
+      }
+      toast.success("Selected transactions deleted", { id: toastId });
       setSelectedTransactions([]);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Bulk delete failed");
+      toast.error(error instanceof Error ? error.message : "Bulk delete failed", { id: toastId });
+    } finally {
+      setBulkAction(null);
     }
   };
 
@@ -351,7 +519,7 @@ export function TransactionList({
           >
             <Filter size={18} />
             <span className="text-body-sm font-medium">Advanced Filters</span>
-            {(minAmount || maxAmount || (startDate && endDate)) && (
+            {(minAmount || maxAmount || categoryFilter || (startDate && endDate)) && (
               <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
             )}
           </button>
@@ -362,8 +530,8 @@ export function TransactionList({
       </div>
 
       {showFilters && (
-        <div className="bg-(--color-canvas-dark)/30 border border-(--color-hairline-on-dark) rounded-xl p-4 animate-in slide-in-from-top-4 duration-300">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-(--color-canvas-dark)/30 border border-(--color-hairline-on-dark) rounded-xl p-3 sm:p-4 animate-in slide-in-from-top-4 duration-300">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-[minmax(210px,0.9fr)_minmax(240px,1.1fr)_minmax(220px,1fr)_auto] xl:items-end">
             <div className="flex flex-col gap-1.5">
               <HelpLabel
                 help="Show only transactions between the minimum and maximum amount."
@@ -371,7 +539,7 @@ export function TransactionList({
               >
                 Amount Range
               </HelpLabel>
-              <div className="flex items-center gap-2">
+              <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
                 <input
                   type="number"
                   placeholder="Min"
@@ -392,12 +560,31 @@ export function TransactionList({
 
             <div className="flex flex-col gap-1.5">
               <HelpLabel
+                help="Show only expenses in one category or income from one source."
+                className="text-caption font-medium"
+              >
+                Category or Source
+              </HelpLabel>
+              <CategoryFilterDropdown
+                value={categoryFilter}
+                expenseOptions={categoryFilterOptions.expenses}
+                incomeOptions={categoryFilterOptions.incomes}
+                onChange={(nextValue) => {
+                  setCategoryFilter(nextValue);
+                  setCurrentPage(1);
+                }}
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <HelpLabel
                 help="Show only transactions between the selected start and end dates."
                 className="text-caption font-medium"
               >
                 Date Range
               </HelpLabel>
               <DateRangePicker
+                className="w-full"
                 onRangeChange={(start, end) => {
                   setStartDate(start);
                   setEndDate(end);
@@ -405,15 +592,17 @@ export function TransactionList({
               />
             </div>
 
-            <div className="flex items-end justify-end">
+            <div className="flex items-end justify-stretch sm:col-span-2 xl:col-span-1 xl:justify-end">
               <button
                 onClick={() => {
                   setMinAmount("");
                   setMaxAmount("");
+                  setCategoryFilter("");
+                  setCurrentPage(1);
                   setStartDate(null);
                   setEndDate(null);
                 }}
-                className="text-caption text-(--color-muted) hover:text-red-500 flex items-center gap-1 transition-colors"
+                className="flex w-full items-center justify-center gap-1 rounded-lg border border-(--color-hairline-on-dark) px-3 py-2 text-caption text-(--color-muted) transition-colors hover:border-red-500/40 hover:text-red-500 xl:w-auto xl:border-transparent"
               >
                 <CloseIcon size={14} />
                 Clear All Filters
@@ -464,19 +653,24 @@ export function TransactionList({
           <div className="flex gap-2 lg:ml-auto">
             <button
               onClick={applyBulkUpdate}
-              className="px-4 py-2 rounded-lg bg-(--color-primary) text-(--color-on-primary) text-button"
+              disabled={bulkAction !== null}
+              className="px-4 py-2 rounded-lg bg-(--color-primary) text-(--color-on-primary) text-button disabled:opacity-60 disabled:cursor-wait flex items-center justify-center gap-2"
             >
-              Apply
+              {bulkAction === "update" && <Loader2 size={16} className="animate-spin" />}
+              {bulkAction === "update" ? "Applying..." : "Apply"}
             </button>
             <button
               onClick={bulkDelete}
-              className="px-4 py-2 rounded-lg bg-(--color-trading-down) text-white text-button"
+              disabled={bulkAction !== null}
+              className="px-4 py-2 rounded-lg bg-(--color-trading-down) text-white text-button disabled:opacity-60 disabled:cursor-wait flex items-center justify-center gap-2"
             >
-              Delete
+              {bulkAction === "delete" && <Loader2 size={16} className="animate-spin" />}
+              {bulkAction === "delete" ? "Deleting..." : "Delete"}
             </button>
             <button
               onClick={() => setSelectedTransactions([])}
-              className="px-4 py-2 rounded-lg border border-(--color-hairline-on-dark) text-button"
+              disabled={bulkAction !== null}
+              className="px-4 py-2 rounded-lg border border-(--color-hairline-on-dark) text-button disabled:opacity-60 disabled:cursor-wait"
             >
               Clear
             </button>
@@ -484,7 +678,8 @@ export function TransactionList({
         </div>
       )}
 
-      <div className="flex flex-col gap-2 relative">
+      <div className="relative -mx-2 overflow-x-auto px-2 md:mx-0 md:px-0">
+        <div className="flex flex-col gap-2 md:min-w-[720px]">
         {/* Sorting header */}
         <div
           className={`hidden md:grid ${enableStatusTracking ? "grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}
@@ -579,6 +774,7 @@ export function TransactionList({
               onToggleSelected={toggleSelected}
             />
           ))}
+        </div>
         </div>
       </div>
 

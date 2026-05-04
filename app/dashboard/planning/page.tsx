@@ -1,6 +1,4 @@
-import { getCategories } from "@/actions/category";
-import { getPlanningData } from "@/actions/planning";
-import { getProfile } from "@/actions/profile";
+import { getPlanningPageData } from "@/actions/planning";
 import { PlanningPanel } from "@/components/PlanningPanel";
 
 export const metadata = {
@@ -9,12 +7,7 @@ export const metadata = {
 };
 
 export default async function PlanningPage() {
-  const [planning, expenses, incomes, profile] = await Promise.all([
-    getPlanningData(),
-    getCategories("expense"),
-    getCategories("income"),
-    getProfile(),
-  ]);
+  const { planning, expenseCategories, incomeCategories, profile } = await getPlanningPageData();
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 py-6 md:py-10 flex flex-col gap-6 flex-1">
@@ -28,8 +21,8 @@ export default async function PlanningPage() {
         budgets={planning.budgets}
         goals={planning.goals}
         recurring={planning.recurring}
-        expenseCategories={expenses}
-        incomeCategories={incomes}
+        expenseCategories={expenseCategories}
+        incomeCategories={incomeCategories}
         month={planning.month}
         currency={profile?.currency || "USD"}
       />

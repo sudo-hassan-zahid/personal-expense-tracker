@@ -51,10 +51,10 @@ export function DateRangePicker({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="form-control flex items-center gap-2 rounded-xl px-4 py-2"
+        className="form-control flex w-full min-w-0 items-center gap-2 rounded-xl px-4 py-2"
       >
-        <CalendarIcon size={16} className="text-(--color-muted)" />
-        <span>
+        <CalendarIcon size={16} className="shrink-0 text-(--color-muted)" />
+        <span className="min-w-0 truncate">
           {startDate ? format(startDate, "MMM d") : "Start"} -{" "}
           {endDate ? format(endDate, "MMM d, yyyy") : "End"}
         </span>

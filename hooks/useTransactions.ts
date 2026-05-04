@@ -13,6 +13,7 @@ type NormalizedTransaction = {
   dateMs: number;
   createdAtMs: number;
   categoryText: string;
+  categoryKey: string;
   noteText: string;
   searchText: string;
 };
@@ -26,6 +27,7 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
 
   const [minAmount, setMinAmount] = useState<string>("");
   const [maxAmount, setMaxAmount] = useState<string>("");
+  const [categoryFilter, setCategoryFilter] = useState<string>("");
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
@@ -46,6 +48,7 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
           dateMs,
           createdAtMs,
           categoryText: categoryText.toLowerCase(),
+          categoryKey: `${transaction.type}:${categoryText.toLowerCase()}`,
           noteText,
           searchText: [
             categoryText,
@@ -68,16 +71,31 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
     const startMs = startDate ? startOfDay(startDate).getTime() : null;
     const endMs = endDate ? endOfDay(endDate).getTime() : null;
 
-    return normalizedTransactions.filter(({ amount, dateMs, searchText }) => {
+    return normalizedTransactions.filter(({ amount, dateMs, searchText, categoryKey }) => {
       const matchesSearch = searchLower === "" || searchText.includes(searchLower);
       const matchesMinAmount = minAmountValue === null || amount >= minAmountValue;
       const matchesMaxAmount = maxAmountValue === null || amount <= maxAmountValue;
+      const matchesCategory = categoryFilter === "" || categoryKey === categoryFilter;
       const matchesDateRange =
         startMs === null || endMs === null || (dateMs >= startMs && dateMs <= endMs);
 
-      return matchesSearch && matchesMinAmount && matchesMaxAmount && matchesDateRange;
+      return (
+        matchesSearch &&
+        matchesMinAmount &&
+        matchesMaxAmount &&
+        matchesCategory &&
+        matchesDateRange
+      );
     });
-  }, [normalizedTransactions, deferredSearch, minAmount, maxAmount, startDate, endDate]);
+  }, [
+    normalizedTransactions,
+    deferredSearch,
+    minAmount,
+    maxAmount,
+    categoryFilter,
+    startDate,
+    endDate,
+  ]);
 
   const sortedTransactions = useMemo(() => {
     return [...filteredTransactions]
@@ -148,6 +166,8 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
     setMinAmount,
     maxAmount,
     setMaxAmount,
+    categoryFilter,
+    setCategoryFilter,
     startDate,
     setStartDate,
     endDate,

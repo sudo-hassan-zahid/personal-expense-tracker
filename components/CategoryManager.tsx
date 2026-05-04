@@ -3,10 +3,11 @@
  */
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { addCategory, deleteCategory, updateCategory } from "@/actions/category";
 import { ActionForm, SubmitButton } from "./ActionForm";
-import { Trash2, Edit2, Check, X, Plus, AlertCircle } from "lucide-react";
+import { Trash2, Edit2, Check, X, Plus, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { DeleteButton } from "./DeleteButton";
 import { HelpLabel, HelpTip } from "./HelpTip";
@@ -24,9 +25,12 @@ export function CategoryManager({
   initialExpenses: Category[];
   initialIncomes: Category[];
 }) {
+  const router = useRouter();
+  const [, startRefreshTransition] = useTransition();
   const [type, setType] = useState<"expense" | "income">("expense");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -38,12 +42,22 @@ export function CategoryManager({
   };
 
   const handleUpdate = async (id: string) => {
+    if (updatingId) return;
+
+    setUpdatingId(id);
+    const toastId = toast.loading("Updating category...");
+
     try {
       await updateCategory(id, editName);
       setEditingId(null);
-      toast.success("Category updated successfully");
+      toast.success("Category updated successfully", { id: toastId });
+      startRefreshTransition(() => router.refresh());
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to update category");
+      toast.error(error instanceof Error ? error.message : "Failed to update category", {
+        id: toastId,
+      });
+    } finally {
+      setUpdatingId(null);
     }
   };
 
@@ -114,13 +128,19 @@ export function CategoryManager({
                             />
                             <button
                               onClick={() => handleUpdate(cat.id)}
-                              className="p-2 text-green-500 hover:bg-green-500/10 rounded-md"
+                              disabled={updatingId !== null}
+                              className="p-2 text-green-500 hover:bg-green-500/10 rounded-md disabled:opacity-50 disabled:cursor-wait"
                             >
-                              <Check size={18} />
+                              {updatingId === cat.id ? (
+                                <Loader2 size={18} className="animate-spin" />
+                              ) : (
+                                <Check size={18} />
+                              )}
                             </button>
                             <button
                               onClick={() => setEditingId(null)}
-                              className="p-2 text-red-500 hover:bg-red-500/10 rounded-md"
+                              disabled={updatingId !== null}
+                              className="p-2 text-red-500 hover:bg-red-500/10 rounded-md disabled:opacity-50"
                             >
                               <X size={18} />
                             </button>

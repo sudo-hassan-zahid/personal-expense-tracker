@@ -3,6 +3,7 @@
  */
 import Link from "next/link";
 import { signup } from "./actions";
+import { AuthSubmitButton } from "@/components/AuthSubmitButton";
 
 export default async function SignupPage(props: {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -102,12 +103,9 @@ export default async function SignupPage(props: {
             </div>
 
             <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-xl border border-transparent bg-gradient-to-r from-blue-500 to-indigo-600 py-3 px-4 text-button text-white shadow-lg shadow-indigo-500/30 hover:shadow-indigo-500/50 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-(--color-canvas-dark) transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-              >
+              <AuthSubmitButton pendingText="Creating account...">
                 Sign up
-              </button>
+              </AuthSubmitButton>
             </div>
           </form>
 

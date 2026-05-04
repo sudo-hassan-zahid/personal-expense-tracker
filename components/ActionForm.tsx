@@ -3,7 +3,7 @@
  */
 "use client";
 import { toast } from "sonner";
-import { ReactNode } from "react";
+import { ReactNode, useRef, useTransition } from "react";
 import { useFormStatus } from "react-dom";
 import { LoadingSpinner } from "./ui/LoadingSpinner";
 
@@ -54,21 +54,40 @@ export function ActionForm({
   onSuccess?: (formData: FormData) => void;
 }) {
   const router = useRouter();
+  const [, startRefreshTransition] = useTransition();
+  const slowToastRef = useRef<string | number | null>(null);
 
   return (
     <form
       action={async (formData) => {
+        const slowToastTimer = window.setTimeout(() => {
+          slowToastRef.current = toast.loading("Still working...", {
+            description: "Waiting on the database. Your click was received.",
+          });
+        }, 600);
+
         try {
           const result = await action(formData);
+          window.clearTimeout(slowToastTimer);
+
           if (result?.error) {
-            toast.error(result.error);
+            toast.error(result.error, slowToastRef.current ? { id: slowToastRef.current } : {});
           } else {
-            toast.success(successMessage);
-            router.refresh();
+            toast.success(
+              successMessage,
+              slowToastRef.current ? { id: slowToastRef.current } : {}
+            );
+            startRefreshTransition(() => router.refresh());
             if (onSuccess) onSuccess(formData);
           }
         } catch (error) {
-          toast.error(error instanceof Error ? error.message : "An error occurred");
+          window.clearTimeout(slowToastTimer);
+          toast.error(
+            error instanceof Error ? error.message : "An error occurred",
+            slowToastRef.current ? { id: slowToastRef.current } : {}
+          );
+        } finally {
+          slowToastRef.current = null;
         }
       }}
       className={className}
