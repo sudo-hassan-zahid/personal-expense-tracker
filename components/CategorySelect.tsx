@@ -4,6 +4,8 @@
 "use client";
 
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { addCategory } from "@/actions/category";
 import { Category } from "@/types";
 import { HelpLabel } from "./HelpTip";
@@ -31,12 +33,13 @@ export function CategorySelect({
   const [localCategories, setLocalCategories] = useState<Category[]>(categories);
 
   const handleAddCategory = async () => {
-    if (!newCategoryName.trim()) return;
+    const categoryName = newCategoryName.trim();
+    if (!categoryName) return;
 
     setIsSubmitting(true);
     try {
       const formData = new FormData();
-      formData.set("name", newCategoryName.trim());
+      formData.set("name", categoryName);
       formData.set("type", type);
       await addCategory(formData);
 
@@ -46,7 +49,7 @@ export function CategorySelect({
           ...prev,
           {
             id: crypto.randomUUID(),
-            name: newCategoryName.trim(),
+            name: categoryName,
             type,
             parent_id: null,
           },
@@ -55,8 +58,9 @@ export function CategorySelect({
 
       setNewCategoryName("");
       setIsAdding(false);
+      toast.success(`${categoryName} added`);
     } catch (error) {
-      console.error("Failed to add category:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to add category");
     } finally {
       setIsSubmitting(false);
     }
@@ -121,9 +125,9 @@ export function CategorySelect({
               type="button"
               onClick={handleAddCategory}
               disabled={isSubmitting || !newCategoryName.trim()}
-              className="px-3 py-2 bg-(--color-primary) text-(--color-on-primary) rounded-md text-body-md hover:bg-(--color-primary-active) transition-colors disabled:opacity-50 shrink-0"
+              className="px-3 py-2 bg-(--color-primary) text-(--color-on-primary) rounded-md text-body-md hover:bg-(--color-primary-active) transition-colors disabled:opacity-50 disabled:cursor-wait shrink-0 min-w-[64px] flex items-center justify-center gap-2"
             >
-              {isSubmitting ? "..." : "Add"}
+              {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : "Add"}
             </button>
             <button
               type="button"
@@ -131,7 +135,8 @@ export function CategorySelect({
                 setIsAdding(false);
                 setNewCategoryName("");
               }}
-              className="px-3 py-2 border border-(--color-hairline-on-dark) rounded-md text-body-md text-(--color-muted) hover:text-(--color-on-dark) transition-colors shrink-0"
+              disabled={isSubmitting}
+              className="px-3 py-2 border border-(--color-hairline-on-dark) rounded-md text-body-md text-(--color-muted) hover:text-(--color-on-dark) transition-colors shrink-0 disabled:opacity-50"
             >
               ✕
             </button>
