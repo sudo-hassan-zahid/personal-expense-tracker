@@ -164,15 +164,9 @@ export const DashboardChart = memo(
               }}
               className="form-control border-none px-3 py-2"
             >
-              <option value="all">
-                All Types
-              </option>
-              <option value="income">
-                Income Only
-              </option>
-              <option value="expense">
-                Expense Only
-              </option>
+              <option value="all">All Types</option>
+              <option value="income">Income Only</option>
+              <option value="expense">Expense Only</option>
             </select>
 
             <div className="w-px h-6 bg-(--color-hairline-on-dark)" />
@@ -182,9 +176,7 @@ export const DashboardChart = memo(
               onChange={(e) => setFilterCategory(e.target.value)}
               className="form-control border-none px-3 py-2 capitalize"
             >
-              <option value="all">
-                All Categories
-              </option>
+              <option value="all">All Categories</option>
               {categories.map((c) => (
                 <option key={c} value={c}>
                   {c}
@@ -194,7 +186,7 @@ export const DashboardChart = memo(
           </div>
         </div>
 
-        <div 
+        <div
           className="h-[280px] md:h-[380px] min-h-[280px] md:min-h-[380px] w-full relative z-10 animate-slide-up stagger-2 min-w-0"
           role="region"
           aria-label="Cashflow analytics chart"
@@ -255,7 +247,7 @@ export const DashboardChart = memo(
                     dx={-10}
                     tick={{ fill: "var(--color-muted)" }}
                   />
-  
+
                   <Tooltip
                     cursor={{
                       stroke: "var(--color-primary)",
@@ -277,8 +269,11 @@ export const DashboardChart = memo(
                       undefined,
                     ]}
                   />
-                  <Legend wrapperStyle={{ fontSize: "12px", paddingTop: "20px" }} iconType="circle" />
-  
+                  <Legend
+                    wrapperStyle={{ fontSize: "12px", paddingTop: "20px" }}
+                    iconType="circle"
+                  />
+
                   {(filterType === "all" || filterType === "income") && (
                     <Area
                       type="monotone"
@@ -334,4 +329,3 @@ export const DashboardChart = memo(
 );
 
 DashboardChart.displayName = "DashboardChart";
-
