@@ -32,7 +32,9 @@ export async function addIncome(formData: FormData) {
       .maybeSingle();
 
     if (duplicate) {
-      return { error: "This income looks like a duplicate. Adjust it or edit the existing record." };
+      return {
+        error: "This income looks like a duplicate. Adjust it or edit the existing record.",
+      };
     }
 
     const currency = String(formData.get("currency") || "USD");
@@ -131,4 +133,3 @@ export async function bulkUpdateIncomes(ids: string[], updates: Record<string, s
   if (error) throw new Error("Failed to bulk update incomes");
   revalidateTransactions();
 }
-

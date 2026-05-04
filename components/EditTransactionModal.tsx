@@ -13,7 +13,6 @@ import { CategorySelect } from "./CategorySelect";
 import { DatePicker } from "./ui/DatePicker";
 import { HelpLabel, HelpTip } from "./HelpTip";
 
-
 /**
  * Modal component for editing an existing transaction (expense or income).
  * Handles type switching between income and expense, including data migration between tables.
@@ -48,7 +47,8 @@ export function EditTransactionModal({
           <div className="flex items-center gap-2">
             <h2 className="text-title-md text-(--color-on-dark)">Edit Transaction</h2>
             <HelpTip label="Edit transaction help">
-              Update the details for this record. Switching type moves it between income and expenses.
+              Update the details for this record. Switching type moves it between income and
+              expenses.
             </HelpTip>
           </div>
           <button
@@ -87,7 +87,10 @@ export function EditTransactionModal({
           >
             {/* Type Switcher */}
             <div>
-              <HelpLabel help="Switches whether this record is treated as income or an expense." className="mb-1">
+              <HelpLabel
+                help="Switches whether this record is treated as income or an expense."
+                className="mb-1"
+              >
                 Type
               </HelpLabel>
               <div className="flex gap-2 p-1 bg-(--color-canvas-dark)/50 rounded-lg border border-(--color-hairline-on-dark)">
@@ -110,7 +113,10 @@ export function EditTransactionModal({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <HelpLabel help="The transaction value in your selected profile currency." className="mb-1">
+                <HelpLabel
+                  help="The transaction value in your selected profile currency."
+                  className="mb-1"
+                >
                   Amount
                 </HelpLabel>
                 <input
@@ -151,7 +157,10 @@ export function EditTransactionModal({
             />
 
             <div>
-              <HelpLabel help="Optional description that also helps search results." className="mb-1">
+              <HelpLabel
+                help="Optional description that also helps search results."
+                className="mb-1"
+              >
                 Note
               </HelpLabel>
               <input
@@ -164,7 +173,10 @@ export function EditTransactionModal({
 
             {showStatusTracking && (
               <div>
-                <HelpLabel help="Done counts in totals. Pending stays visible but is excluded from summaries." className="mb-1">
+                <HelpLabel
+                  help="Done counts in totals. Pending stays visible but is excluded from summaries."
+                  className="mb-1"
+                >
                   Status
                 </HelpLabel>
                 <input type="hidden" name="status" value={status} />
@@ -200,4 +212,3 @@ export function EditTransactionModal({
     </div>
   );
 }
-

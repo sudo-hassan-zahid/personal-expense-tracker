@@ -34,4 +34,3 @@ export function ThemeToggle({ initialTheme }: { initialTheme: "light" | "dark" }
     </button>
   );
 }
-

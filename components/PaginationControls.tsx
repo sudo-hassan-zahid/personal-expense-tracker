@@ -55,21 +55,11 @@ export function PaginationControls({
             }}
             className="form-control px-2 py-1"
           >
-            <option value="5">
-              5
-            </option>
-            <option value="10">
-              10
-            </option>
-            <option value="20">
-              20
-            </option>
-            <option value="50">
-              50
-            </option>
-            <option value="100">
-              100
-            </option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
           </select>
         </div>
         <div className="flex items-center gap-2">
@@ -109,4 +99,3 @@ export function PaginationControls({
     </div>
   );
 }
-

@@ -57,7 +57,10 @@ export default async function ProfilePage() {
           </div>
 
           <div>
-            <HelpLabel help="Fill this only when you want to change your password." className="mb-1">
+            <HelpLabel
+              help="Fill this only when you want to change your password."
+              className="mb-1"
+            >
               New Password (leave blank to keep current)
             </HelpLabel>
             <input
@@ -116,7 +119,8 @@ export default async function ProfilePage() {
                 <span className="flex items-center gap-2 text-body-md text-(--color-on-dark)">
                   Enable Status Tracking
                   <HelpTip label="Status tracking help">
-                    Adds Done and Pending states. Pending transactions stay visible but are excluded from summaries.
+                    Adds Done and Pending states. Pending transactions stay visible but are excluded
+                    from summaries.
                   </HelpTip>
                 </span>
                 <span className="text-caption text-(--color-muted)">
@@ -222,4 +226,3 @@ export default async function ProfilePage() {
     </div>
   );
 }
-

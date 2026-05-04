@@ -14,7 +14,7 @@ export function ProgressBar() {
       setVisible(true);
       setProgress(30);
     }, 0);
-    
+
     const timer1 = setTimeout(() => setProgress(60), 100);
     const timer2 = setTimeout(() => setProgress(90), 300);
     const timer3 = setTimeout(() => {

@@ -81,10 +81,7 @@ export function CategorySelect({
             className="form-control flex-1 text-body-md"
           >
             {localCategories.map((cat) => (
-              <option
-                key={cat.id}
-                value={cat.name}
-              >
+              <option key={cat.id} value={cat.name}>
                 {cat.parent_id ? `  └ ${cat.name}` : cat.name}
               </option>
             ))}
@@ -152,4 +149,3 @@ export function CategorySelect({
     </div>
   );
 }
-

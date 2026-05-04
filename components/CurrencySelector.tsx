@@ -38,4 +38,3 @@ export function CurrencySelector({ currentCurrency }: { currentCurrency: string 
     </select>
   );
 }
-

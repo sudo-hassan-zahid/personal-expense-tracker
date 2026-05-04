@@ -33,7 +33,6 @@ import { EditTransactionModal } from "./EditTransactionModal";
 import { Transaction, Category } from "@/types";
 import { HelpLabel, HelpTip } from "./HelpTip";
 
-
 // Memoized Row Component for maximum performance
 const TransactionRow = memo(
   ({
@@ -301,7 +300,9 @@ export function TransactionList({
     try {
       await Promise.all(
         selectedTransactions.map((transaction) =>
-          transaction.type === "income" ? deleteIncome(transaction.id) : deleteExpense(transaction.id)
+          transaction.type === "income"
+            ? deleteIncome(transaction.id)
+            : deleteExpense(transaction.id)
         )
       );
       toast.success("Selected transactions deleted");
@@ -331,7 +332,7 @@ export function TransactionList({
             </HelpTip>
           </div>
           {search && (
-            <button 
+            <button
               onClick={() => handleSearchChange("")}
               className="absolute inset-y-0 right-0 pr-3 flex items-center text-(--color-muted) hover:text-(--color-on-dark) transition-colors"
             >
@@ -361,7 +362,10 @@ export function TransactionList({
         <div className="bg-(--color-canvas-dark)/30 border border-(--color-hairline-on-dark) rounded-xl p-4 animate-in slide-in-from-top-4 duration-300">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex flex-col gap-1.5">
-              <HelpLabel help="Show only transactions between the minimum and maximum amount." className="text-caption font-medium">
+              <HelpLabel
+                help="Show only transactions between the minimum and maximum amount."
+                className="text-caption font-medium"
+              >
                 Amount Range
               </HelpLabel>
               <div className="flex items-center gap-2">
@@ -384,7 +388,10 @@ export function TransactionList({
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <HelpLabel help="Show only transactions between the selected start and end dates." className="text-caption font-medium">
+              <HelpLabel
+                help="Show only transactions between the selected start and end dates."
+                className="text-caption font-medium"
+              >
                 Date Range
               </HelpLabel>
               <DateRangePicker
@@ -415,26 +422,61 @@ export function TransactionList({
 
       {selectedTransactions.length > 0 && (
         <div className="bg-(--color-surface-elevated-dark) border border-(--color-hairline-on-dark) rounded-xl p-3 flex flex-col lg:flex-row gap-3 lg:items-center">
-          <span className="text-body-sm text-(--color-on-dark)">{selectedTransactions.length} selected</span>
+          <span className="text-body-sm text-(--color-on-dark)">
+            {selectedTransactions.length} selected
+          </span>
           <HelpTip label="Bulk actions help">
-            Apply the entered date, category, source, or status to selected rows, or delete them together.
+            Apply the entered date, category, source, or status to selected rows, or delete them
+            together.
           </HelpTip>
-          <input type="date" value={bulkDate} onChange={(e) => setBulkDate(e.target.value)} className="form-control" />
-          <select value={bulkCategory} onChange={(e) => setBulkCategory(e.target.value)} className="form-control">
+          <input
+            type="date"
+            value={bulkDate}
+            onChange={(e) => setBulkDate(e.target.value)}
+            className="form-control"
+          />
+          <select
+            value={bulkCategory}
+            onChange={(e) => setBulkCategory(e.target.value)}
+            className="form-control"
+          >
             <option value="">Category/source</option>
-            {[...expenseCategories, ...incomeCategories].map((category) => <option key={`${category.type}-${category.id}`} value={category.name}>{category.name}</option>)}
+            {[...expenseCategories, ...incomeCategories].map((category) => (
+              <option key={`${category.type}-${category.id}`} value={category.name}>
+                {category.name}
+              </option>
+            ))}
           </select>
           {enableStatusTracking && (
-            <select value={bulkStatus} onChange={(e) => setBulkStatus(e.target.value)} className="form-control">
+            <select
+              value={bulkStatus}
+              onChange={(e) => setBulkStatus(e.target.value)}
+              className="form-control"
+            >
               <option value="">Status</option>
               <option value="done">Done</option>
               <option value="pending">Pending</option>
             </select>
           )}
           <div className="flex gap-2 lg:ml-auto">
-            <button onClick={applyBulkUpdate} className="px-4 py-2 rounded-lg bg-(--color-primary) text-(--color-on-primary) text-button">Apply</button>
-            <button onClick={bulkDelete} className="px-4 py-2 rounded-lg bg-(--color-trading-down) text-white text-button">Delete</button>
-            <button onClick={() => setSelectedTransactions([])} className="px-4 py-2 rounded-lg border border-(--color-hairline-on-dark) text-button">Clear</button>
+            <button
+              onClick={applyBulkUpdate}
+              className="px-4 py-2 rounded-lg bg-(--color-primary) text-(--color-on-primary) text-button"
+            >
+              Apply
+            </button>
+            <button
+              onClick={bulkDelete}
+              className="px-4 py-2 rounded-lg bg-(--color-trading-down) text-white text-button"
+            >
+              Delete
+            </button>
+            <button
+              onClick={() => setSelectedTransactions([])}
+              className="px-4 py-2 rounded-lg border border-(--color-hairline-on-dark) text-button"
+            >
+              Clear
+            </button>
           </div>
         </div>
       )}
@@ -510,7 +552,13 @@ export function TransactionList({
           </div>
         )}
 
-        <div className={isPending ? "opacity-50 pointer-events-none transition-opacity duration-300" : "transition-opacity duration-300"}>
+        <div
+          className={
+            isPending
+              ? "opacity-50 pointer-events-none transition-opacity duration-300"
+              : "transition-opacity duration-300"
+          }
+        >
           {displayedTransactions.map((t, i) => (
             <TransactionRow
               key={t.id + t.type}
@@ -522,7 +570,9 @@ export function TransactionList({
               newlyAddedId={newlyAddedId}
               onEdit={setEditingTransaction}
               onDelete={setTransactionToDelete}
-              selected={selectedTransactions.some((item) => item.id === t.id && item.type === t.type)}
+              selected={selectedTransactions.some(
+                (item) => item.id === t.id && item.type === t.type
+              )}
               onToggleSelected={toggleSelected}
             />
           ))}
@@ -577,7 +627,7 @@ export function TransactionList({
                   onClick={async () => {
                     const idToRemove = transactionToDelete.id;
                     setIsDeleting(true);
-                    
+
                     // Optimistic UI removal
                     if (onOptimisticDelete) {
                       startTransition(() => {
@@ -586,8 +636,7 @@ export function TransactionList({
                     }
 
                     try {
-                      if (transactionToDelete.type === "income")
-                        await deleteIncome(idToRemove);
+                      if (transactionToDelete.type === "income") await deleteIncome(idToRemove);
                       else await deleteExpense(idToRemove);
                       toast.success("Transaction deleted successfully");
                       setTransactionToDelete(null);
@@ -610,4 +659,3 @@ export function TransactionList({
     </div>
   );
 }
-

@@ -80,45 +80,47 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
   }, [normalizedTransactions, deferredSearch, minAmount, maxAmount, startDate, endDate]);
 
   const sortedTransactions = useMemo(() => {
-    return [...filteredTransactions].sort((a, b) => {
-      let valA: SortableValue;
-      let valB: SortableValue;
+    return [...filteredTransactions]
+      .sort((a, b) => {
+        let valA: SortableValue;
+        let valB: SortableValue;
 
-      switch (sortField) {
-        case "amount":
-          valA = a.amount;
-          valB = b.amount;
-          break;
-        case "category":
-          valA = a.categoryText;
-          valB = b.categoryText;
-          break;
-        case "note":
-          valA = a.noteText;
-          valB = b.noteText;
-          break;
-        case "date":
-          valA = a.dateMs;
-          valB = b.dateMs;
-          break;
-        case "type":
-          valA = a.transaction.type;
-          valB = b.transaction.type;
-          break;
-        case "status":
-          valA = (a.transaction.status || "pending").toLowerCase();
-          valB = (b.transaction.status || "pending").toLowerCase();
-          break;
-        default:
-          valA = String(a.transaction[sortField as keyof Transaction] || "");
-          valB = String(b.transaction[sortField as keyof Transaction] || "");
-      }
+        switch (sortField) {
+          case "amount":
+            valA = a.amount;
+            valB = b.amount;
+            break;
+          case "category":
+            valA = a.categoryText;
+            valB = b.categoryText;
+            break;
+          case "note":
+            valA = a.noteText;
+            valB = b.noteText;
+            break;
+          case "date":
+            valA = a.dateMs;
+            valB = b.dateMs;
+            break;
+          case "type":
+            valA = a.transaction.type;
+            valB = b.transaction.type;
+            break;
+          case "status":
+            valA = (a.transaction.status || "pending").toLowerCase();
+            valB = (b.transaction.status || "pending").toLowerCase();
+            break;
+          default:
+            valA = String(a.transaction[sortField as keyof Transaction] || "");
+            valB = String(b.transaction[sortField as keyof Transaction] || "");
+        }
 
-      if (valA < valB) return sortOrder === "asc" ? -1 : 1;
-      if (valA > valB) return sortOrder === "asc" ? 1 : -1;
+        if (valA < valB) return sortOrder === "asc" ? -1 : 1;
+        if (valA > valB) return sortOrder === "asc" ? 1 : -1;
 
-      return sortOrder === "asc" ? a.createdAtMs - b.createdAtMs : b.createdAtMs - a.createdAtMs;
-    }).map(({ transaction }) => transaction);
+        return sortOrder === "asc" ? a.createdAtMs - b.createdAtMs : b.createdAtMs - a.createdAtMs;
+      })
+      .map(({ transaction }) => transaction);
   }, [filteredTransactions, sortField, sortOrder]);
 
   const totalPages =
@@ -156,4 +158,3 @@ export function useTransactions(initialTransactions: Transaction[], initialItems
     displayedTransactions,
   };
 }
-

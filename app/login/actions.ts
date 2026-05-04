@@ -22,4 +22,3 @@ export async function login(formData: FormData) {
 
   redirect("/dashboard");
 }
-

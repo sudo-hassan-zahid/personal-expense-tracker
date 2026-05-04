@@ -34,7 +34,8 @@ export function AnalyticsSummary({
           <div className="flex items-center gap-2">
             <h2 className="text-title-sm text-(--color-on-dark)">Cash Flow</h2>
             <HelpTip label="Cash flow help">
-              Shows inflow, outflow, opening balance, and closing balance from completed transactions.
+              Shows inflow, outflow, opening balance, and closing balance from completed
+              transactions.
             </HelpTip>
           </div>
           <Landmark size={18} className="text-(--color-primary)" />
@@ -83,7 +84,9 @@ export function AnalyticsSummary({
           ) : (
             topCategories.map((category) => (
               <div key={category.name} className="flex items-center justify-between gap-4">
-                <span className="text-body-sm text-(--color-on-dark) truncate">{category.name}</span>
+                <span className="text-body-sm text-(--color-on-dark) truncate">
+                  {category.name}
+                </span>
                 <span className="text-number-sm text-(--color-trading-down)">
                   {formatCurrency(category.amount, currency)}
                 </span>

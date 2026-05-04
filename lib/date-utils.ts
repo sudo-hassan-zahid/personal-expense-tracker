@@ -30,4 +30,3 @@ export function formatPKT(date: Date | string, formatStr: string = "yyyy-MM-dd")
 export function getTodayPKT() {
   return format(getCurrentPKTDate(), "yyyy-MM-dd");
 }
-

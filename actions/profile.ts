@@ -158,7 +158,7 @@ export async function updateProfile(formData: FormData) {
     }
 
     revalidateProfile(user.id);
-    
+
     return { success: true };
   } catch (error) {
     console.error("Error updating profile:", error);
@@ -168,4 +168,3 @@ export async function updateProfile(formData: FormData) {
     };
   }
 }
-

@@ -33,7 +33,9 @@ export async function addExpense(formData: FormData) {
       .maybeSingle();
 
     if (duplicate) {
-      return { error: "This expense looks like a duplicate. Adjust it or edit the existing record." };
+      return {
+        error: "This expense looks like a duplicate. Adjust it or edit the existing record.",
+      };
     }
 
     let attachmentUrl: string | null = null;
@@ -179,4 +181,3 @@ export async function bulkUpdateExpenses(ids: string[], updates: Record<string, 
   if (error) throw new Error("Failed to bulk update expenses");
   revalidateTransactions();
 }
-

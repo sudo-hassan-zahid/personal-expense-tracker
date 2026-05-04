@@ -37,10 +37,17 @@ export function BudgetProgress({
           const isAlerting = spent / limit >= threshold;
 
           return (
-            <div key={budget.id} className="border border-(--color-hairline-on-dark) rounded-lg p-4">
+            <div
+              key={budget.id}
+              className="border border-(--color-hairline-on-dark) rounded-lg p-4"
+            >
               <div className="flex items-center justify-between gap-3">
-                <span className="text-body-sm text-(--color-on-dark) truncate">{budget.category}</span>
-                <span className={`text-caption ${isOver ? "text-(--color-trading-down)" : isAlerting ? "text-(--color-primary)" : "text-(--color-muted)"}`}>
+                <span className="text-body-sm text-(--color-on-dark) truncate">
+                  {budget.category}
+                </span>
+                <span
+                  className={`text-caption ${isOver ? "text-(--color-trading-down)" : isAlerting ? "text-(--color-primary)" : "text-(--color-muted)"}`}
+                >
                   {isOver ? "Over" : isAlerting ? "Alert" : "On track"}
                 </span>
               </div>

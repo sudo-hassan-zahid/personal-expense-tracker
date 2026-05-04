@@ -44,7 +44,9 @@ export const getRequestProfile = cache(async (): Promise<RequestProfile> => {
   const supabase = await createClient(allCookies);
   const { data, error } = await supabase
     .from("profiles")
-    .select("id, theme, show_cursor_trail, currency, pagination_enabled, enable_status_tracking, name")
+    .select(
+      "id, theme, show_cursor_trail, currency, pagination_enabled, enable_status_tracking, name"
+    )
     .eq("id", user.id)
     .maybeSingle();
 
