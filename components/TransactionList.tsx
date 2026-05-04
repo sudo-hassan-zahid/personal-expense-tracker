@@ -109,39 +109,42 @@ const TransactionRow = memo(
           </div>
         </div>
 
-        <div className="flex items-center justify-between w-full md:contents mt-2 md:mt-0 pt-2 md:pt-0 border-t border-(--color-hairline-on-dark)/50 md:border-0">
-          <div className="text-number-sm text-(--color-muted) truncate">
-            {format(new Date(t.date), "MMM d, yyyy")}
-          </div>
+        <div className="flex flex-col gap-2 w-full md:contents mt-2 md:mt-0 pt-2 md:pt-0 border-t border-(--color-hairline-on-dark)/50 md:border-0">
+          <div className="flex items-center justify-between gap-2 md:contents">
+            <div className="text-number-sm text-(--color-muted) whitespace-nowrap md:truncate">
+              <span className="md:hidden">{format(new Date(t.date), "MMM d")}</span>
+              <span className="hidden md:inline">{format(new Date(t.date), "MMM d, yyyy")}</span>
+            </div>
 
-          <div className="text-body-sm capitalize flex justify-center">
-            <span
-              className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.type === "income" ? "bg-green-500/10 text-green-500 border border-green-500/20" : "bg-red-500/10 text-red-500 border border-red-500/20"}`}
-            >
-              {t.type}
-            </span>
-          </div>
-
-          <div
-            className={`hidden md:block text-number-md font-semibold text-right ${t.type === "income" ? "text-green-500" : "text-red-500"} truncate`}
-          >
-            {t.type === "income" ? "+" : "-"}
-            {formatCurrency(Number(t.amount), currency).replace(/^[^\d]*/, "")}
-          </div>
-
-          {enableStatusTracking ? (
-            <div className="text-center">
+            <div className="text-body-sm capitalize flex justify-center">
               <span
-                className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.status === "done" ? "bg-green-500/10 text-green-500 border border-green-500/20" : "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"}`}
+                className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.type === "income" ? "bg-green-500/10 text-green-500 border border-green-500/20" : "bg-red-500/10 text-red-500 border border-red-500/20"}`}
               >
-                {t.status || "done"}
+                {t.type}
               </span>
             </div>
-          ) : (
-            <div className="hidden md:block" />
-          )}
 
-          <div className="text-right flex justify-end gap-1 pr-2">
+            <div
+              className={`hidden md:block text-number-md font-semibold text-right ${t.type === "income" ? "text-green-500" : "text-red-500"} truncate`}
+            >
+              {t.type === "income" ? "+" : "-"}
+              {formatCurrency(Number(t.amount), currency).replace(/^[^\d]*/, "")}
+            </div>
+
+            {enableStatusTracking ? (
+              <div className="text-center">
+                <span
+                  className={`px-2 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase ${t.status === "done" ? "bg-green-500/10 text-green-500 border border-green-500/20" : "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20"}`}
+                >
+                  {t.status || "done"}
+                </span>
+              </div>
+            ) : (
+              <div className="hidden md:block" />
+            )}
+          </div>
+
+          <div className="text-right flex justify-end gap-1 md:pr-2">
             {t.type === "expense" && t.attachment_url && (
               <Link
                 href={`/dashboard/attachments?path=${encodeURIComponent(t.attachment_url)}`}
@@ -314,7 +317,7 @@ export function TransactionList({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-2">
+      <div className="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 mb-2">
         <div className="relative w-full md:max-w-sm group">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-(--color-muted) group-focus-within:text-(--color-primary) transition-colors">
             <Search size={18} />
@@ -341,10 +344,10 @@ export function TransactionList({
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex w-full items-center gap-2 md:w-auto">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all ${showFilters ? "bg-(--color-primary) text-white border-(--color-primary)" : "bg-(--color-canvas-dark)/50 border-(--color-hairline-on-dark) text-(--color-muted) hover:text-(--color-on-dark)"}`}
+            className={`flex w-full items-center justify-center gap-2 px-4 py-2.5 rounded-xl border transition-all md:w-auto ${showFilters ? "bg-(--color-primary) text-white border-(--color-primary)" : "bg-(--color-canvas-dark)/50 border-(--color-hairline-on-dark) text-(--color-muted) hover:text-(--color-on-dark)"}`}
           >
             <Filter size={18} />
             <span className="text-body-sm font-medium">Advanced Filters</span>

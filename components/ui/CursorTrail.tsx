@@ -11,6 +11,7 @@ export function CursorTrail() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+    if (document.body.classList.contains("theme-light")) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;

@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { SUPABASE_COOKIE_OPTIONS } from "@/lib/supabase";
 
 function hasSupabaseAuthCookie(request: NextRequest) {
   return request.cookies.getAll().some((cookie) => cookie.name.startsWith("sb-"));
@@ -50,6 +51,7 @@ export async function proxy(request: NextRequest) {
           );
         },
       },
+      cookieOptions: SUPABASE_COOKIE_OPTIONS,
     }
   );
 

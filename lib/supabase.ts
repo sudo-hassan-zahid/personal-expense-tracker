@@ -4,6 +4,12 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
+export const SUPABASE_COOKIE_OPTIONS = {
+  path: "/",
+  sameSite: "lax" as const,
+  secure: process.env.NODE_ENV === "production",
+};
+
 type Cookie = {
   name: string;
   value: string;
@@ -42,6 +48,7 @@ export async function createClient(cookieStore?: unknown) {
           }
         },
       },
+      cookieOptions: SUPABASE_COOKIE_OPTIONS,
     }
   );
 }

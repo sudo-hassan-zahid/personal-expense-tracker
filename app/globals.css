@@ -292,6 +292,24 @@
     border: 1px solid rgba(255, 255, 255, 0.05);
   }
 
+  .theme-light .glass-dark {
+    background: rgba(255, 255, 255, 0.82);
+    border-color: rgba(24, 26, 32, 0.12);
+  }
+
+  .theme-light .glow-mesh {
+    opacity: 0.45;
+  }
+
+  .theme-light select.form-control {
+    color-scheme: light;
+  }
+
+  .theme-light select.form-control option {
+    background-color: #ffffff;
+    color: #181a20;
+  }
+
   @keyframes pulse-border {
     0%,
     100% {
