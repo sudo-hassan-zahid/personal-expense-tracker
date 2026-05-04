@@ -54,9 +54,7 @@ type OptimisticTransaction =
   | { action: "delete"; id: string }
   | {
       action: "add";
-      data:
-        | (Expense & { type: "expense" })
-        | (Income & { type: "income" });
+      data: (Expense & { type: "expense" }) | (Income & { type: "income" });
     };
 
 export function DashboardContent({
@@ -301,7 +299,10 @@ export function DashboardContent({
               className="flex flex-col gap-4"
             >
               <div>
-                <HelpLabel help="The expense value in your selected profile currency." className="mb-1">
+                <HelpLabel
+                  help="The expense value in your selected profile currency."
+                  className="mb-1"
+                >
                   Amount
                 </HelpLabel>
                 <input
@@ -327,7 +328,10 @@ export function DashboardContent({
                 help="The day the expense happened."
               />
               <div>
-                <HelpLabel help="Optional detail that makes this transaction easier to search later." className="mb-1">
+                <HelpLabel
+                  help="Optional detail that makes this transaction easier to search later."
+                  className="mb-1"
+                >
                   Note
                 </HelpLabel>
                 <input
@@ -339,7 +343,10 @@ export function DashboardContent({
               </div>
               {isStatusTrackingEnabled && (
                 <div>
-                  <HelpLabel help="Done counts in totals now. Pending keeps the item visible but out of summaries." className="mb-1">
+                  <HelpLabel
+                    help="Done counts in totals now. Pending keeps the item visible but out of summaries."
+                    className="mb-1"
+                  >
                     Status
                   </HelpLabel>
                   <select
@@ -396,7 +403,10 @@ export function DashboardContent({
               className="flex flex-col gap-4"
             >
               <div>
-                <HelpLabel help="The income value in your selected profile currency." className="mb-1">
+                <HelpLabel
+                  help="The income value in your selected profile currency."
+                  className="mb-1"
+                >
                   Amount
                 </HelpLabel>
                 <input
@@ -422,7 +432,10 @@ export function DashboardContent({
                 help="The day the income was received or recorded."
               />
               <div>
-                <HelpLabel help="Optional context, invoice reference, or reminder for this income." className="mb-1">
+                <HelpLabel
+                  help="Optional context, invoice reference, or reminder for this income."
+                  className="mb-1"
+                >
                   Note
                 </HelpLabel>
                 <input
@@ -434,7 +447,10 @@ export function DashboardContent({
               </div>
               {isStatusTrackingEnabled && (
                 <div>
-                  <HelpLabel help="Done counts in totals now. Pending keeps the item visible but out of summaries." className="mb-1">
+                  <HelpLabel
+                    help="Done counts in totals now. Pending keeps the item visible but out of summaries."
+                    className="mb-1"
+                  >
                     Status
                   </HelpLabel>
                   <select
