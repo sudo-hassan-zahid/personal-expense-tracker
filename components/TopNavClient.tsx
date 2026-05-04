@@ -4,12 +4,31 @@
 "use client";
 
 import { useState } from "react";
+import { useFormStatus } from "react-dom";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import type { User } from "@supabase/supabase-js";
 import type { Category } from "@/types";
 import { QuickAddModal } from "./QuickAddModal";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+
+function SignOutButton({ className }: { className: string }) {
+  const { pending } = useFormStatus();
+
+  return (
+    <button disabled={pending} className={`${className} disabled:cursor-wait disabled:opacity-70`}>
+      {pending ? (
+        <span className="flex items-center justify-center gap-2">
+          <LoadingSpinner size={16} />
+          Logging out...
+        </span>
+      ) : (
+        "Log Out"
+      )}
+    </button>
+  );
+}
 
 export function TopNavClient({
   user,
@@ -91,9 +110,7 @@ export function TopNavClient({
             <ThemeToggle initialTheme={activeTheme} />
             {user ? (
               <form action="/auth/signout" method="post">
-                <button className="text-button text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md transition-colors">
-                  Log Out
-                </button>
+                <SignOutButton className="text-button text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md transition-colors" />
               </form>
             ) : (
               <>
@@ -183,9 +200,7 @@ export function TopNavClient({
                 />
 
                 <form action="/auth/signout" method="post" className="mt-4">
-                  <button className="w-full text-button text-white bg-red-600 hover:bg-red-700 px-4 py-3 rounded-md transition-colors">
-                    Log Out
-                  </button>
+                  <SignOutButton className="w-full text-button text-white bg-red-600 hover:bg-red-700 px-4 py-3 rounded-md transition-colors" />
                 </form>
               </>
             ) : (
