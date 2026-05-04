@@ -3,7 +3,7 @@
  */
 "use client";
 
-import { useState, useEffect, memo, useTransition } from "react";
+import { useState, useEffect, memo, useMemo, useTransition } from "react";
 import {
   ArrowUpRight,
   ArrowDownRight,
@@ -212,6 +212,8 @@ export function TransactionList({
     setMinAmount,
     maxAmount,
     setMaxAmount,
+    categoryFilter,
+    setCategoryFilter,
     startDate,
     setStartDate,
     endDate,
@@ -231,6 +233,20 @@ export function TransactionList({
   const [bulkCategory, setBulkCategory] = useState("");
   const [bulkStatus, setBulkStatus] = useState("");
   const [bulkAction, setBulkAction] = useState<"update" | "delete" | null>(null);
+
+  const categoryFilterOptions = useMemo(
+    () => ({
+      expenses: expenseCategories.map((category) => ({
+        key: `expense:${category.name.toLowerCase()}`,
+        name: category.name,
+      })),
+      incomes: incomeCategories.map((category) => ({
+        key: `income:${category.name.toLowerCase()}`,
+        name: category.name,
+      })),
+    }),
+    [expenseCategories, incomeCategories]
+  );
 
   const [prevCount, setPrevCount] = useState(initialTransactions.length);
   useEffect(() => {
@@ -374,7 +390,7 @@ export function TransactionList({
           >
             <Filter size={18} />
             <span className="text-body-sm font-medium">Advanced Filters</span>
-            {(minAmount || maxAmount || (startDate && endDate)) && (
+            {(minAmount || maxAmount || categoryFilter || (startDate && endDate)) && (
               <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
             )}
           </button>
@@ -386,7 +402,7 @@ export function TransactionList({
 
       {showFilters && (
         <div className="bg-(--color-canvas-dark)/30 border border-(--color-hairline-on-dark) rounded-xl p-4 animate-in slide-in-from-top-4 duration-300">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="flex flex-col gap-1.5">
               <HelpLabel
                 help="Show only transactions between the minimum and maximum amount."
@@ -415,6 +431,43 @@ export function TransactionList({
 
             <div className="flex flex-col gap-1.5">
               <HelpLabel
+                help="Show only expenses in one category or income from one source."
+                className="text-caption font-medium"
+              >
+                Category or Source
+              </HelpLabel>
+              <select
+                value={categoryFilter}
+                onChange={(e) => {
+                  setCategoryFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="form-control form-control-compact w-full"
+              >
+                <option value="">All categories and sources</option>
+                {categoryFilterOptions.expenses.length > 0 && (
+                  <optgroup label="Expense categories">
+                    {categoryFilterOptions.expenses.map((category) => (
+                      <option key={category.key} value={category.key}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                )}
+                {categoryFilterOptions.incomes.length > 0 && (
+                  <optgroup label="Income sources">
+                    {categoryFilterOptions.incomes.map((category) => (
+                      <option key={category.key} value={category.key}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                )}
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <HelpLabel
                 help="Show only transactions between the selected start and end dates."
                 className="text-caption font-medium"
               >
@@ -433,6 +486,8 @@ export function TransactionList({
                 onClick={() => {
                   setMinAmount("");
                   setMaxAmount("");
+                  setCategoryFilter("");
+                  setCurrentPage(1);
                   setStartDate(null);
                   setEndDate(null);
                 }}
