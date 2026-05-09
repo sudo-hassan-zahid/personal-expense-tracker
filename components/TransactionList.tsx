@@ -316,6 +316,7 @@ export function TransactionList({
   isWideView = false,
   onOptimisticDelete,
   initialSearch = "",
+  isFirstRun = false,
 }: {
   initialTransactions: Transaction[];
   currency: string;
@@ -327,6 +328,7 @@ export function TransactionList({
   isWideView?: boolean;
   onOptimisticDelete?: (id: string) => void;
   initialSearch?: string;
+  isFirstRun?: boolean;
 }) {
   const [isPending, startTransition] = useTransition();
   const optimisticTransactions = initialTransactions;
@@ -777,8 +779,12 @@ export function TransactionList({
             <div className="w-12 h-12 rounded-full bg-(--color-surface-elevated-dark) flex items-center justify-center mb-2">
               <Search size={24} className="opacity-20" />
             </div>
-            <p className="font-medium">No transactions found</p>
-            <p className="text-caption opacity-70">Try adjusting your filters or search query.</p>
+            <p className="font-medium">{isFirstRun ? "No transactions yet" : "No transactions found"}</p>
+            <p className="text-caption opacity-70">
+              {isFirstRun
+                ? "Use the quick-add forms to record your first income or expense."
+                : "Try adjusting your filters or search query."}
+            </p>
           </div>
         )}
 

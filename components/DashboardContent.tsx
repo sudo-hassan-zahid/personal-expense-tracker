@@ -17,6 +17,7 @@ import { Expense, Income, Category } from "@/types";
 import { AnalyticsSummary } from "./AnalyticsSummary";
 import { BudgetProgress } from "./BudgetProgress";
 import type { MonthlyBudget } from "@/types";
+import { FirstRunGuide } from "./FirstRunGuide";
 import { HelpLabel, HelpTip } from "./HelpTip";
 
 const DashboardChart = dynamic(
@@ -139,9 +140,12 @@ export function DashboardContent({
   const netBalance = totalIncome - totalExpenses;
   const initialSearch =
     (Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q)?.trim() || "";
+  const isFirstRun = initialExpenses.length === 0 && initialIncomes.length === 0;
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 py-6 md:py-[40px] flex flex-col gap-6 md:gap-8 flex-1">
+      {isFirstRun && <FirstRunGuide />}
+
       {/* Top Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-(--color-surface-card-dark) p-4 md:p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-1">
@@ -179,20 +183,23 @@ export function DashboardContent({
         </div>
       </div>
 
-      {/* Chart Section */}
-      <DashboardChart
-        transactions={allTransactions}
-        currency={currency}
-        enableStatusTracking={profile?.enable_status_tracking ?? false}
-      />
+      {!isFirstRun && (
+        <>
+          <DashboardChart
+            transactions={allTransactions}
+            currency={currency}
+            enableStatusTracking={profile?.enable_status_tracking ?? false}
+          />
 
-      <AnalyticsSummary
-        transactions={allTransactions}
-        currency={currency}
-        enableStatusTracking={isStatusTrackingEnabled}
-      />
+          <AnalyticsSummary
+            transactions={allTransactions}
+            currency={currency}
+            enableStatusTracking={isStatusTrackingEnabled}
+          />
 
-      <BudgetProgress budgets={budgets} expenses={initialExpenses} currency={currency} />
+          <BudgetProgress budgets={budgets} expenses={initialExpenses} currency={currency} />
+        </>
+      )}
 
       {/* 8/4 or 12 Split Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -273,6 +280,7 @@ export function DashboardContent({
             isWideView={isWideView}
             onOptimisticDelete={(id) => addOptimisticTransaction({ action: "delete", id })}
             initialSearch={initialSearch}
+            isFirstRun={isFirstRun}
           />
         </div>
 
@@ -281,7 +289,10 @@ export function DashboardContent({
           className={`${isWideView ? "lg:col-span-12 grid grid-cols-1 md:grid-cols-2" : "lg:col-span-4 flex flex-col"} gap-6 animate-slide-up stagger-5 transition-all duration-300`}
         >
           {/* Add Expense Card */}
-          <div className="bg-(--color-surface-card-dark) rounded-xl p-4 md:p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
+          <div
+            id="quick-add-expense"
+            className="bg-(--color-surface-card-dark) rounded-xl p-4 md:p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)"
+          >
             <div className="mb-4 flex items-center gap-2">
               <h2 className="text-title-md">Quick Add Expense</h2>
               <HelpTip label="Quick add expense help">
@@ -385,7 +396,10 @@ export function DashboardContent({
           </div>
 
           {/* Add Income Card */}
-          <div className="bg-(--color-surface-card-dark) rounded-xl p-4 md:p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)">
+          <div
+            id="quick-add-income"
+            className="bg-(--color-surface-card-dark) rounded-xl p-4 md:p-6 text-(--color-on-dark) border border-(--color-hairline-on-dark)"
+          >
             <div className="mb-4 flex items-center gap-2">
               <h2 className="text-title-md">Quick Add Income</h2>
               <HelpTip label="Quick add income help">

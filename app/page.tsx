@@ -10,11 +10,11 @@ export default async function Home() {
         {/* Hero Section */}
         <section className="flex flex-col items-center text-center gap-6 stagger-1 animate-slide-up">
           <h1 className="text-display-sm md:text-display-lg lg:text-hero-display text-(--color-on-dark)">
-            Take Control of Your <span className="text-(--color-primary)">Finances</span>
+            Keep Track Of Your <span className="text-(--color-primary)">Money</span>
           </h1>
           <p className="text-body-md md:text-title-md lg:text-title-lg text-(--color-body) max-w-[700px] opacity-90 px-4">
-            Track your income, monitor your expenses, and grow your net worth with the most powerful
-            personal expense tracker.
+            A simple place to log income, record expenses, and understand where your month is
+            going without turning life into a banking dashboard.
           </p>
           <div className="flex flex-col sm:flex-row items-center gap-4 mt-2 w-full sm:w-auto px-6 sm:px-0">
             <Link
@@ -36,26 +36,26 @@ export default async function Home() {
         <section className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 stagger-2 animate-slide-up">
           <div className="glass-dark rounded-2xl p-6 md:p-8 flex flex-col items-center text-center gap-2 md:gap-3 border border-(--color-hairline-on-dark)">
             <div className="text-display-sm md:text-number-display text-(--color-primary)">
-              256-bit
+              Fast
             </div>
             <div className="text-caption md:text-title-sm text-(--color-muted)">
-              Bank-grade encryption
+              Quick daily tracking
             </div>
           </div>
           <div className="glass-dark rounded-2xl p-6 md:p-8 flex flex-col items-center text-center gap-2 md:gap-3 border border-(--color-hairline-on-dark)">
             <div className="text-display-sm md:text-number-display text-(--color-primary)">
-              100%
+              Clear
             </div>
             <div className="text-caption md:text-title-sm text-(--color-muted)">
-              Data ownership & privacy
+              Monthly totals and trends
             </div>
           </div>
           <div className="glass-dark rounded-2xl p-6 md:p-8 flex flex-col items-center text-center gap-2 md:gap-3 border border-(--color-hairline-on-dark)">
             <div className="text-display-sm md:text-number-display text-(--color-primary)">
-              24/7
+              Simple
             </div>
             <div className="text-caption md:text-title-sm text-(--color-muted)">
-              Uptime & sync reliability
+              No banking-app complexity
             </div>
           </div>
         </section>
@@ -63,7 +63,7 @@ export default async function Home() {
         {/* Footer Note */}
         <footer className="text-center stagger-3 animate-slide-up">
           <p className="text-body-md text-(--color-muted)">
-            No credit card required. Free forever for individuals.
+            Built for personal use. Start small and keep it practical.
           </p>
           <p className="mt-2 text-body-sm text-(--color-muted) opacity-70">
             Want to see it in action first?{" "}
