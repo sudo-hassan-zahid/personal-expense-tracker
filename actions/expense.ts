@@ -67,7 +67,7 @@ export async function addExpense(formData: FormData) {
       return { error: "Failed to add expense." };
     }
 
-    revalidateTransactions();
+    revalidateTransactions(user.id);
     return { success: true };
   } catch (error) {
     logError("Error adding expense", error);
@@ -93,7 +93,7 @@ export async function deleteExpense(id: string) {
       throw new Error("Failed to delete expense");
     }
 
-    revalidateTransactions();
+    revalidateTransactions(user.id);
   } catch (error) {
     logError("Error deleting expense", error, { id });
     throw new Error(error instanceof Error ? error.message : "Failed to delete expense");
@@ -133,7 +133,7 @@ export async function updateExpense(id: string, formData: FormData) {
       return { error: "Failed to update expense." };
     }
 
-    revalidateTransactions();
+    revalidateTransactions(user.id);
     return { success: true };
   } catch (error) {
     logError("Error updating expense", error, { id });
@@ -166,7 +166,7 @@ export async function addSplitExpense(formData: FormData) {
   const { error } = await supabase.from("expenses").insert(rows);
   if (error) return { error: "Failed to save split expense." };
 
-  revalidateTransactions();
+  revalidateTransactions(user.id);
   return { success: true };
 }
 
@@ -179,5 +179,5 @@ export async function bulkUpdateExpenses(ids: string[], updates: Record<string, 
     .in("id", ids)
     .eq("user_id", user.id);
   if (error) throw new Error("Failed to bulk update expenses");
-  revalidateTransactions();
+  revalidateTransactions(user.id);
 }

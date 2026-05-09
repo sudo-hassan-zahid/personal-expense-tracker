@@ -53,7 +53,7 @@ export async function addIncome(formData: FormData) {
       return { error: "Failed to add income." };
     }
 
-    revalidateTransactions();
+    revalidateTransactions(user.id);
     return { success: true };
   } catch (error) {
     console.error("Error adding income:", error);
@@ -78,7 +78,7 @@ export async function deleteIncome(id: string) {
     throw new Error("Failed to delete income");
   }
 
-  revalidateTransactions();
+  revalidateTransactions(user.id);
 }
 
 /**
@@ -114,7 +114,7 @@ export async function updateIncome(id: string, formData: FormData) {
       return { error: "Failed to update income." };
     }
 
-    revalidateTransactions();
+    revalidateTransactions(user.id);
     return { success: true };
   } catch (error) {
     console.error("Error updating income:", error);
@@ -131,5 +131,5 @@ export async function bulkUpdateIncomes(ids: string[], updates: Record<string, s
     .in("id", ids)
     .eq("user_id", user.id);
   if (error) throw new Error("Failed to bulk update incomes");
-  revalidateTransactions();
+  revalidateTransactions(user.id);
 }

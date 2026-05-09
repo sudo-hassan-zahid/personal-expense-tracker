@@ -17,7 +17,12 @@ export async function getDashboardData(
   filters?: DashboardFilters
 ) {
   "use cache";
-  cacheTag("transactions", "categories", "profile", `profile-${userId}`, userId);
+  cacheTag(
+    `transactions-${userId}`,
+    `categories-${userId}`,
+    `profile-${userId}`,
+    `planning-${userId}`
+  );
 
   const supabase = await createClient(cookieStore);
 
