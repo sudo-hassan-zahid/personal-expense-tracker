@@ -409,6 +409,19 @@ export function TransactionList({
     setSearch(val);
   };
 
+  const selectedTypes = useMemo(
+    () => new Set(selectedTransactions.map((transaction) => transaction.type)),
+    [selectedTransactions]
+  );
+  const hasMixedSelection = selectedTypes.size > 1;
+  const bulkCategoryOptions = useMemo(() => {
+    if (hasMixedSelection) return [];
+    if (selectedTypes.has("income")) return incomeCategories;
+    if (selectedTypes.has("expense")) return expenseCategories;
+    return [];
+  }, [expenseCategories, hasMixedSelection, incomeCategories, selectedTypes]);
+  const hasBulkUpdates = bulkDate !== "" || bulkStatus !== "" || bulkCategory !== "";
+
   const toggleSelected = (transaction: Transaction) => {
     setSelectedTransactions((current) =>
       current.some((item) => item.id === transaction.id && item.type === transaction.type)
@@ -419,6 +432,14 @@ export function TransactionList({
 
   const applyBulkUpdate = async () => {
     if (bulkAction) return;
+    if (!hasBulkUpdates) {
+      toast.error("Choose at least one bulk field before applying changes.");
+      return;
+    }
+    if (hasMixedSelection && bulkCategory) {
+      toast.error("Category/source bulk updates only work when all selected rows share one type.");
+      return;
+    }
 
     const expenseIds = selectedTransactions.filter((t) => t.type === "expense").map((t) => t.id);
     const incomeIds = selectedTransactions.filter((t) => t.type === "income").map((t) => t.id);
@@ -631,17 +652,23 @@ export function TransactionList({
             className="form-control"
           />
           <select
-            value={bulkCategory}
+            value={hasMixedSelection ? "" : bulkCategory}
             onChange={(e) => setBulkCategory(e.target.value)}
+            disabled={hasMixedSelection}
             className="form-control"
           >
             <option value="">Category/source</option>
-            {[...expenseCategories, ...incomeCategories].map((category) => (
+            {bulkCategoryOptions.map((category) => (
               <option key={`${category.type}-${category.id}`} value={category.name}>
                 {category.name}
               </option>
             ))}
           </select>
+          {hasMixedSelection && (
+            <span className="text-caption text-(--color-muted)">
+              Category/source bulk changes are disabled for mixed income and expense selections.
+            </span>
+          )}
           {enableStatusTracking && (
             <select
               value={bulkStatus}
@@ -656,7 +683,7 @@ export function TransactionList({
           <div className="flex gap-2 lg:ml-auto">
             <button
               onClick={applyBulkUpdate}
-              disabled={bulkAction !== null}
+              disabled={bulkAction !== null || !hasBulkUpdates}
               className="px-4 py-2 rounded-lg bg-(--color-primary) text-(--color-on-primary) text-button disabled:opacity-60 disabled:cursor-wait flex items-center justify-center gap-2"
             >
               {bulkAction === "update" && <Loader2 size={16} className="animate-spin" />}
