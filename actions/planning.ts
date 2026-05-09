@@ -122,7 +122,7 @@ export async function saveBudget(formData: FormData) {
   );
 
   if (error) return { error: "Failed to save budget." };
-  revalidatePlanning();
+  revalidatePlanning(user.id);
   return { success: true };
 }
 
@@ -134,7 +134,7 @@ export async function deleteBudget(id: string) {
     .eq("id", id)
     .eq("user_id", user.id);
   if (error) throw new Error("Failed to delete budget");
-  revalidatePlanning();
+  revalidatePlanning(user.id);
 }
 
 export async function saveSavingsGoal(formData: FormData) {
@@ -158,7 +158,7 @@ export async function saveSavingsGoal(formData: FormData) {
   });
 
   if (error) return { error: "Failed to save savings goal." };
-  revalidatePlanning();
+  revalidatePlanning(user.id);
   return { success: true };
 }
 
@@ -170,7 +170,7 @@ export async function deleteSavingsGoal(id: string) {
     .eq("id", id)
     .eq("user_id", user.id);
   if (error) throw new Error("Failed to delete savings goal");
-  revalidatePlanning();
+  revalidatePlanning(user.id);
 }
 
 export async function saveRecurringTransaction(formData: FormData) {
@@ -200,7 +200,7 @@ export async function saveRecurringTransaction(formData: FormData) {
   });
 
   if (error) return { error: "Failed to save recurring transaction." };
-  revalidatePlanning();
+  revalidatePlanning(user.id);
   return { success: true };
 }
 
@@ -212,7 +212,7 @@ export async function deleteRecurringTransaction(id: string) {
     .eq("id", id)
     .eq("user_id", user.id);
   if (error) throw new Error("Failed to delete recurring transaction");
-  revalidatePlanning();
+  revalidatePlanning(user.id);
 }
 
 export async function postDueRecurringTransactions() {
@@ -284,7 +284,7 @@ export async function postDueRecurringTransactions() {
     return { error: "Transactions were posted, but recurring schedules failed to advance." };
   }
 
-  revalidateTransactions();
-  revalidatePlanning();
+  revalidateTransactions(user.id);
+  revalidatePlanning(user.id);
   return { success: true };
 }

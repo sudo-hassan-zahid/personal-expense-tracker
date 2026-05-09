@@ -86,7 +86,7 @@ export async function addCategory(formData: FormData) {
     throw new Error("Failed to add category");
   }
 
-  revalidateCategories();
+  revalidateCategories(user.id);
 }
 
 export async function updateCategory(id: string, name: string) {
@@ -138,10 +138,10 @@ export async function updateCategory(id: string, name: string) {
         .eq("user_id", user.id)
         .eq("source", oldName);
     }
-    revalidateTransactions();
+    revalidateTransactions(user.id);
   }
 
-  revalidateCategories();
+  revalidateCategories(user.id);
 }
 
 export async function deleteCategory(id: string) {
@@ -191,5 +191,5 @@ export async function deleteCategory(id: string) {
     throw new Error("Failed to delete category");
   }
 
-  revalidateCategories();
+  revalidateCategories(user.id);
 }
