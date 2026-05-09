@@ -18,8 +18,12 @@ type NormalizedTransaction = {
   searchText: string;
 };
 
-export function useTransactions(initialTransactions: Transaction[], initialItemsPerPage: number) {
-  const [search, setSearch] = useState("");
+export function useTransactions(
+  initialTransactions: Transaction[],
+  initialItemsPerPage: number,
+  initialSearch = ""
+) {
+  const [search, setSearch] = useState(initialSearch);
   const deferredSearch = useDeferredValue(search);
   const [sortField, setSortField] = useState<string>("date");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");

@@ -315,6 +315,7 @@ export function TransactionList({
   enableStatusTracking,
   isWideView = false,
   onOptimisticDelete,
+  initialSearch = "",
 }: {
   initialTransactions: Transaction[];
   currency: string;
@@ -325,6 +326,7 @@ export function TransactionList({
   enableStatusTracking: boolean;
   isWideView?: boolean;
   onOptimisticDelete?: (id: string) => void;
+  initialSearch?: string;
 }) {
   const [isPending, startTransition] = useTransition();
   const optimisticTransactions = initialTransactions;
@@ -351,7 +353,7 @@ export function TransactionList({
     totalItems,
     totalPages,
     displayedTransactions,
-  } = useTransactions(optimisticTransactions, paginationEnabled ? itemsPerPage : 0);
+  } = useTransactions(optimisticTransactions, paginationEnabled ? itemsPerPage : 0, initialSearch);
 
   const [newlyAddedId, setNewlyAddedId] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);

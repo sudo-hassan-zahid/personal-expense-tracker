@@ -17,7 +17,6 @@ import { Expense, Income, Category } from "@/types";
 import { AnalyticsSummary } from "./AnalyticsSummary";
 import { BudgetProgress } from "./BudgetProgress";
 import type { MonthlyBudget } from "@/types";
-import { SplitExpenseForm } from "./SplitExpenseForm";
 import { HelpLabel, HelpTip } from "./HelpTip";
 
 const DashboardChart = dynamic(
@@ -25,6 +24,15 @@ const DashboardChart = dynamic(
   {
     loading: () => (
       <div className="w-full h-[380px] bg-(--color-surface-card-dark) rounded-2xl border border-(--color-hairline-on-dark) animate-pulse" />
+    ),
+  }
+);
+
+const SplitExpenseForm = dynamic(
+  () => import("./SplitExpenseForm").then((module) => ({ default: module.SplitExpenseForm })),
+  {
+    loading: () => (
+      <div className="min-h-[220px] rounded-xl border border-(--color-hairline-on-dark) bg-(--color-surface-card-dark) animate-pulse" />
     ),
   }
 );
@@ -129,6 +137,8 @@ export function DashboardContent({
   }, [optimisticTransactions, isStatusTrackingEnabled]);
 
   const netBalance = totalIncome - totalExpenses;
+  const initialSearch =
+    (Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q)?.trim() || "";
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 py-6 md:py-[40px] flex flex-col gap-6 md:gap-8 flex-1">
@@ -252,6 +262,7 @@ export function DashboardContent({
           </div>
 
           <TransactionList
+            key={initialSearch}
             initialTransactions={allTransactions}
             currency={currency}
             paginationEnabled={paginationEnabled}
@@ -261,6 +272,7 @@ export function DashboardContent({
             enableStatusTracking={isStatusTrackingEnabled}
             isWideView={isWideView}
             onOptimisticDelete={(id) => addOptimisticTransaction({ action: "delete", id })}
+            initialSearch={initialSearch}
           />
         </div>
 
