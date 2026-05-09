@@ -10,7 +10,7 @@ import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
 
 import { useRouter } from "next/navigation";
 
-type ActionResult = void | { error?: string; success?: boolean; imported?: number };
+type ActionResult = void | { error?: string; success?: boolean; imported?: number; message?: string };
 
 export function SubmitButton({
   children,
@@ -93,7 +93,7 @@ export function ActionForm({
               toast.error(result.error, slowToastRef.current ? { id: slowToastRef.current } : {});
             } else {
               toast.success(
-                successMessage,
+                result?.message || successMessage,
                 slowToastRef.current ? { id: slowToastRef.current } : {}
               );
               startRefreshTransition(() => router.refresh());
