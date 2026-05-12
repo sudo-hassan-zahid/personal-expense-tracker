@@ -27,6 +27,7 @@ import {
   startOfWeek,
 } from "date-fns";
 import { formatCurrency } from "@/lib/currency";
+import { HelpTip } from "./HelpTip";
 import { DateRangePicker } from "./ui/DateRangePicker";
 import { Transaction } from "@/types";
 
@@ -40,6 +41,14 @@ type ChartDatum = {
   income: number;
   expense: number;
   displayDate: string;
+};
+
+type SummaryTotals = {
+  filteredIncome: number;
+  filteredExpense: number;
+  matchingTransactions: number;
+  selectedCategoryLabel: string | null;
+  selectedCategoryTotal: number;
 };
 
 type ChartGranularity = "day" | "week" | "month";
@@ -122,30 +131,36 @@ export const DashboardChart = memo(
     }, []);
 
     const categories = useMemo(() => {
-      const cats = transactions.reduce((acc, t) => {
-        const categoryName = t.type === "income" ? t.source : t.category;
-        if (categoryName) acc.add(categoryName.toLowerCase());
+      const categoryMap = transactions.reduce((acc, transaction) => {
+        const categoryName = transaction.type === "income" ? transaction.source : transaction.category;
+        if (!categoryName) return acc;
+
+        const normalizedName = categoryName.toLowerCase();
+        if (!acc.has(normalizedName)) {
+          acc.set(normalizedName, categoryName);
+        }
+
         return acc;
-      }, new Set<string>());
-      return Array.from(cats).sort();
+      }, new Map<string, string>());
+
+      return Array.from(categoryMap.entries())
+        .sort((a, b) => a[1].localeCompare(b[1]))
+        .map(([value, label]) => ({ value, label }));
     }, [transactions]);
 
-    const chartData = useMemo(() => {
+    const selectedCategoryLabel =
+      filterCategory === "all"
+        ? null
+        : categories.find((category) => category.value === filterCategory)?.label || filterCategory;
+
+    const filteredTransactions = useMemo(() => {
       try {
-        let filtered = transactions;
         const { start: startDate, end: endDate } = dateRange;
         if (!startDate || !endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
           return [];
         }
 
-        const granularity = getChartGranularity(startDate, endDate);
-        const chartDataMap = new Map<string, ChartDatum>();
-
-        buildBuckets(startDate, endDate, granularity).forEach((bucket) => {
-          chartDataMap.set(bucket.date, bucket);
-        });
-
-        filtered = filtered.filter((transaction) => {
+        let filtered = transactions.filter((transaction) => {
           const transactionDate = new Date(transaction.date);
           return transactionDate >= startOfDay(startDate) && transactionDate <= endOfDay(endDate);
         });
@@ -162,11 +177,58 @@ export const DashboardChart = memo(
           });
         }
 
-        const transactionsToProcess = enableStatusTracking
+        return enableStatusTracking
           ? filtered.filter((transaction) => transaction.status === "done")
           : filtered;
+      } catch (error) {
+        console.error("Error filtering chart transactions:", error);
+        return [];
+      }
+    }, [transactions, dateRange, filterType, filterCategory, enableStatusTracking]);
 
-        transactionsToProcess.forEach((transaction) => {
+    const summaryTotals = useMemo<SummaryTotals>(() => {
+      return filteredTransactions.reduce(
+        (totals, transaction) => {
+          const amount = Number(transaction.amount);
+          totals.matchingTransactions += 1;
+
+          if (transaction.type === "income") {
+            totals.filteredIncome += amount;
+          } else {
+            totals.filteredExpense += amount;
+          }
+
+          if (selectedCategoryLabel) {
+            totals.selectedCategoryTotal += amount;
+          }
+
+          return totals;
+        },
+        {
+          filteredIncome: 0,
+          filteredExpense: 0,
+          matchingTransactions: 0,
+          selectedCategoryLabel,
+          selectedCategoryTotal: 0,
+        }
+      );
+    }, [filteredTransactions, selectedCategoryLabel]);
+
+    const chartData = useMemo(() => {
+      try {
+        const { start: startDate, end: endDate } = dateRange;
+        if (!startDate || !endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+          return [];
+        }
+
+        const granularity = getChartGranularity(startDate, endDate);
+        const chartDataMap = new Map<string, ChartDatum>();
+
+        buildBuckets(startDate, endDate, granularity).forEach((bucket) => {
+          chartDataMap.set(bucket.date, bucket);
+        });
+
+        filteredTransactions.forEach((transaction) => {
           const bucketKey = getBucketKey(transaction.date, granularity);
           const entry = chartDataMap.get(bucketKey);
           if (!entry) return;
@@ -185,7 +247,7 @@ export const DashboardChart = memo(
         console.error("Error processing chart data:", error);
         return [];
       }
-    }, [transactions, dateRange, filterType, filterCategory, enableStatusTracking]);
+    }, [dateRange, filteredTransactions]);
 
     return (
       <div className="w-full bg-(--color-surface-card-dark) p-4 md:p-8 rounded-2xl border border-(--color-hairline-on-dark) flex flex-col gap-8 shadow-2xl relative overflow-hidden animate-slide-up">
@@ -231,11 +293,50 @@ export const DashboardChart = memo(
             >
               <option value="all">All Categories</option>
               {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
+                <option key={category.value} value={category.value}>
+                  {category.label}
                 </option>
               ))}
             </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 relative z-10">
+          <div className="rounded-xl border border-(--color-hairline-on-dark) bg-(--color-canvas-dark)/35 p-4">
+            <div className="mb-1 flex items-center gap-2 text-caption text-(--color-muted)">
+              <span>Filtered Spend</span>
+              <HelpTip label="Filtered spend help">
+                Total expenses for the current chart date range, type, category, and status filters.
+              </HelpTip>
+            </div>
+            <div className="text-title-md text-(--color-trading-down)">
+              {formatCurrency(summaryTotals.filteredExpense, currency)}
+            </div>
+          </div>
+          <div className="rounded-xl border border-(--color-hairline-on-dark) bg-(--color-canvas-dark)/35 p-4">
+            <div className="mb-1 flex items-center gap-2 text-caption text-(--color-muted)">
+              <span>Filtered Income</span>
+              <HelpTip label="Filtered income help">
+                Total income for the current chart date range, type, category, and status filters.
+              </HelpTip>
+            </div>
+            <div className="text-title-md text-(--color-trading-up)">
+              {formatCurrency(summaryTotals.filteredIncome, currency)}
+            </div>
+          </div>
+          <div className="rounded-xl border border-(--color-hairline-on-dark) bg-(--color-canvas-dark)/35 p-4">
+            <div className="mb-1 flex items-center gap-2 text-caption text-(--color-muted)">
+              <span>{selectedCategoryLabel ? `${selectedCategoryLabel} Total` : "Matching Rows"}</span>
+              <HelpTip label="Chart filtered total help">
+                When a category or source is selected, this shows its total in the chart view.
+                Otherwise it shows how many transactions match the current chart filters.
+              </HelpTip>
+            </div>
+            <div className="text-title-md text-(--color-on-dark)">
+              {selectedCategoryLabel
+                ? formatCurrency(summaryTotals.selectedCategoryTotal, currency)
+                : `${summaryTotals.matchingTransactions} transaction${summaryTotals.matchingTransactions === 1 ? "" : "s"}`}
+            </div>
           </div>
         </div>
 

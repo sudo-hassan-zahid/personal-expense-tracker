@@ -125,7 +125,7 @@ export function DashboardContent({
   }, [optimisticTransactions, filterType, filterStatus]);
 
   const { totalExpenses, totalIncome } = useMemo(() => {
-    return optimisticTransactions.reduce(
+    return allTransactions.reduce(
       (totals, transaction) => {
         if (isStatusTrackingEnabled && transaction.status !== "done") return totals;
         const amount = Number(transaction.amount);
@@ -135,7 +135,7 @@ export function DashboardContent({
       },
       { totalExpenses: 0, totalIncome: 0 }
     );
-  }, [optimisticTransactions, isStatusTrackingEnabled]);
+  }, [allTransactions, isStatusTrackingEnabled]);
 
   const netBalance = totalIncome - totalExpenses;
   const initialSearch =

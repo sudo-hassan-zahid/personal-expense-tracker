@@ -352,6 +352,7 @@ export function TransactionList({
     setStartDate,
     endDate,
     setEndDate,
+    sortedTransactions,
     totalItems,
     totalPages,
     displayedTransactions,
@@ -382,6 +383,12 @@ export function TransactionList({
     }),
     [expenseCategories, incomeCategories]
   );
+  const allCategoryFilterOptions = useMemo(
+    () => [...categoryFilterOptions.expenses, ...categoryFilterOptions.incomes],
+    [categoryFilterOptions]
+  );
+  const selectedCategoryLabel =
+    allCategoryFilterOptions.find((option) => option.key === categoryFilter)?.name || null;
 
   const [prevCount, setPrevCount] = useState(initialTransactions.length);
   useEffect(() => {
@@ -425,6 +432,30 @@ export function TransactionList({
     return [];
   }, [expenseCategories, hasMixedSelection, incomeCategories, selectedTypes]);
   const hasBulkUpdates = bulkDate !== "" || bulkStatus !== "" || bulkCategory !== "";
+  const filteredSummary = sortedTransactions.reduce(
+    (summary, transaction) => {
+      const amount = Number(transaction.amount);
+      summary.matchingTransactions += 1;
+
+      if (transaction.type === "income") {
+        summary.totalIncome += amount;
+      } else {
+        summary.totalExpenses += amount;
+      }
+
+      if (selectedCategoryLabel) {
+        summary.selectedCategoryTotal += amount;
+      }
+
+      return summary;
+    },
+    {
+      matchingTransactions: 0,
+      totalIncome: 0,
+      totalExpenses: 0,
+      selectedCategoryTotal: 0,
+    }
+  );
 
   const toggleSelected = (transaction: Transaction) => {
     setSelectedTransactions((current) =>
@@ -543,12 +574,12 @@ export function TransactionList({
         <div className="flex w-full items-center gap-2 md:w-auto">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex w-full items-center justify-center gap-2 px-4 py-2.5 rounded-xl border transition-all md:w-auto ${showFilters ? "bg-(--color-primary) text-white border-(--color-primary)" : "bg-(--color-canvas-dark)/50 border-(--color-hairline-on-dark) text-(--color-muted) hover:text-(--color-on-dark)"}`}
+            className={`flex w-full items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-button text-black transition-all md:w-auto ${showFilters ? "bg-(--color-primary) border-(--color-primary)" : "bg-(--color-canvas-dark)/50 border-(--color-hairline-on-dark) hover:border-(--color-on-dark)"}`}
           >
             <Filter size={18} />
-            <span className="text-body-sm font-medium">Advanced Filters</span>
+            <span>Advanced Filters</span>
             {(minAmount || maxAmount || categoryFilter || (startDate && endDate)) && (
-              <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
             )}
           </button>
           <HelpTip label="Advanced filters help">
@@ -639,6 +670,31 @@ export function TransactionList({
           </div>
         </div>
       )}
+
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+        <div className="rounded-xl border border-(--color-hairline-on-dark) bg-(--color-canvas-dark)/25 p-3">
+          <div className="mb-1 text-caption text-(--color-muted)">Filtered Expenses</div>
+          <div className="text-title-sm text-(--color-trading-down)">
+            {formatCurrency(filteredSummary.totalExpenses, currency)}
+          </div>
+        </div>
+        <div className="rounded-xl border border-(--color-hairline-on-dark) bg-(--color-canvas-dark)/25 p-3">
+          <div className="mb-1 text-caption text-(--color-muted)">Filtered Income</div>
+          <div className="text-title-sm text-(--color-trading-up)">
+            {formatCurrency(filteredSummary.totalIncome, currency)}
+          </div>
+        </div>
+        <div className="rounded-xl border border-(--color-hairline-on-dark) bg-(--color-canvas-dark)/25 p-3">
+          <div className="mb-1 text-caption text-(--color-muted)">
+            {selectedCategoryLabel ? `${selectedCategoryLabel} Total` : "Matching Transactions"}
+          </div>
+          <div className="text-title-sm text-(--color-on-dark)">
+            {selectedCategoryLabel
+              ? formatCurrency(filteredSummary.selectedCategoryTotal, currency)
+              : `${filteredSummary.matchingTransactions} transaction${filteredSummary.matchingTransactions === 1 ? "" : "s"}`}
+          </div>
+        </div>
+      </div>
 
       {selectedTransactions.length > 0 && (
         <div className="bg-(--color-surface-elevated-dark) border border-(--color-hairline-on-dark) rounded-xl p-3 flex flex-col lg:flex-row gap-3 lg:items-center">
