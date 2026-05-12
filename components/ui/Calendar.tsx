@@ -83,7 +83,7 @@ export function Calendar({
                 h-8 md:h-9 w-8 md:w-9 rounded-lg flex items-center justify-center text-body-sm transition-all
 
                 ${!isCurrentMonth ? "text-(--color-muted) opacity-30" : "text-(--color-on-dark)"}
-                ${isSelected ? "bg-(--color-primary) text-white font-bold scale-110 shadow-lg shadow-blue-500/20" : "hover:bg-(--color-surface-elevated-dark)"}
+                ${isSelected ? "bg-(--color-primary) text-(--color-on-primary) font-bold scale-110 shadow-lg shadow-(--color-primary)/20" : "hover:bg-(--color-surface-elevated-dark)"}
                 ${isToday && !isSelected ? "ring-1 ring-(--color-primary) text-(--color-primary)" : ""}
               `}
             >

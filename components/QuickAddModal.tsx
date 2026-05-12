@@ -58,13 +58,13 @@ export function QuickAddModal({
             <div className="mb-4 grid grid-cols-2 gap-2">
               <button
                 onClick={() => setType("expense")}
-                className={`h-10 rounded-lg border text-body-sm ${type === "expense" ? "border-(--color-primary) bg-(--color-primary) text-(--color-on-primary)" : "border-(--color-hairline-on-dark)"}`}
+                className={`h-10 rounded-lg border text-button transition-colors ${type === "expense" ? "border-(--color-primary) bg-(--color-primary) text-(--color-on-primary)" : "border-(--color-hairline-on-dark) text-(--color-on-dark) hover:bg-(--color-surface-elevated-dark)"}`}
               >
                 Expense
               </button>
               <button
                 onClick={() => setType("income")}
-                className={`h-10 rounded-lg border text-body-sm ${type === "income" ? "border-(--color-primary) bg-(--color-primary) text-(--color-on-primary)" : "border-(--color-hairline-on-dark)"}`}
+                className={`h-10 rounded-lg border text-button transition-colors ${type === "income" ? "border-(--color-primary) bg-(--color-primary) text-(--color-on-primary)" : "border-(--color-hairline-on-dark) text-(--color-on-dark) hover:bg-(--color-surface-elevated-dark)"}`}
               >
                 Income
               </button>

@@ -434,16 +434,19 @@ export function TransactionList({
   const hasBulkUpdates = bulkDate !== "" || bulkStatus !== "" || bulkCategory !== "";
   const filteredSummary = sortedTransactions.reduce(
     (summary, transaction) => {
+      const isCompleted = !enableStatusTracking || (transaction.status || "done") === "done";
       const amount = Number(transaction.amount);
       summary.matchingTransactions += 1;
 
-      if (transaction.type === "income") {
-        summary.totalIncome += amount;
-      } else {
-        summary.totalExpenses += amount;
+      if (isCompleted) {
+        if (transaction.type === "income") {
+          summary.totalIncome += amount;
+        } else {
+          summary.totalExpenses += amount;
+        }
       }
 
-      if (selectedCategoryLabel) {
+      if (selectedCategoryLabel && isCompleted) {
         summary.selectedCategoryTotal += amount;
       }
 
@@ -574,15 +577,20 @@ export function TransactionList({
         <div className="flex w-full items-center gap-2 md:w-auto">
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex w-full items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-button text-black transition-all md:w-auto ${showFilters ? "bg-(--color-primary) border-(--color-primary)" : "bg-(--color-canvas-dark)/50 border-(--color-hairline-on-dark) hover:border-(--color-on-dark)"}`}
+            className={`flex w-full items-center justify-center gap-2 rounded-xl border border-(--color-primary) bg-(--color-primary) px-4 py-2.5 text-button text-(--color-on-primary) transition-all md:w-auto ${showFilters ? "shadow-lg shadow-(--color-primary)/20" : "hover:bg-(--color-primary-active)"}`}
           >
             <Filter size={18} />
             <span>Advanced Filters</span>
             {(minAmount || maxAmount || categoryFilter || (startDate && endDate)) && (
-              <span className="w-2 h-2 rounded-full bg-black animate-pulse" />
+              <span
+                className="h-2 w-2 rounded-full bg-(--color-on-primary) animate-pulse"
+              />
             )}
           </button>
-          <HelpTip label="Advanced filters help">
+          <HelpTip
+            label="Advanced filters help"
+            tooltipClassName="left-auto right-0 translate-x-0"
+          >
             Open amount and date filters for a more precise transaction view.
           </HelpTip>
         </div>
