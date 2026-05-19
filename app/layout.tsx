@@ -26,6 +26,8 @@ export const metadata: Metadata = {
   description: "Track your expenses and income.",
 };
 
+const enableAmbientEffects = process.env.NEXT_PUBLIC_ENABLE_AMBIENT_EFFECTS === "true";
+
 import { cookies } from "next/headers";
 
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -51,8 +53,8 @@ export default async function RootLayout({
           <ProgressBar />
         </Suspense>
         <div className="glow-mesh" />
-        <LazyParticleBackground />
-        {profile?.show_cursor_trail !== false && <LazyCursorTrail />}
+        {enableAmbientEffects && <LazyParticleBackground />}
+        {enableAmbientEffects && profile?.show_cursor_trail === true && <LazyCursorTrail />}
         <TopNav activeTheme={activeTheme as "light" | "dark"} profile={profile} />
         <main className="flex-1 flex flex-col relative z-10">{children}</main>
         <Toaster

@@ -102,6 +102,10 @@ export function useTransactions(
   ]);
 
   const sortedTransactions = useMemo(() => {
+    if (sortField === "date" && sortOrder === "desc") {
+      return filteredTransactions.map(({ transaction }) => transaction);
+    }
+
     return [...filteredTransactions]
       .sort((a, b) => {
         let valA: SortableValue;

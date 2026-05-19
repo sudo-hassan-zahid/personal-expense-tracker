@@ -18,7 +18,10 @@ export default async function DashboardPage(props: {
   // Cached data fetching — all 5 queries run in parallel, result is cached
   // Pass cookies explicitly to avoid dynamic access error
   const { expenses, incomes, expenseCategories, incomeCategories, profile, budgets } =
-    await getDashboardData(userId, allCookies, dashboardFilters);
+    await getDashboardData(userId, allCookies, dashboardFilters, {
+      type: filterType,
+      status: filterStatus,
+    });
 
   const currency = profile?.currency || "USD";
   const paginationEnabled = profile?.pagination_enabled ?? true;

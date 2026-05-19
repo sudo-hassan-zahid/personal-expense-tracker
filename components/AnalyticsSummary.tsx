@@ -1,15 +1,60 @@
 import { BarChart3, Gauge, Landmark, Trophy } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
 import { HelpTip } from "./HelpTip";
-import {
-  getAverageDailySpend,
-  getCompletedTransactions,
-  getForecastedMonthlyExpense,
-  getTopExpenseCategories,
-  getYearlyComparison,
-  summarizeCashFlow,
-} from "@/lib/analytics";
 import type { Transaction } from "@/types";
+
+function getAnalytics(transactions: Transaction[], enableStatusTracking: boolean) {
+  const topCategoryTotals = new Map<string, number>();
+  const currentYear = new Date().getFullYear();
+  const daysInMonth = new Date(currentYear, new Date().getMonth() + 1, 0).getDate();
+  let inflow = 0;
+  let outflow = 0;
+  let expenseMinDate = Number.POSITIVE_INFINITY;
+  let expenseMaxDate = Number.NEGATIVE_INFINITY;
+  let currentIncome = 0;
+  let currentExpense = 0;
+
+  for (const transaction of transactions) {
+    if (enableStatusTracking && transaction.status !== "done") continue;
+
+    const amount = Number(transaction.amount);
+    const transactionDate = new Date(transaction.date);
+    const year = transactionDate.getFullYear();
+
+    if (transaction.type === "income") {
+      inflow += amount;
+      if (year === currentYear) currentIncome += amount;
+      continue;
+    }
+
+    outflow += amount;
+    if (year === currentYear) currentExpense += amount;
+    topCategoryTotals.set(transaction.category, (topCategoryTotals.get(transaction.category) || 0) + amount);
+    const time = transactionDate.getTime();
+    if (time < expenseMinDate) expenseMinDate = time;
+    if (time > expenseMaxDate) expenseMaxDate = time;
+  }
+
+  const activeExpenseDays =
+    Number.isFinite(expenseMinDate) && Number.isFinite(expenseMaxDate)
+      ? Math.max(
+          1,
+          Math.floor((expenseMaxDate - expenseMinDate) / (1000 * 60 * 60 * 24)) + 1
+        )
+      : 0;
+  const averageDailySpend = activeExpenseDays > 0 ? outflow / activeExpenseDays : 0;
+
+  return {
+    cashFlow: { opening: 0, inflow, outflow, closing: inflow - outflow },
+    topCategories: Array.from(topCategoryTotals.entries())
+      .map(([name, amount]) => ({ name, amount }))
+      .sort((a, b) => b.amount - a.amount)
+      .slice(0, 3),
+    averageDailySpend,
+    forecast: averageDailySpend * daysInMonth,
+    yearlyNet: currentIncome - currentExpense,
+  };
+}
 
 export function AnalyticsSummary({
   transactions,
@@ -20,12 +65,10 @@ export function AnalyticsSummary({
   currency: string;
   enableStatusTracking: boolean;
 }) {
-  const completed = getCompletedTransactions(transactions, enableStatusTracking);
-  const cashFlow = summarizeCashFlow(completed);
-  const topCategories = getTopExpenseCategories(completed);
-  const averageDailySpend = getAverageDailySpend(completed);
-  const forecast = getForecastedMonthlyExpense(completed);
-  const yearly = getYearlyComparison(completed);
+  const { cashFlow, topCategories, averageDailySpend, forecast, yearlyNet } = getAnalytics(
+    transactions,
+    enableStatusTracking
+  );
 
   return (
     <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-slide-up stagger-4">
@@ -117,7 +160,7 @@ export function AnalyticsSummary({
           Forecast: {formatCurrency(forecast, currency)}
         </div>
         <div className="mt-1 text-caption text-(--color-muted)">
-          This year net: {formatCurrency(yearly.currentIncome - yearly.currentExpense, currency)}
+          This year net: {formatCurrency(yearlyNet, currency)}
         </div>
       </div>
     </section>

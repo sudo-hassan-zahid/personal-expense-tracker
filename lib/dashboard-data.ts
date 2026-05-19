@@ -14,7 +14,8 @@ import { format } from "date-fns";
 export async function getDashboardData(
   userId: string,
   cookieStore?: unknown,
-  filters?: DashboardFilters
+  filters?: DashboardFilters,
+  viewFilters?: { type?: string; status?: string }
 ) {
   "use cache";
   cacheTag(
@@ -66,10 +67,22 @@ export async function getDashboardData(
     incomeQuery = incomeQuery.or(`note.ilike.%${escaped}%,source.ilike.%${escaped}%`);
   }
 
+  if (viewFilters?.status && viewFilters.status !== "all") {
+    expenseQuery = expenseQuery.eq("status", viewFilters.status);
+    incomeQuery = incomeQuery.eq("status", viewFilters.status);
+  }
+
+  const shouldFetchExpenses = viewFilters?.type !== "income";
+  const shouldFetchIncomes = viewFilters?.type !== "expense";
+
   // Keep independent dashboard reads parallel while avoiding duplicate category round trips.
   const [expensesRes, incomesRes, categoriesRes, profileRes, budgetsRes] = await Promise.all([
-    expenseQuery.order("date", { ascending: false }).order("created_at", { ascending: false }),
-    incomeQuery.order("date", { ascending: false }).order("created_at", { ascending: false }),
+    shouldFetchExpenses
+      ? expenseQuery.order("date", { ascending: false }).order("created_at", { ascending: false })
+      : Promise.resolve({ data: [] }),
+    shouldFetchIncomes
+      ? incomeQuery.order("date", { ascending: false }).order("created_at", { ascending: false })
+      : Promise.resolve({ data: [] }),
     supabase
       .from("categories")
       .select("id, name, type, parent_id")

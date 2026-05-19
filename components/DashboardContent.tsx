@@ -14,8 +14,6 @@ import { TransactionList } from "./TransactionList";
 import { DatePicker } from "./ui/DatePicker";
 import { TransactionFilter } from "./TransactionFilter";
 import { Expense, Income, Category } from "@/types";
-import { AnalyticsSummary } from "./AnalyticsSummary";
-import { BudgetProgress } from "./BudgetProgress";
 import type { MonthlyBudget } from "@/types";
 import { FirstRunGuide } from "./FirstRunGuide";
 import { HelpLabel, HelpTip } from "./HelpTip";
@@ -34,6 +32,31 @@ const SplitExpenseForm = dynamic(
   {
     loading: () => (
       <div className="min-h-[220px] rounded-xl border border-(--color-hairline-on-dark) bg-(--color-surface-card-dark) animate-pulse" />
+    ),
+  }
+);
+
+const AnalyticsSummary = dynamic(
+  () => import("./AnalyticsSummary").then((module) => ({ default: module.AnalyticsSummary })),
+  {
+    loading: () => (
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {[0, 1, 2].map((item) => (
+          <div
+            key={item}
+            className="h-[170px] rounded-xl border border-(--color-hairline-on-dark) bg-(--color-surface-card-dark) animate-pulse"
+          />
+        ))}
+      </div>
+    ),
+  }
+);
+
+const BudgetProgress = dynamic(
+  () => import("./BudgetProgress").then((module) => ({ default: module.BudgetProgress })),
+  {
+    loading: () => (
+      <div className="h-[180px] rounded-xl border border-(--color-hairline-on-dark) bg-(--color-surface-card-dark) animate-pulse" />
     ),
   }
 );

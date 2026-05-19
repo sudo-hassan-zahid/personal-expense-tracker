@@ -14,6 +14,11 @@ export function BudgetProgress({
 }) {
   if (budgets.length === 0) return null;
 
+  const spentByCategory = expenses.reduce((totals, expense) => {
+    totals.set(expense.category, (totals.get(expense.category) || 0) + Number(expense.amount));
+    return totals;
+  }, new Map<string, number>());
+
   return (
     <section className="bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-5 animate-slide-up stagger-4">
       <div className="flex items-center justify-between mb-4">
@@ -27,9 +32,7 @@ export function BudgetProgress({
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {budgets.map((budget) => {
-          const spent = expenses
-            .filter((expense) => expense.category === budget.category)
-            .reduce((sum, expense) => sum + Number(expense.amount), 0);
+          const spent = spentByCategory.get(budget.category) || 0;
           const limit = Number(budget.limit_amount) + Number(budget.rollover_amount || 0);
           const threshold = Number(budget.alert_threshold);
           const pct = limit > 0 ? Math.min(100, (spent / limit) * 100) : 0;
