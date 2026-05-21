@@ -60,9 +60,21 @@ const TransactionRow = memo(
     selected: boolean;
     onToggleSelected: (t: Transaction) => void;
   }) => {
+    const amountLabel = useMemo(
+      () => formatCurrency(Number(t.amount), currency).replace(/^[^\d]*/, ""),
+      [currency, t.amount]
+    );
+    const dateLabels = useMemo(() => {
+      const date = new Date(t.date);
+      return {
+        short: format(date, "MMM d"),
+        long: format(date, "MMM d, yyyy"),
+      };
+    }, [t.date]);
+
     return (
       <div
-        className={`flex flex-col md:grid ${enableStatusTracking ? "md:grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "md:grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-2 md:gap-4 items-start md:items-center py-4 md:py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-200 px-3 md:px-2 -mx-3 md:mx-0 rounded-xl md:rounded-lg ${index < 10 ? "animate-slide-up" : "opacity-100"} ${index < 5 ? `stagger-${index + 1}` : ""} ${newlyAddedId === t.id ? "bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse" : ""}`}
+        className={`flex flex-col md:grid ${enableStatusTracking ? "md:grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "md:grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-2 md:gap-4 items-start md:items-center py-4 md:py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-colors duration-150 px-3 md:px-2 -mx-3 md:mx-0 rounded-xl md:rounded-lg ${index < 10 ? "animate-slide-up" : "opacity-100"} ${index < 5 ? `stagger-${index + 1}` : ""} ${newlyAddedId === t.id ? "bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse" : ""}`}
       >
         <div className="hidden md:block text-number-sm text-(--color-muted) pl-2">
           <input
@@ -107,15 +119,15 @@ const TransactionRow = memo(
             className={`text-number-md font-semibold text-right md:hidden ${t.type === "income" ? "text-green-500" : "text-red-500"} truncate`}
           >
             {t.type === "income" ? "+" : "-"}
-            {formatCurrency(Number(t.amount), currency).replace(/^[^\d]*/, "")}
+            {amountLabel}
           </div>
         </div>
 
         <div className="flex flex-col gap-2 w-full md:contents mt-2 md:mt-0 pt-2 md:pt-0 border-t border-(--color-hairline-on-dark)/50 md:border-0">
           <div className="flex items-center justify-between gap-2 md:contents">
             <div className="text-number-sm text-(--color-muted) whitespace-nowrap md:truncate">
-              <span className="md:hidden">{format(new Date(t.date), "MMM d")}</span>
-              <span className="hidden md:inline">{format(new Date(t.date), "MMM d, yyyy")}</span>
+              <span className="md:hidden">{dateLabels.short}</span>
+              <span className="hidden md:inline">{dateLabels.long}</span>
             </div>
 
             <div className="text-body-sm capitalize flex justify-center">
@@ -130,7 +142,7 @@ const TransactionRow = memo(
               className={`hidden md:block text-number-md font-semibold text-right ${t.type === "income" ? "text-green-500" : "text-red-500"} truncate`}
             >
               {t.type === "income" ? "+" : "-"}
-              {formatCurrency(Number(t.amount), currency).replace(/^[^\d]*/, "")}
+              {amountLabel}
             </div>
 
             {enableStatusTracking ? (
@@ -150,7 +162,7 @@ const TransactionRow = memo(
             {t.type === "expense" && t.attachment_url && (
               <Link
                 href={`/dashboard/attachments?path=${encodeURIComponent(t.attachment_url)}`}
-                className="p-2 text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-primary)/10 rounded-md transition-all"
+                className="p-2 text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-primary)/10 rounded-md transition-colors"
                 title="Open attachment"
               >
                 <Paperclip size={16} />
@@ -158,13 +170,13 @@ const TransactionRow = memo(
             )}
             <button
               onClick={() => onEdit(t)}
-              className="p-2 text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-primary)/10 rounded-md transition-all"
+              className="p-2 text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-primary)/10 rounded-md transition-colors"
             >
               <Pencil size={16} />
             </button>
             <DeleteButton
               onClick={() => onDelete(t)}
-              className="p-2 text-(--color-muted) hover:text-red-500 hover:bg-red-500/10 rounded-md transition-all"
+              className="p-2 text-(--color-muted) hover:text-red-500 hover:bg-red-500/10 rounded-md transition-colors"
             >
               <Trash2 size={16} />
             </DeleteButton>
