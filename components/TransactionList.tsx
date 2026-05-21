@@ -3,7 +3,7 @@
  */
 "use client";
 
-import { useState, useEffect, memo, useMemo, useRef, useTransition } from "react";
+import { useState, useEffect, memo, useMemo, useRef, useTransition, useCallback } from "react";
 import {
   ArrowUpRight,
   ArrowDownRight,
@@ -432,41 +432,50 @@ export function TransactionList({
     return [];
   }, [expenseCategories, hasMixedSelection, incomeCategories, selectedTypes]);
   const hasBulkUpdates = bulkDate !== "" || bulkStatus !== "" || bulkCategory !== "";
-  const filteredSummary = sortedTransactions.reduce(
-    (summary, transaction) => {
-      const isCompleted = !enableStatusTracking || (transaction.status || "done") === "done";
-      const amount = Number(transaction.amount);
-      summary.matchingTransactions += 1;
+  const filteredSummary = useMemo(
+    () =>
+      sortedTransactions.reduce(
+        (summary, transaction) => {
+          const isCompleted = !enableStatusTracking || (transaction.status || "done") === "done";
+          const amount = Number(transaction.amount);
+          summary.matchingTransactions += 1;
 
-      if (isCompleted) {
-        if (transaction.type === "income") {
-          summary.totalIncome += amount;
-        } else {
-          summary.totalExpenses += amount;
+          if (isCompleted) {
+            if (transaction.type === "income") {
+              summary.totalIncome += amount;
+            } else {
+              summary.totalExpenses += amount;
+            }
+          }
+
+          if (selectedCategoryLabel && isCompleted) {
+            summary.selectedCategoryTotal += amount;
+          }
+
+          return summary;
+        },
+        {
+          matchingTransactions: 0,
+          totalIncome: 0,
+          totalExpenses: 0,
+          selectedCategoryTotal: 0,
         }
-      }
-
-      if (selectedCategoryLabel && isCompleted) {
-        summary.selectedCategoryTotal += amount;
-      }
-
-      return summary;
-    },
-    {
-      matchingTransactions: 0,
-      totalIncome: 0,
-      totalExpenses: 0,
-      selectedCategoryTotal: 0,
-    }
+      ),
+    [enableStatusTracking, selectedCategoryLabel, sortedTransactions]
   );
 
-  const toggleSelected = (transaction: Transaction) => {
+  const selectedTransactionKeys = useMemo(
+    () => new Set(selectedTransactions.map((transaction) => `${transaction.type}:${transaction.id}`)),
+    [selectedTransactions]
+  );
+
+  const toggleSelected = useCallback((transaction: Transaction) => {
     setSelectedTransactions((current) =>
       current.some((item) => item.id === transaction.id && item.type === transaction.type)
         ? current.filter((item) => !(item.id === transaction.id && item.type === transaction.type))
         : [...current, transaction]
     );
-  };
+  }, []);
 
   const applyBulkUpdate = async () => {
     if (bulkAction) return;
@@ -870,9 +879,7 @@ export function TransactionList({
               newlyAddedId={newlyAddedId}
               onEdit={setEditingTransaction}
               onDelete={setTransactionToDelete}
-              selected={selectedTransactions.some(
-                (item) => item.id === t.id && item.type === t.type
-              )}
+              selected={selectedTransactionKeys.has(`${t.type}:${t.id}`)}
               onToggleSelected={toggleSelected}
             />
           ))}
