@@ -2,7 +2,7 @@
  * Utility/Hook: useTransactions.ts
  */
 import { useState, useMemo, useDeferredValue } from "react";
-import { format, startOfDay, endOfDay } from "date-fns";
+import { startOfDay, endOfDay } from "date-fns";
 import { Transaction } from "@/types";
 
 type SortableValue = string | number;
@@ -17,6 +17,15 @@ type NormalizedTransaction = {
   noteText: string;
   searchText: string;
 };
+
+const MONTH_NAMES = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+
+function formatSearchDate(dateValue: string) {
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) return dateValue.toLowerCase();
+
+  return `${MONTH_NAMES[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+}
 
 export function useTransactions(
   initialTransactions: Transaction[],
@@ -43,7 +52,7 @@ export function useTransactions(
         const amount = Number(transaction.amount);
         const dateMs = new Date(transaction.date).getTime();
         const createdAtMs = new Date(transaction.created_at).getTime();
-        const dateText = format(new Date(transaction.date), "MMM d, yyyy").toLowerCase();
+        const dateText = formatSearchDate(transaction.date);
         const noteText = (transaction.note || "").toLowerCase();
 
         return {
