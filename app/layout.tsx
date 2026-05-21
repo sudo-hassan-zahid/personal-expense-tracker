@@ -47,12 +47,12 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}>
       <body
-        className={`min-h-full flex flex-col bg-(--color-canvas-dark) text-(--color-body) animate-liquid relative ${themeClass}`}
+        className={`min-h-full flex flex-col bg-(--color-canvas-dark) text-(--color-body) relative ${themeClass}`}
       >
         <Suspense fallback={null}>
           <ProgressBar />
         </Suspense>
-        <div className="glow-mesh" />
+        {enableAmbientEffects && <div className="glow-mesh" />}
         {enableAmbientEffects && <LazyParticleBackground />}
         {enableAmbientEffects && profile?.show_cursor_trail === true && <LazyCursorTrail />}
         <TopNav activeTheme={activeTheme as "light" | "dark"} profile={profile} />
