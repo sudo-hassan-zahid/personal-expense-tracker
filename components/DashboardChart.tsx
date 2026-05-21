@@ -250,10 +250,7 @@ export const DashboardChart = memo(
     }, [dateRange, filteredTransactions]);
 
     return (
-      <div className="w-full bg-(--color-surface-card-dark) p-4 md:p-8 rounded-2xl border border-(--color-hairline-on-dark) flex flex-col gap-8 shadow-2xl relative overflow-hidden animate-slide-up">
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-purple-500/10 rounded-full blur-[80px] pointer-events-none" />
-
+      <div className="w-full bg-(--color-surface-card-dark) p-4 md:p-8 rounded-2xl border border-(--color-hairline-on-dark) flex flex-col gap-8 relative overflow-hidden animate-slide-up">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10 animate-slide-up stagger-1">
           <div>
             <h2 className="text-[20px] md:text-[24px] tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 font-bold mb-1">
@@ -434,10 +431,7 @@ export const DashboardChart = memo(
                       stroke: "#10b981",
                       fill: "var(--color-canvas-dark)",
                     }}
-                    isAnimationActive={true}
-                    animationDuration={500}
-                    animationBegin={100}
-                    animationEasing="ease-in-out"
+                    isAnimationActive={false}
                   />
                 )}
                 {(filterType === "all" || filterType === "expense") && (
@@ -455,10 +449,7 @@ export const DashboardChart = memo(
                       stroke: "#ef4444",
                       fill: "var(--color-canvas-dark)",
                     }}
-                    isAnimationActive={true}
-                    animationDuration={500}
-                    animationBegin={200}
-                    animationEasing="ease-in-out"
+                    isAnimationActive={false}
                   />
                 )}
               </AreaChart>
