@@ -89,6 +89,58 @@ type OptimisticTransaction =
       data: (Expense & { type: "expense" }) | (Income & { type: "income" });
     };
 
+type DashboardTransaction = (Expense & { type: "expense" }) | (Income & { type: "income" });
+
+function compareTransactionsNewestFirst(
+  a: DashboardTransaction,
+  b: DashboardTransaction,
+  timestampCache: Map<string, number>
+) {
+  const dateDiff =
+    getCachedTimestamp(timestampCache, b.id, "date", b.date) -
+    getCachedTimestamp(timestampCache, a.id, "date", a.date);
+  if (dateDiff !== 0) return dateDiff;
+
+  return (
+    getCachedTimestamp(timestampCache, b.id, "created_at", b.created_at) -
+    getCachedTimestamp(timestampCache, a.id, "created_at", a.created_at)
+  );
+}
+
+function getCachedTimestamp(
+  cache: Map<string, number>,
+  id: string,
+  field: "date" | "created_at",
+  value: string
+) {
+  const key = `${id}:${field}:${value}`;
+  const cachedValue = cache.get(key);
+  if (cachedValue !== undefined) return cachedValue;
+
+  const timestamp = new Date(value).getTime();
+  cache.set(key, timestamp);
+  return timestamp;
+}
+
+function buildDashboardHref(
+  pathname: string,
+  searchParams: Record<string, string | string[] | undefined>,
+  overrides?: Record<string, string>
+) {
+  const params = new URLSearchParams();
+
+  Object.entries(searchParams).forEach(([key, value]) => {
+    if (value) params.set(key, Array.isArray(value) ? value[0] : value);
+  });
+
+  Object.entries(overrides ?? {}).forEach(([key, value]) => {
+    params.set(key, value);
+  });
+
+  const queryString = params.toString();
+  return queryString ? `${pathname}?${queryString}` : pathname;
+}
+
 export function DashboardContent({
   expenses: initialExpenses,
   incomes: initialIncomes,
@@ -121,17 +173,18 @@ export function DashboardContent({
         return state.filter((t) => t.id !== newTransaction.id);
       }
       if (newTransaction.action === "add") {
-        return [newTransaction.data, ...state].sort((a, b) => {
-          const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
-          if (dateDiff !== 0) return dateDiff;
-          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-        });
+        const timestampCache = new Map<string, number>();
+        return [newTransaction.data, ...state].sort((a, b) =>
+          compareTransactionsNewestFirst(a, b, timestampCache)
+        );
       }
       return state;
     }
   );
 
   const allTransactions = useMemo(() => {
+    const timestampCache = new Map<string, number>();
+
     return optimisticTransactions
       .filter((t) => {
         if (filterType && filterType !== "all" && t.type !== filterType) return false;
@@ -140,11 +193,7 @@ export function DashboardContent({
         }
         return true;
       })
-      .sort((a, b) => {
-        const dateDiff = new Date(b.date).getTime() - new Date(a.date).getTime();
-        if (dateDiff !== 0) return dateDiff;
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-      });
+      .sort((a, b) => compareTransactionsNewestFirst(a, b, timestampCache));
   }, [optimisticTransactions, filterType, filterStatus]);
 
   const { totalExpenses, totalIncome } = useMemo(() => {
@@ -164,6 +213,17 @@ export function DashboardContent({
   const initialSearch =
     (Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q)?.trim() || "";
   const isFirstRun = initialExpenses.length === 0 && initialIncomes.length === 0;
+  const exportHref = useMemo(
+    () => buildDashboardHref("/dashboard/export", searchParams),
+    [searchParams]
+  );
+  const viewHref = useMemo(
+    () =>
+      buildDashboardHref("/dashboard", searchParams, {
+        view: isWideView ? "standard" : "wide",
+      }),
+    [searchParams, isWideView]
+  );
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 py-6 md:py-[40px] flex flex-col gap-6 md:gap-8 flex-1">
@@ -242,31 +302,14 @@ export function DashboardContent({
               </div>
               <div className="flex shrink-0 items-center gap-1">
                 <Link
-                  href={`/dashboard/export?${(() => {
-                    const params = new URLSearchParams();
-                    if (searchParams) {
-                      Object.entries(searchParams).forEach(([key, value]) => {
-                        if (value) params.set(key, Array.isArray(value) ? value[0] : value);
-                      });
-                    }
-                    return params.toString();
-                  })()}`}
+                  href={exportHref}
                   className="p-2 hover:bg-(--color-canvas-dark) rounded-lg transition-colors text-(--color-muted) hover:text-(--color-on-dark) border border-transparent hover:border-(--color-hairline-on-dark)"
                   title="Export CSV"
                 >
                   <Download size={16} />
                 </Link>
                 <Link
-                  href={`/dashboard?${(() => {
-                    const params = new URLSearchParams();
-                    if (searchParams) {
-                      Object.entries(searchParams).forEach(([key, value]) => {
-                        if (value) params.set(key, Array.isArray(value) ? value[0] : value);
-                      });
-                    }
-                    params.set("view", isWideView ? "standard" : "wide");
-                    return params.toString();
-                  })()}`}
+                  href={viewHref}
                   className="hidden sm:flex p-2 hover:bg-(--color-canvas-dark) rounded-lg transition-colors text-(--color-muted) hover:text-(--color-on-dark) border border-transparent hover:border-(--color-hairline-on-dark)"
                   title={isWideView ? "Standard View" : "Expand Table"}
                 >

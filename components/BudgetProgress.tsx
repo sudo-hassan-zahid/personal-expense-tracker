@@ -1,3 +1,6 @@
+"use client";
+
+import { useMemo } from "react";
 import { AlertTriangle } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
 import { HelpTip } from "./HelpTip";
@@ -12,12 +15,14 @@ export function BudgetProgress({
   expenses: Expense[];
   currency: string;
 }) {
-  if (budgets.length === 0) return null;
+  const spentByCategory = useMemo(() => {
+    return expenses.reduce((totals, expense) => {
+      totals.set(expense.category, (totals.get(expense.category) || 0) + Number(expense.amount));
+      return totals;
+    }, new Map<string, number>());
+  }, [expenses]);
 
-  const spentByCategory = expenses.reduce((totals, expense) => {
-    totals.set(expense.category, (totals.get(expense.category) || 0) + Number(expense.amount));
-    return totals;
-  }, new Map<string, number>());
+  if (budgets.length === 0) return null;
 
   return (
     <section className="bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-5 animate-slide-up stagger-4">
