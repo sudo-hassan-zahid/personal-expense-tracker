@@ -4,6 +4,7 @@
 "use client";
 
 import { useState, useEffect, memo, useMemo, useRef, useTransition, useCallback } from "react";
+import dynamic from "next/dynamic";
 import {
   ArrowUpRight,
   ArrowDownRight,
@@ -27,13 +28,32 @@ import { deleteIncome } from "@/actions/income";
 import { bulkUpdateExpenses } from "@/actions/expense";
 import { bulkUpdateIncomes } from "@/actions/income";
 import { PaginationControls } from "./PaginationControls";
-import { DateRangePicker } from "./ui/DateRangePicker";
 import { toast } from "sonner";
 import { useTransactions } from "@/hooks/useTransactions";
-import { EditTransactionModal } from "./EditTransactionModal";
 import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
 import { Transaction, Category } from "@/types";
 import { HelpLabel, HelpTip } from "./HelpTip";
+
+const DateRangePicker = dynamic(
+  () => import("./ui/DateRangePicker").then((module) => ({ default: module.DateRangePicker })),
+  {
+    loading: () => <div className="h-10 rounded-lg bg-(--color-canvas-dark)/50" />,
+  }
+);
+
+const EditTransactionModal = dynamic(
+  () =>
+    import("./EditTransactionModal").then((module) => ({
+      default: module.EditTransactionModal,
+    })),
+  {
+    loading: () => (
+      <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 p-4">
+        <div className="h-80 w-full max-w-lg rounded-2xl border border-(--color-hairline-on-dark) bg-(--color-surface-card-dark)" />
+      </div>
+    ),
+  }
+);
 
 // Memoized Row Component for maximum performance
 const TransactionRow = memo(
