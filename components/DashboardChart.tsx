@@ -160,9 +160,12 @@ export const DashboardChart = memo(
           return [];
         }
 
+        const startTime = startOfDay(startDate).getTime();
+        const endTime = endOfDay(endDate).getTime();
+
         let filtered = transactions.filter((transaction) => {
-          const transactionDate = new Date(transaction.date);
-          return transactionDate >= startOfDay(startDate) && transactionDate <= endOfDay(endDate);
+          const transactionTime = new Date(transaction.date).getTime();
+          return transactionTime >= startTime && transactionTime <= endTime;
         });
 
         if (filterType !== "all") {
@@ -240,9 +243,7 @@ export const DashboardChart = memo(
           }
         });
 
-        return Array.from(chartDataMap.values()).sort(
-          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-        );
+        return Array.from(chartDataMap.values());
       } catch (error) {
         console.error("Error processing chart data:", error);
         return [];
