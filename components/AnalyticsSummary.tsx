@@ -1,6 +1,3 @@
-"use client";
-
-import { useMemo } from "react";
 import { BarChart3, Gauge, Landmark, Trophy } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
 import { HelpTip } from "./HelpTip";
@@ -8,9 +5,8 @@ import type { Transaction } from "@/types";
 
 function getAnalytics(transactions: Transaction[], enableStatusTracking: boolean) {
   const topCategoryTotals = new Map<string, number>();
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const daysInMonth = new Date(currentYear, currentDate.getMonth() + 1, 0).getDate();
+  const currentYear = new Date().getFullYear();
+  const daysInMonth = new Date(currentYear, new Date().getMonth() + 1, 0).getDate();
   let inflow = 0;
   let outflow = 0;
   let expenseMinDate = Number.POSITIVE_INFINITY;
@@ -69,9 +65,9 @@ export function AnalyticsSummary({
   currency: string;
   enableStatusTracking: boolean;
 }) {
-  const { cashFlow, topCategories, averageDailySpend, forecast, yearlyNet } = useMemo(
-    () => getAnalytics(transactions, enableStatusTracking),
-    [transactions, enableStatusTracking]
+  const { cashFlow, topCategories, averageDailySpend, forecast, yearlyNet } = getAnalytics(
+    transactions,
+    enableStatusTracking
   );
 
   return (
