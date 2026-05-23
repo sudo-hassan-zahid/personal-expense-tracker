@@ -47,11 +47,11 @@ export function TopNavClient({
 
   return (
     <>
-      <header className="h-[64px] bg-(--color-canvas-dark) flex items-center justify-between px-3 sm:px-6 shrink-0 border-b border-(--color-hairline-on-dark) sticky top-0 z-50">
-        <div className="flex min-w-0 items-center gap-4 lg:gap-8">
+      <header className="h-[64px] bg-(--color-canvas-dark) flex items-center justify-between px-6 shrink-0 border-b border-(--color-hairline-on-dark) sticky top-0 z-50">
+        <div className="flex items-center gap-8">
           <Link
             href="/"
-            className="group flex min-w-0 items-center gap-2 text-primary font-bold text-lg tracking-tight hover:text-primary-active transition-colors sm:text-xl"
+            className="group flex items-center gap-2 text-primary font-bold text-xl tracking-tight hover:text-primary-active transition-colors"
             onClick={() => setIsOpen(false)}
           >
             <svg
@@ -149,11 +149,11 @@ export function TopNavClient({
 
       {/* Mobile Menu Drawer */}
       <div
-        className={`fixed top-[64px] right-0 bottom-0 w-[min(100vw-1rem,280px)] bg-(--color-surface-card-dark) border-l border-(--color-hairline-on-dark) z-40 md:hidden transition-transform duration-200 ease-out ${
+        className={`fixed top-[64px] right-0 bottom-0 w-[280px] bg-(--color-surface-card-dark) border-l border-(--color-hairline-on-dark) z-40 md:hidden transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <div className="flex flex-col gap-6 p-4 sm:p-6">
+        <div className="flex flex-col p-6 gap-6">
           <div className="flex items-center justify-between">
             <span className="text-body-sm font-semibold uppercase tracking-wider text-(--color-muted)">
               Menu
@@ -166,28 +166,28 @@ export function TopNavClient({
               <>
                 <Link
                   href="/dashboard"
-                  className="text-title-sm text-(--color-body) hover:text-(--color-primary) py-2 border-b border-(--color-hairline-on-dark) transition-colors"
+                  className="text-title-sm text-(--color-body) hover:text-(--color-primary) py-2 border-b border-(--color-hairline-on-dark) hover:pl-2 transition-all"
                   onClick={() => setIsOpen(false)}
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/dashboard/categories"
-                  className="text-title-sm text-(--color-body) hover:text-(--color-primary) py-2 border-b border-(--color-hairline-on-dark) transition-colors"
+                  className="text-title-sm text-(--color-body) hover:text-(--color-primary) py-2 border-b border-(--color-hairline-on-dark) hover:pl-2 transition-all"
                   onClick={() => setIsOpen(false)}
                 >
                   Categories
                 </Link>
                 <Link
                   href="/dashboard/planning"
-                  className="text-title-sm text-(--color-body) hover:text-(--color-primary) py-2 border-b border-(--color-hairline-on-dark) transition-colors"
+                  className="text-title-sm text-(--color-body) hover:text-(--color-primary) py-2 border-b border-(--color-hairline-on-dark) hover:pl-2 transition-all"
                   onClick={() => setIsOpen(false)}
                 >
                   Planning
                 </Link>
                 <Link
                   href="/dashboard/profile"
-                  className="text-title-sm text-(--color-body) hover:text-(--color-primary) py-2 border-b border-(--color-hairline-on-dark) transition-colors"
+                  className="text-title-sm text-(--color-body) hover:text-(--color-primary) py-2 border-b border-(--color-hairline-on-dark) hover:pl-2 transition-all"
                   onClick={() => setIsOpen(false)}
                 >
                   Profile

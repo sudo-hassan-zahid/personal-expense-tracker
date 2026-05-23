@@ -497,6 +497,7 @@
     background-size: 400% 400%;
     background-attachment: fixed;
     animation: liquid-glow 15s ease infinite;
+    will-change: background-position;
   }
 
   .glow-mesh {
@@ -512,22 +513,5 @@
     pointer-events: none;
     z-index: -1;
     contain: strict;
-  }
-
-  @media (prefers-reduced-motion: reduce), (max-width: 767px) {
-    .animate-pulse-border,
-    .animate-in,
-    .shimmer,
-    .animate-slide-up,
-    .animate-fade-in,
-    .animate-liquid {
-      animation: none !important;
-    }
-
-    .animate-slide-up {
-      opacity: 1;
-      transform: none;
-      will-change: auto;
-    }
   }
 }
