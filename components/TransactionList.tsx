@@ -89,9 +89,9 @@ const TransactionRow = memo(
               <div className="overflow-hidden min-w-0 flex-1">
                 <div
                   className={`text-body-md text-(--color-on-dark) font-medium ${isWideView ? "break-words" : "truncate"}`}
-                  title={t.note || "No note"}
+                  title={t.note || "-"}
                 >
-                  {t.note || "No note"}
+                  {t.note || "-"}
                 </div>
                 <div
                   className={`text-caption text-(--color-muted) ${isWideView ? "break-words" : "truncate"}`}
