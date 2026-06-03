@@ -1,15 +1,14 @@
 "use client";
 
-import { useMemo, useOptimistic, useTransition } from "react";
+import { useMemo, useOptimistic } from "react";
 import dynamic from "next/dynamic";
 import { addMonths, format, subMonths } from "date-fns";
 import { formatCurrency } from "@/lib/currency";
 import { getTodayPKT } from "@/lib/date-utils";
 import { addExpense } from "@/actions/expense";
 import { addIncome } from "@/actions/income";
-import { CalendarDays, ChevronLeft, ChevronRight, Download, Loader2 } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, Download, RotateCcw } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { CategorySelect } from "./CategorySelect";
 import { ActionForm, SubmitButton } from "./ActionForm";
 import { TransactionList } from "./TransactionList";
@@ -112,8 +111,6 @@ export function DashboardContent({
   dashboardFilters,
   openingBalance,
 }: DashboardContentProps) {
-  const router = useRouter();
-  const [isCarryForwardPending, startCarryForwardTransition] = useTransition();
   const initialTransactions = useMemo(
     () => [
       ...initialExpenses.map((e) => ({ ...e, type: "expense" as const })),
@@ -182,14 +179,23 @@ export function DashboardContent({
   const buildMonthHref = (month: string) => {
     const params = new URLSearchParams();
     Object.entries(searchParams).forEach(([key, value]) => {
-      if (!value || key === "period" || key === "start" || key === "end" || key === "page") return;
+      if (
+        !value ||
+        key === "period" ||
+        key === "start" ||
+        key === "end" ||
+        key === "page" ||
+        key === "carryForward"
+      ) {
+        return;
+      }
       params.set(key, Array.isArray(value) ? value[0] : value);
     });
     params.set("month", month);
     return `/dashboard?${params.toString()}`;
   };
 
-  const updateCarryForward = (enabled: boolean) => {
+  const buildCarryForwardHref = (enabled: boolean) => {
     const params = new URLSearchParams();
     Object.entries(searchParams).forEach(([key, value]) => {
       if (!value || key === "page") return;
@@ -198,9 +204,7 @@ export function DashboardContent({
     if (enabled) params.set("carryForward", "1");
     else params.delete("carryForward");
 
-    startCarryForwardTransition(() => {
-      router.push(`/dashboard?${params.toString()}`, { scroll: false });
-    });
+    return `/dashboard?${params.toString()}`;
   };
 
   return (
@@ -245,19 +249,23 @@ export function DashboardContent({
               </Link>
             </div>
 
-            <label className="flex min-h-10 items-center gap-2 rounded-lg border border-(--color-hairline-on-dark) px-3 text-caption uppercase text-(--color-muted)">
-              <input
-                type="checkbox"
-                className="h-4 w-4 accent-(--color-primary)"
-                checked={dashboardFilters.carryForward}
-                disabled={isCarryForwardPending}
-                onChange={(event) => updateCarryForward(event.target.checked)}
-              />
-              <span>Carry Forward</span>
-              {isCarryForwardPending && (
-                <Loader2 size={14} className="animate-spin text-(--color-primary)" />
-              )}
-            </label>
+            {dashboardFilters.carryForward ? (
+              <Link
+                href={buildCarryForwardHref(false)}
+                className="flex min-h-10 items-center justify-center gap-2 rounded-lg border border-(--color-hairline-on-dark) px-3 text-caption font-medium uppercase text-(--color-primary) transition-colors hover:bg-(--color-canvas-dark) hover:text-(--color-on-dark)"
+              >
+                <RotateCcw size={14} />
+                Carried Forward
+              </Link>
+            ) : (
+              <Link
+                href={buildCarryForwardHref(true)}
+                className="flex min-h-10 items-center justify-center gap-2 rounded-lg border border-(--color-hairline-on-dark) px-3 text-caption font-medium uppercase text-(--color-muted) transition-colors hover:bg-(--color-canvas-dark) hover:text-(--color-on-dark)"
+              >
+                <RotateCcw size={14} />
+                Carry Forward Once
+              </Link>
+            )}
           </div>
         </div>
       )}
