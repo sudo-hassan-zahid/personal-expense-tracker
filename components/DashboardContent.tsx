@@ -84,6 +84,7 @@ interface DashboardContentProps {
 
 type DashboardProfile = {
   enable_status_tracking?: boolean | null;
+  auto_carry_forward_balance?: boolean | null;
 };
 
 type OptimisticTransaction =
@@ -175,6 +176,7 @@ export function DashboardContent({
   const selectedMonthLabel = format(selectedMonthDate, "MMMM yyyy");
   const todayMonth = getTodayPKT().slice(0, 7);
   const showMonthControls = dashboardFilters.period !== "all" && dashboardFilters.period !== "last-30";
+  const isAutoCarryForwardEnabled = profile?.auto_carry_forward_balance ?? false;
 
   const buildMonthHref = (month: string) => {
     const params = new URLSearchParams();
@@ -249,13 +251,21 @@ export function DashboardContent({
               </Link>
             </div>
 
-            {dashboardFilters.carryForward ? (
+            {isAutoCarryForwardEnabled ? (
+              <Link
+                href="/dashboard/profile"
+                className="flex min-h-10 items-center justify-center gap-2 rounded-lg border border-(--color-hairline-on-dark) px-3 text-caption font-medium uppercase text-(--color-primary) transition-colors hover:bg-(--color-canvas-dark) hover:text-(--color-on-dark)"
+              >
+                <RotateCcw size={14} />
+                Auto Carry Forward On
+              </Link>
+            ) : dashboardFilters.carryForward ? (
               <Link
                 href={buildCarryForwardHref(false)}
                 className="flex min-h-10 items-center justify-center gap-2 rounded-lg border border-(--color-hairline-on-dark) px-3 text-caption font-medium uppercase text-(--color-primary) transition-colors hover:bg-(--color-canvas-dark) hover:text-(--color-on-dark)"
               >
                 <RotateCcw size={14} />
-                Carried Forward
+                Carried Forward Once
               </Link>
             ) : (
               <Link

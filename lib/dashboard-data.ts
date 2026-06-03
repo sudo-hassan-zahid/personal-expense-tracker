@@ -105,7 +105,7 @@ export async function getDashboardData(
     supabase
       .from("profiles")
       .select(
-        "id, currency, pagination_enabled, enable_status_tracking, theme, show_cursor_trail, name"
+        "id, currency, pagination_enabled, enable_status_tracking, auto_carry_forward_balance, theme, show_cursor_trail, name"
       )
       .eq("id", userId)
       .maybeSingle(),

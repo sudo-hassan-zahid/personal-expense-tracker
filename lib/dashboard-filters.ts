@@ -30,14 +30,18 @@ function parseAmount(value: string | undefined) {
 
 export function parseDashboardFilters(
   searchParams: Record<string, string | string[] | undefined> | undefined,
-  defaultPeriod: DashboardPeriod = "this-month"
+  defaultPeriod: DashboardPeriod = "this-month",
+  defaultCarryForward = false
 ): DashboardFilters {
   const today = getCurrentPKTDate();
   const requestedPeriod = firstParam(searchParams?.period) as DashboardPeriod | undefined;
   const month = firstParam(searchParams?.month);
   const start = firstParam(searchParams?.start);
   const end = firstParam(searchParams?.end);
-  const carryForward = firstParam(searchParams?.carryForward) === "1";
+  const requestedCarryForward = firstParam(searchParams?.carryForward);
+  const carryForward = requestedCarryForward
+    ? requestedCarryForward === "1"
+    : defaultCarryForward;
   const rawSearch = firstParam(searchParams?.q)?.trim();
   const period: DashboardPeriod =
     requestedPeriod && ["this-month", "last-30", "all", "custom"].includes(requestedPeriod)

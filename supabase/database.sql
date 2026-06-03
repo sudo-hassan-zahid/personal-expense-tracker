@@ -98,6 +98,7 @@ create table public.profiles (
     name text,
     theme text not null default 'dark',
     pagination_enabled boolean not null default true,
+    auto_carry_forward_balance boolean not null default false,
     currency text not null default 'USD',
     created_at timestamp with time zone default timezone('utc'::text, now()) not null,
     updated_at timestamp with time zone default timezone('utc'::text, now()) not null

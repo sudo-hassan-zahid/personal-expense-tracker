@@ -1,6 +1,6 @@
 import { getDashboardData } from "@/lib/dashboard-data";
 import { DashboardContent } from "@/components/DashboardContent";
-import { getRequestAuth } from "@/lib/request-data";
+import { getRequestAuth, getRequestProfile } from "@/lib/request-data";
 import { parseDashboardFilters } from "@/lib/dashboard-filters";
 
 export default async function DashboardPage(props: {
@@ -13,7 +13,12 @@ export default async function DashboardPage(props: {
 
   const { allCookies, user } = await getRequestAuth();
   const userId = user?.id ?? "";
-  const dashboardFilters = parseDashboardFilters(searchParams);
+  const requestProfile = await getRequestProfile();
+  const dashboardFilters = parseDashboardFilters(
+    searchParams,
+    "this-month",
+    requestProfile?.auto_carry_forward_balance ?? false
+  );
 
   // Cached data fetching — all 5 queries run in parallel, result is cached
   // Pass cookies explicitly to avoid dynamic access error
