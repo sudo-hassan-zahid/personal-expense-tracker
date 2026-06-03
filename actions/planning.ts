@@ -71,11 +71,7 @@ export async function getPlanningPageData() {
       .in("type", ["expense", "income"])
       .order("type", { ascending: true })
       .order("name", { ascending: true }),
-    supabase
-      .from("profiles")
-      .select("id, currency")
-      .eq("id", user.id)
-      .maybeSingle(),
+    supabase.from("profiles").select("id, currency").eq("id", user.id).maybeSingle(),
   ]);
 
   const categoryData = categories.data || [];

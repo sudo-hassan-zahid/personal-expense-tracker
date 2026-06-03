@@ -13,8 +13,8 @@ export default async function Home() {
             Keep Track Of Your <span className="text-(--color-primary)">Money</span>
           </h1>
           <p className="text-body-md md:text-title-md lg:text-title-lg text-(--color-body) max-w-[700px] opacity-90 px-4">
-            A simple place to log income, record expenses, and understand where your month is
-            going without turning life into a banking dashboard.
+            A simple place to log income, record expenses, and understand where your month is going
+            without turning life into a banking dashboard.
           </p>
           <div className="flex flex-col sm:flex-row items-center gap-4 mt-2 w-full sm:w-auto px-6 sm:px-0">
             <Link

@@ -132,7 +132,8 @@ export const DashboardChart = memo(
 
     const categories = useMemo(() => {
       const categoryMap = transactions.reduce((acc, transaction) => {
-        const categoryName = transaction.type === "income" ? transaction.source : transaction.category;
+        const categoryName =
+          transaction.type === "income" ? transaction.source : transaction.category;
         if (!categoryName) return acc;
 
         const normalizedName = categoryName.toLowerCase();
@@ -326,7 +327,9 @@ export const DashboardChart = memo(
           </div>
           <div className="rounded-xl border border-(--color-hairline-on-dark) bg-(--color-canvas-dark)/35 p-4">
             <div className="mb-1 flex items-center gap-2 text-caption text-(--color-muted)">
-              <span>{selectedCategoryLabel ? `${selectedCategoryLabel} Total` : "Matching Rows"}</span>
+              <span>
+                {selectedCategoryLabel ? `${selectedCategoryLabel} Total` : "Matching Rows"}
+              </span>
               <HelpTip label="Chart filtered total help">
                 When a category or source is selected, this shows its total in the chart view.
                 Otherwise it shows how many transactions match the current chart filters.

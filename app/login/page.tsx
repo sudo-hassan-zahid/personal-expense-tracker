@@ -103,9 +103,7 @@ export default async function LoginPage(props: {
             </div>
 
             <div>
-              <AuthSubmitButton pendingText="Logging in...">
-                Log in
-              </AuthSubmitButton>
+              <AuthSubmitButton pendingText="Logging in...">Log in</AuthSubmitButton>
             </div>
           </form>
 

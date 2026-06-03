@@ -39,9 +39,7 @@ export function parseDashboardFilters(
   const start = firstParam(searchParams?.start);
   const end = firstParam(searchParams?.end);
   const requestedCarryForward = firstParam(searchParams?.carryForward);
-  const carryForward = requestedCarryForward
-    ? requestedCarryForward === "1"
-    : defaultCarryForward;
+  const carryForward = requestedCarryForward ? requestedCarryForward === "1" : defaultCarryForward;
   const rawSearch = firstParam(searchParams?.q)?.trim();
   const period: DashboardPeriod =
     requestedPeriod && ["this-month", "last-30", "all", "custom"].includes(requestedPeriod)

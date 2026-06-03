@@ -582,15 +582,10 @@ export function TransactionList({
             <Filter size={18} />
             <span>Advanced Filters</span>
             {(minAmount || maxAmount || categoryFilter || (startDate && endDate)) && (
-              <span
-                className="h-2 w-2 rounded-full bg-(--color-on-primary) animate-pulse"
-              />
+              <span className="h-2 w-2 rounded-full bg-(--color-on-primary) animate-pulse" />
             )}
           </button>
-          <HelpTip
-            label="Advanced filters help"
-            tooltipClassName="left-auto right-0 translate-x-0"
-          >
+          <HelpTip label="Advanced filters help" tooltipClassName="left-auto right-0 translate-x-0">
             Open amount and date filters for a more precise transaction view.
           </HelpTip>
         </div>
@@ -778,105 +773,107 @@ export function TransactionList({
 
       <div className="relative -mx-2 overflow-x-hidden px-2 md:mx-0 md:px-0">
         <div className="flex flex-col gap-2 md:min-w-[720px]">
-        {/* Sorting header */}
-        <div
-          className={`hidden md:grid ${enableStatusTracking ? "grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}
-        >
-          <div className="pl-2">#</div>
+          {/* Sorting header */}
           <div
-            className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1"
-            onClick={() => toggleSort("note")}
+            className={`hidden md:grid ${enableStatusTracking ? "grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}
           >
-            Description{" "}
-            <ArrowUpDown
-              size={12}
-              className={sortField === "note" ? "text-(--color-primary)" : ""}
-            />
-          </div>
-          <div
-            className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1"
-            onClick={() => toggleSort("date")}
-          >
-            Date{" "}
-            <ArrowUpDown
-              size={12}
-              className={sortField === "date" ? "text-(--color-primary)" : ""}
-            />
-          </div>
-          <div
-            className="text-center cursor-pointer hover:text-(--color-on-dark) flex items-center justify-center gap-1"
-            onClick={() => toggleSort("type")}
-          >
-            Type{" "}
-            <ArrowUpDown
-              size={12}
-              className={sortField === "type" ? "text-(--color-primary)" : ""}
-            />
-          </div>
-          <div
-            className="text-right cursor-pointer hover:text-(--color-on-dark) flex items-center justify-end gap-1"
-            onClick={() => toggleSort("amount")}
-          >
-            Amount{" "}
-            <ArrowUpDown
-              size={12}
-              className={sortField === "amount" ? "text-(--color-primary)" : ""}
-            />
-          </div>
-          {enableStatusTracking && (
+            <div className="pl-2">#</div>
             <div
-              className="text-center cursor-pointer hover:text-(--color-on-dark) flex items-center justify-center gap-1 transition-colors"
-              onClick={() => toggleSort("status")}
+              className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1"
+              onClick={() => toggleSort("note")}
             >
-              Status{" "}
+              Description{" "}
               <ArrowUpDown
                 size={12}
-                className={sortField === "status" ? "text-(--color-primary)" : ""}
+                className={sortField === "note" ? "text-(--color-primary)" : ""}
               />
             </div>
-          )}
-          <div className="text-right pr-2">Action</div>
-        </div>
-
-        {displayedTransactions.length === 0 && (
-          <div className="py-16 text-center text-body-md text-(--color-muted) bg-(--color-canvas-dark)/20 rounded-2xl border border-dashed border-(--color-hairline-on-dark) flex flex-col items-center gap-3 animate-fade-in">
-            <div className="w-12 h-12 rounded-full bg-(--color-surface-elevated-dark) flex items-center justify-center mb-2">
-              <Search size={24} className="opacity-20" />
+            <div
+              className="text-left cursor-pointer hover:text-(--color-on-dark) flex items-center gap-1"
+              onClick={() => toggleSort("date")}
+            >
+              Date{" "}
+              <ArrowUpDown
+                size={12}
+                className={sortField === "date" ? "text-(--color-primary)" : ""}
+              />
             </div>
-            <p className="font-medium">{isFirstRun ? "No transactions yet" : "No transactions found"}</p>
-            <p className="text-caption opacity-70">
-              {isFirstRun
-                ? "Use the quick-add forms to record your first income or expense."
-                : "Try adjusting your filters or search query."}
-            </p>
+            <div
+              className="text-center cursor-pointer hover:text-(--color-on-dark) flex items-center justify-center gap-1"
+              onClick={() => toggleSort("type")}
+            >
+              Type{" "}
+              <ArrowUpDown
+                size={12}
+                className={sortField === "type" ? "text-(--color-primary)" : ""}
+              />
+            </div>
+            <div
+              className="text-right cursor-pointer hover:text-(--color-on-dark) flex items-center justify-end gap-1"
+              onClick={() => toggleSort("amount")}
+            >
+              Amount{" "}
+              <ArrowUpDown
+                size={12}
+                className={sortField === "amount" ? "text-(--color-primary)" : ""}
+              />
+            </div>
+            {enableStatusTracking && (
+              <div
+                className="text-center cursor-pointer hover:text-(--color-on-dark) flex items-center justify-center gap-1 transition-colors"
+                onClick={() => toggleSort("status")}
+              >
+                Status{" "}
+                <ArrowUpDown
+                  size={12}
+                  className={sortField === "status" ? "text-(--color-primary)" : ""}
+                />
+              </div>
+            )}
+            <div className="text-right pr-2">Action</div>
           </div>
-        )}
 
-        <div
-          className={
-            isPending
-              ? "opacity-50 pointer-events-none transition-opacity duration-300"
-              : "transition-opacity duration-300"
-          }
-        >
-          {displayedTransactions.map((t, i) => (
-            <TransactionRow
-              key={t.id + t.type}
-              t={t}
-              index={i}
-              currency={currency}
-              enableStatusTracking={enableStatusTracking}
-              isWideView={isWideView}
-              newlyAddedId={newlyAddedId}
-              onEdit={setEditingTransaction}
-              onDelete={setTransactionToDelete}
-              selected={selectedTransactions.some(
-                (item) => item.id === t.id && item.type === t.type
-              )}
-              onToggleSelected={toggleSelected}
-            />
-          ))}
-        </div>
+          {displayedTransactions.length === 0 && (
+            <div className="py-16 text-center text-body-md text-(--color-muted) bg-(--color-canvas-dark)/20 rounded-2xl border border-dashed border-(--color-hairline-on-dark) flex flex-col items-center gap-3 animate-fade-in">
+              <div className="w-12 h-12 rounded-full bg-(--color-surface-elevated-dark) flex items-center justify-center mb-2">
+                <Search size={24} className="opacity-20" />
+              </div>
+              <p className="font-medium">
+                {isFirstRun ? "No transactions yet" : "No transactions found"}
+              </p>
+              <p className="text-caption opacity-70">
+                {isFirstRun
+                  ? "Use the quick-add forms to record your first income or expense."
+                  : "Try adjusting your filters or search query."}
+              </p>
+            </div>
+          )}
+
+          <div
+            className={
+              isPending
+                ? "opacity-50 pointer-events-none transition-opacity duration-300"
+                : "transition-opacity duration-300"
+            }
+          >
+            {displayedTransactions.map((t, i) => (
+              <TransactionRow
+                key={t.id + t.type}
+                t={t}
+                index={i}
+                currency={currency}
+                enableStatusTracking={enableStatusTracking}
+                isWideView={isWideView}
+                newlyAddedId={newlyAddedId}
+                onEdit={setEditingTransaction}
+                onDelete={setTransactionToDelete}
+                selected={selectedTransactions.some(
+                  (item) => item.id === t.id && item.type === t.type
+                )}
+                onToggleSelected={toggleSelected}
+              />
+            ))}
+          </div>
         </div>
       </div>
 

@@ -103,9 +103,7 @@ export default async function SignupPage(props: {
             </div>
 
             <div>
-              <AuthSubmitButton pendingText="Creating account...">
-                Sign up
-              </AuthSubmitButton>
+              <AuthSubmitButton pendingText="Creating account...">Sign up</AuthSubmitButton>
             </div>
           </form>
 

@@ -477,7 +477,9 @@ export function PlanningPanel({
           </div>
 
           <div className="rounded-lg border border-(--color-hairline-on-dark) bg-(--color-canvas-dark)/30 p-4">
-            <h3 className="text-body-sm font-semibold text-(--color-on-dark)">Accepted CSV format</h3>
+            <h3 className="text-body-sm font-semibold text-(--color-on-dark)">
+              Accepted CSV format
+            </h3>
             <div className="mt-3 grid gap-2 text-caption text-(--color-muted)">
               <p>
                 Required columns: <span className="text-(--color-muted-strong)">type</span>,{" "}
@@ -489,11 +491,12 @@ export function PlanningPanel({
               </p>
               <p>
                 Optional columns: <span className="text-(--color-muted-strong)">note</span> and{" "}
-                <span className="text-(--color-muted-strong)">status</span>. Status defaults to done.
+                <span className="text-(--color-muted-strong)">status</span>. Status defaults to
+                done.
               </p>
               <p>
-                Values: type must be income or expense, date should be YYYY-MM-DD, amount should be a
-                positive number, and status can be done or pending.
+                Values: type must be income or expense, date should be YYYY-MM-DD, amount should be
+                a positive number, and status can be done or pending.
               </p>
             </div>
             <div className="mt-4 overflow-hidden rounded-md border border-(--color-hairline-on-dark)">

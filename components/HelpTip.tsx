@@ -15,7 +15,9 @@ export function HelpTip({
   tooltipClassName?: string;
 }) {
   return (
-    <span className={`relative inline-flex items-center hover:z-[10030] focus-within:z-[10030] ${className}`}>
+    <span
+      className={`relative inline-flex items-center hover:z-[10030] focus-within:z-[10030] ${className}`}
+    >
       <button
         type="button"
         aria-label={label}

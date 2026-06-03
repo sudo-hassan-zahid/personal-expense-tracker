@@ -10,7 +10,12 @@ import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
 
 import { useRouter } from "next/navigation";
 
-type ActionResult = void | { error?: string; success?: boolean; imported?: number; message?: string };
+type ActionResult = void | {
+  error?: string;
+  success?: boolean;
+  imported?: number;
+  message?: string;
+};
 
 export function SubmitButton({
   children,

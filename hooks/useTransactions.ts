@@ -84,11 +84,7 @@ export function useTransactions(
         startMs === null || endMs === null || (dateMs >= startMs && dateMs <= endMs);
 
       return (
-        matchesSearch &&
-        matchesMinAmount &&
-        matchesMaxAmount &&
-        matchesCategory &&
-        matchesDateRange
+        matchesSearch && matchesMinAmount && matchesMaxAmount && matchesCategory && matchesDateRange
       );
     });
   }, [

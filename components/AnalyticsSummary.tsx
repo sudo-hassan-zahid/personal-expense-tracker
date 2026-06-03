@@ -33,7 +33,10 @@ function getAnalytics(
 
     outflow += amount;
     if (year === currentYear) currentExpense += amount;
-    topCategoryTotals.set(transaction.category, (topCategoryTotals.get(transaction.category) || 0) + amount);
+    topCategoryTotals.set(
+      transaction.category,
+      (topCategoryTotals.get(transaction.category) || 0) + amount
+    );
     const time = transactionDate.getTime();
     if (time < expenseMinDate) expenseMinDate = time;
     if (time > expenseMaxDate) expenseMaxDate = time;
@@ -41,10 +44,7 @@ function getAnalytics(
 
   const activeExpenseDays =
     Number.isFinite(expenseMinDate) && Number.isFinite(expenseMaxDate)
-      ? Math.max(
-          1,
-          Math.floor((expenseMaxDate - expenseMinDate) / (1000 * 60 * 60 * 24)) + 1
-        )
+      ? Math.max(1, Math.floor((expenseMaxDate - expenseMinDate) / (1000 * 60 * 60 * 24)) + 1)
       : 0;
   const averageDailySpend = activeExpenseDays > 0 ? outflow / activeExpenseDays : 0;
 

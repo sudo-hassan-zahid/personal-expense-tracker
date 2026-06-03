@@ -7,7 +7,14 @@ import { formatCurrency } from "@/lib/currency";
 import { getTodayPKT } from "@/lib/date-utils";
 import { addExpense } from "@/actions/expense";
 import { addIncome } from "@/actions/income";
-import { CalendarDays, ChevronLeft, ChevronRight, Download, Loader2, RotateCcw } from "lucide-react";
+import {
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  Download,
+  Loader2,
+  RotateCcw,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { CategorySelect } from "./CategorySelect";
@@ -176,10 +183,12 @@ export function DashboardContent({
   const initialSearch =
     (Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q)?.trim() || "";
   const isFirstRun = initialExpenses.length === 0 && initialIncomes.length === 0;
-  const selectedMonth = dashboardFilters.month || dashboardFilters.startDate?.slice(0, 7) || getTodayPKT().slice(0, 7);
+  const selectedMonth =
+    dashboardFilters.month || dashboardFilters.startDate?.slice(0, 7) || getTodayPKT().slice(0, 7);
   const selectedMonthDate = new Date(`${selectedMonth}-01T00:00:00`);
   const selectedMonthLabel = format(selectedMonthDate, "MMMM yyyy");
-  const showMonthControls = dashboardFilters.period !== "all" && dashboardFilters.period !== "last-30";
+  const showMonthControls =
+    dashboardFilters.period !== "all" && dashboardFilters.period !== "last-30";
   const isAutoCarryForwardEnabled = profile?.auto_carry_forward_balance ?? false;
   const hasSelectedMonthOption = availableMonths.includes(selectedMonth);
 
