@@ -3,7 +3,11 @@ import { formatCurrency } from "@/lib/currency";
 import { HelpTip } from "./HelpTip";
 import type { Transaction } from "@/types";
 
-function getAnalytics(transactions: Transaction[], enableStatusTracking: boolean) {
+function getAnalytics(
+  transactions: Transaction[],
+  enableStatusTracking: boolean,
+  openingBalance: number
+) {
   const topCategoryTotals = new Map<string, number>();
   const currentYear = new Date().getFullYear();
   const daysInMonth = new Date(currentYear, new Date().getMonth() + 1, 0).getDate();
@@ -45,7 +49,12 @@ function getAnalytics(transactions: Transaction[], enableStatusTracking: boolean
   const averageDailySpend = activeExpenseDays > 0 ? outflow / activeExpenseDays : 0;
 
   return {
-    cashFlow: { opening: 0, inflow, outflow, closing: inflow - outflow },
+    cashFlow: {
+      opening: openingBalance,
+      inflow,
+      outflow,
+      closing: openingBalance + inflow - outflow,
+    },
     topCategories: Array.from(topCategoryTotals.entries())
       .map(([name, amount]) => ({ name, amount }))
       .sort((a, b) => b.amount - a.amount)
@@ -60,14 +69,17 @@ export function AnalyticsSummary({
   transactions,
   currency,
   enableStatusTracking,
+  openingBalance = 0,
 }: {
   transactions: Transaction[];
   currency: string;
   enableStatusTracking: boolean;
+  openingBalance?: number;
 }) {
   const { cashFlow, topCategories, averageDailySpend, forecast, yearlyNet } = getAnalytics(
     transactions,
-    enableStatusTracking
+    enableStatusTracking,
+    openingBalance
   );
 
   return (

@@ -17,7 +17,7 @@ export default async function DashboardPage(props: {
 
   // Cached data fetching — all 5 queries run in parallel, result is cached
   // Pass cookies explicitly to avoid dynamic access error
-  const { expenses, incomes, expenseCategories, incomeCategories, profile, budgets } =
+  const { expenses, incomes, expenseCategories, incomeCategories, profile, budgets, openingBalance } =
     await getDashboardData(userId, allCookies, dashboardFilters, {
       type: filterType,
       status: filterStatus,
@@ -45,6 +45,8 @@ export default async function DashboardPage(props: {
       filterStatus={filterStatus}
       isWideView={isWideView}
       searchParams={searchParams ?? {}}
+      dashboardFilters={dashboardFilters}
+      openingBalance={openingBalance}
     />
   );
 }

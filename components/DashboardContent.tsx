@@ -1,13 +1,15 @@
 "use client";
 
-import { useMemo, useOptimistic } from "react";
+import { useMemo, useOptimistic, useTransition } from "react";
 import dynamic from "next/dynamic";
+import { addMonths, format, subMonths } from "date-fns";
 import { formatCurrency } from "@/lib/currency";
 import { getTodayPKT } from "@/lib/date-utils";
 import { addExpense } from "@/actions/expense";
 import { addIncome } from "@/actions/income";
-import { ChevronLeft, ChevronRight, Download } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, Download, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { CategorySelect } from "./CategorySelect";
 import { ActionForm, SubmitButton } from "./ActionForm";
 import { TransactionList } from "./TransactionList";
@@ -17,6 +19,7 @@ import { Expense, Income, Category } from "@/types";
 import type { MonthlyBudget } from "@/types";
 import { FirstRunGuide } from "./FirstRunGuide";
 import { HelpLabel, HelpTip } from "./HelpTip";
+import type { DashboardFilters } from "@/lib/dashboard-filters";
 
 const DashboardChart = dynamic(
   () => import("./DashboardChart").then((module) => ({ default: module.DashboardChart })),
@@ -76,6 +79,8 @@ interface DashboardContentProps {
   filterStatus?: string;
   isWideView: boolean;
   searchParams: Record<string, string | string[] | undefined>;
+  dashboardFilters: DashboardFilters;
+  openingBalance: number;
 }
 
 type DashboardProfile = {
@@ -104,7 +109,11 @@ export function DashboardContent({
   filterStatus,
   isWideView,
   searchParams,
+  dashboardFilters,
+  openingBalance,
 }: DashboardContentProps) {
+  const router = useRouter();
+  const [isCarryForwardPending, startCarryForwardTransition] = useTransition();
   const initialTransactions = useMemo(
     () => [
       ...initialExpenses.map((e) => ({ ...e, type: "expense" as const })),
@@ -160,14 +169,98 @@ export function DashboardContent({
     );
   }, [allTransactions, isStatusTrackingEnabled]);
 
-  const netBalance = totalIncome - totalExpenses;
+  const netBalance = openingBalance + totalIncome - totalExpenses;
   const initialSearch =
     (Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q)?.trim() || "";
   const isFirstRun = initialExpenses.length === 0 && initialIncomes.length === 0;
+  const selectedMonth = dashboardFilters.month || dashboardFilters.startDate?.slice(0, 7) || getTodayPKT().slice(0, 7);
+  const selectedMonthDate = new Date(`${selectedMonth}-01T00:00:00`);
+  const selectedMonthLabel = format(selectedMonthDate, "MMMM yyyy");
+  const todayMonth = getTodayPKT().slice(0, 7);
+  const showMonthControls = dashboardFilters.period !== "all" && dashboardFilters.period !== "last-30";
+
+  const buildMonthHref = (month: string) => {
+    const params = new URLSearchParams();
+    Object.entries(searchParams).forEach(([key, value]) => {
+      if (!value || key === "period" || key === "start" || key === "end" || key === "page") return;
+      params.set(key, Array.isArray(value) ? value[0] : value);
+    });
+    params.set("month", month);
+    return `/dashboard?${params.toString()}`;
+  };
+
+  const updateCarryForward = (enabled: boolean) => {
+    const params = new URLSearchParams();
+    Object.entries(searchParams).forEach(([key, value]) => {
+      if (!value || key === "page") return;
+      params.set(key, Array.isArray(value) ? value[0] : value);
+    });
+    if (enabled) params.set("carryForward", "1");
+    else params.delete("carryForward");
+
+    startCarryForwardTransition(() => {
+      router.push(`/dashboard?${params.toString()}`, { scroll: false });
+    });
+  };
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 py-6 md:py-[40px] flex flex-col gap-6 md:gap-8 flex-1">
       {isFirstRun && <FirstRunGuide />}
+
+      {showMonthControls && (
+        <div className="flex flex-col gap-3 rounded-xl border border-(--color-hairline-on-dark) bg-(--color-surface-card-dark) p-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-(--color-hairline-on-dark) text-(--color-primary)">
+              <CalendarDays size={18} />
+            </div>
+            <div className="min-w-0">
+              <div className="text-caption uppercase text-(--color-muted)">Selected month</div>
+              <div className="truncate text-title-sm text-(--color-on-dark)">
+                {selectedMonthLabel}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="grid grid-cols-[40px_1fr_40px] overflow-hidden rounded-lg border border-(--color-hairline-on-dark)">
+              <Link
+                href={buildMonthHref(format(subMonths(selectedMonthDate, 1), "yyyy-MM"))}
+                className="flex h-10 items-center justify-center text-(--color-muted) transition-colors hover:bg-(--color-canvas-dark) hover:text-(--color-on-dark)"
+                title="Previous month"
+              >
+                <ChevronLeft size={16} />
+              </Link>
+              <Link
+                href={buildMonthHref(todayMonth)}
+                className="flex h-10 items-center justify-center border-x border-(--color-hairline-on-dark) px-4 text-caption font-medium uppercase text-(--color-muted) transition-colors hover:bg-(--color-canvas-dark) hover:text-(--color-on-dark)"
+              >
+                This Month
+              </Link>
+              <Link
+                href={buildMonthHref(format(addMonths(selectedMonthDate, 1), "yyyy-MM"))}
+                className="flex h-10 items-center justify-center text-(--color-muted) transition-colors hover:bg-(--color-canvas-dark) hover:text-(--color-on-dark)"
+                title="Next month"
+              >
+                <ChevronRight size={16} />
+              </Link>
+            </div>
+
+            <label className="flex min-h-10 items-center gap-2 rounded-lg border border-(--color-hairline-on-dark) px-3 text-caption uppercase text-(--color-muted)">
+              <input
+                type="checkbox"
+                className="h-4 w-4 accent-(--color-primary)"
+                checked={dashboardFilters.carryForward}
+                disabled={isCarryForwardPending}
+                onChange={(event) => updateCarryForward(event.target.checked)}
+              />
+              <span>Carry Forward</span>
+              {isCarryForwardPending && (
+                <Loader2 size={14} className="animate-spin text-(--color-primary)" />
+              )}
+            </label>
+          </div>
+        </div>
+      )}
 
       {/* Top Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -175,12 +268,17 @@ export function DashboardContent({
           <div className="flex items-center justify-center md:justify-start gap-1.5 text-body-sm md:text-body-md text-(--color-muted) mb-2">
             <span>Net Balance</span>
             <HelpTip label="Net balance help">
-              Income minus completed expenses for the current view.
+              Opening balance plus income minus completed expenses for the current view.
             </HelpTip>
           </div>
           <div className="text-display-sm md:text-number-display text-(--color-on-dark) text-center">
             {formatCurrency(netBalance, currency)}
           </div>
+          {dashboardFilters.carryForward && (
+            <div className="mt-2 text-center text-caption text-(--color-muted)">
+              Opening: {formatCurrency(openingBalance, currency)}
+            </div>
+          )}
         </div>
         <div className="bg-(--color-surface-card-dark) p-4 md:p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-2">
           <div className="flex items-center justify-center md:justify-start gap-1.5 text-body-sm md:text-body-md text-(--color-muted) mb-2">
@@ -218,6 +316,7 @@ export function DashboardContent({
             transactions={allTransactions}
             currency={currency}
             enableStatusTracking={isStatusTrackingEnabled}
+            openingBalance={openingBalance}
           />
 
           <BudgetProgress budgets={budgets} expenses={initialExpenses} currency={currency} />
