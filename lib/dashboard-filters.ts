@@ -7,6 +7,8 @@ export type DashboardFilters = {
   period: DashboardPeriod;
   startDate?: string;
   endDate?: string;
+  month?: string;
+  carryForward?: boolean;
   minAmount?: number;
   maxAmount?: number;
   search?: string;
@@ -28,13 +30,18 @@ function parseAmount(value: string | undefined) {
 
 export function parseDashboardFilters(
   searchParams: Record<string, string | string[] | undefined> | undefined,
-  defaultPeriod: DashboardPeriod = "this-month"
+  defaultPeriod: DashboardPeriod = "this-month",
+  defaultCarryForward = false
 ): DashboardFilters {
   const today = getCurrentPKTDate();
   const requestedPeriod = firstParam(searchParams?.period) as DashboardPeriod | undefined;
   const month = firstParam(searchParams?.month);
   const start = firstParam(searchParams?.start);
   const end = firstParam(searchParams?.end);
+  const requestedCarryForward = firstParam(searchParams?.carryForward);
+  const carryForward = requestedCarryForward
+    ? requestedCarryForward === "1"
+    : defaultCarryForward;
   const rawSearch = firstParam(searchParams?.q)?.trim();
   const period: DashboardPeriod =
     requestedPeriod && ["this-month", "last-30", "all", "custom"].includes(requestedPeriod)
@@ -47,6 +54,8 @@ export function parseDashboardFilters(
       period: "custom",
       startDate: format(startOfMonth(monthDate), "yyyy-MM-dd"),
       endDate: format(endOfMonth(monthDate), "yyyy-MM-dd"),
+      month,
+      carryForward,
       minAmount: parseAmount(firstParam(searchParams?.min)),
       maxAmount: parseAmount(firstParam(searchParams?.max)),
       search: rawSearch || undefined,
@@ -56,6 +65,7 @@ export function parseDashboardFilters(
   if (period === "all") {
     return {
       period,
+      carryForward: false,
       minAmount: parseAmount(firstParam(searchParams?.min)),
       maxAmount: parseAmount(firstParam(searchParams?.max)),
       search: rawSearch || undefined,
@@ -67,6 +77,7 @@ export function parseDashboardFilters(
       period,
       startDate: format(subDays(today, 29), "yyyy-MM-dd"),
       endDate: format(today, "yyyy-MM-dd"),
+      carryForward: false,
       minAmount: parseAmount(firstParam(searchParams?.min)),
       maxAmount: parseAmount(firstParam(searchParams?.max)),
       search: rawSearch || undefined,
@@ -78,6 +89,7 @@ export function parseDashboardFilters(
       period,
       startDate: start,
       endDate: end,
+      carryForward,
       minAmount: parseAmount(firstParam(searchParams?.min)),
       maxAmount: parseAmount(firstParam(searchParams?.max)),
       search: rawSearch || undefined,
@@ -88,6 +100,8 @@ export function parseDashboardFilters(
     period: "this-month",
     startDate: format(startOfMonth(today), "yyyy-MM-dd"),
     endDate: format(endOfMonth(today), "yyyy-MM-dd"),
+    month: format(today, "yyyy-MM"),
+    carryForward,
     minAmount: parseAmount(firstParam(searchParams?.min)),
     maxAmount: parseAmount(firstParam(searchParams?.max)),
     search: rawSearch || undefined,

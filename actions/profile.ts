@@ -16,6 +16,7 @@ type ProfileUpdate = {
   pagination_enabled: boolean;
   enable_status_tracking: boolean;
   show_cursor_trail: boolean;
+  auto_carry_forward_balance: boolean;
   updated_at: string;
 };
 
@@ -66,7 +67,7 @@ async function fetchProfile(userId: string, cookieStore?: unknown) {
   const { data, error } = await supabase
     .from("profiles")
     .select(
-      "id, theme, show_cursor_trail, currency, pagination_enabled, enable_status_tracking, name"
+      "id, theme, show_cursor_trail, currency, pagination_enabled, enable_status_tracking, auto_carry_forward_balance, name"
     )
     .eq("id", userId)
     .maybeSingle();
@@ -121,6 +122,7 @@ export async function updateProfile(formData: FormData) {
     const paginationEnabled = formData.get("pagination") === "on";
     const statusTrackingEnabled = formData.get("enable_status_tracking") === "on";
     const showCursorTrail = formData.get("show_cursor_trail") === "on";
+    const autoCarryForwardBalance = formData.get("auto_carry_forward_balance") === "on";
 
     const updates: ProfileUpdate = {
       name,
@@ -129,6 +131,7 @@ export async function updateProfile(formData: FormData) {
       pagination_enabled: paginationEnabled,
       enable_status_tracking: statusTrackingEnabled,
       show_cursor_trail: showCursorTrail,
+      auto_carry_forward_balance: autoCarryForwardBalance,
       updated_at: new Date().toISOString(),
     };
 

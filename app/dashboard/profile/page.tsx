@@ -165,6 +165,29 @@ export default async function ProfilePage() {
             <div className="flex items-center justify-between p-4 bg-(--color-canvas-dark)/50 rounded-xl border border-(--color-hairline-on-dark)">
               <div className="flex flex-col">
                 <span className="flex items-center gap-2 text-body-md text-(--color-on-dark)">
+                  Auto Carry Forward Balance
+                  <HelpTip label="Auto carry forward help">
+                    Adds the previous balance into each selected month automatically.
+                  </HelpTip>
+                </span>
+                <span className="text-caption text-(--color-muted)">
+                  Keep last month&apos;s remaining balance included after refresh and sign in.
+                </span>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer group">
+                <input
+                  type="checkbox"
+                  name="auto_carry_forward_balance"
+                  defaultChecked={profile?.auto_carry_forward_balance ?? false}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-(--color-surface-elevated-dark) border border-(--color-hairline-on-dark) peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-blue-500 peer-checked:to-indigo-500"></div>
+              </label>
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-(--color-canvas-dark)/50 rounded-xl border border-(--color-hairline-on-dark)">
+              <div className="flex flex-col">
+                <span className="flex items-center gap-2 text-body-md text-(--color-on-dark)">
                   Enable Pagination
                   <HelpTip label="Pagination help">
                     Splits long transaction lists into pages for easier browsing.

@@ -14,6 +14,7 @@ export type RequestProfile = {
   currency: string | null;
   pagination_enabled: boolean | null;
   enable_status_tracking: boolean | null;
+  auto_carry_forward_balance: boolean | null;
   name: string | null;
 } | null;
 
@@ -45,7 +46,7 @@ export const getRequestProfile = cache(async (): Promise<RequestProfile> => {
   const { data, error } = await supabase
     .from("profiles")
     .select(
-      "id, theme, show_cursor_trail, currency, pagination_enabled, enable_status_tracking, name"
+      "id, theme, show_cursor_trail, currency, pagination_enabled, enable_status_tracking, auto_carry_forward_balance, name"
     )
     .eq("id", user.id)
     .maybeSingle();

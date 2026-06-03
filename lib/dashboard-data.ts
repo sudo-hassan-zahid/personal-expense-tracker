@@ -6,6 +6,15 @@ import { cacheTag } from "next/cache";
 import type { DashboardFilters } from "@/lib/dashboard-filters";
 import { format } from "date-fns";
 
+function getAvailableTransactionMonths(
+  expenseDates: { date: string }[],
+  incomeDates: { date: string }[]
+) {
+  return Array.from(
+    new Set([...expenseDates, ...incomeDates].map((transaction) => transaction.date.slice(0, 7)))
+  ).sort((a, b) => b.localeCompare(a));
+}
+
 /**
  * Cached data fetcher for the dashboard.
  * Runs dashboard queries in parallel with a single Supabase client.
@@ -74,9 +83,23 @@ export async function getDashboardData(
 
   const shouldFetchExpenses = viewFilters?.type !== "income";
   const shouldFetchIncomes = viewFilters?.type !== "expense";
+  const budgetMonth = filters?.startDate
+    ? format(new Date(`${filters.startDate}T00:00:00`), "yyyy-MM-01")
+    : format(new Date(), "yyyy-MM-01");
+  const shouldFetchOpeningBalance = Boolean(filters?.carryForward && filters.startDate);
 
   // Keep independent dashboard reads parallel while avoiding duplicate category round trips.
-  const [expensesRes, incomesRes, categoriesRes, profileRes, budgetsRes] = await Promise.all([
+  const [
+    expensesRes,
+    incomesRes,
+    categoriesRes,
+    profileRes,
+    budgetsRes,
+    openingExpensesRes,
+    openingIncomesRes,
+    availableExpenseMonthsRes,
+    availableIncomeMonthsRes,
+  ] = await Promise.all([
     shouldFetchExpenses
       ? expenseQuery.order("date", { ascending: false }).order("created_at", { ascending: false })
       : Promise.resolve({ data: [] }),
@@ -93,7 +116,7 @@ export async function getDashboardData(
     supabase
       .from("profiles")
       .select(
-        "id, currency, pagination_enabled, enable_status_tracking, theme, show_cursor_trail, name"
+        "id, currency, pagination_enabled, enable_status_tracking, auto_carry_forward_balance, theme, show_cursor_trail, name"
       )
       .eq("id", userId)
       .maybeSingle(),
@@ -101,11 +124,48 @@ export async function getDashboardData(
       .from("monthly_budgets")
       .select("id, category, month, limit_amount, alert_threshold, rollover_amount")
       .eq("user_id", userId)
-      .eq("month", format(new Date(), "yyyy-MM-01"))
+      .eq("month", budgetMonth)
       .order("category"),
+    shouldFetchOpeningBalance
+      ? supabase
+          .from("expenses")
+          .select("amount, status")
+          .eq("user_id", userId)
+          .is("deleted_at", null)
+          .lt("date", filters?.startDate)
+      : Promise.resolve({ data: [] }),
+    shouldFetchOpeningBalance
+      ? supabase
+          .from("incomes")
+          .select("amount, status")
+          .eq("user_id", userId)
+          .is("deleted_at", null)
+          .lt("date", filters?.startDate)
+      : Promise.resolve({ data: [] }),
+    supabase
+      .from("expenses")
+      .select("date")
+      .eq("user_id", userId)
+      .is("deleted_at", null)
+      .order("date", { ascending: false }),
+    supabase
+      .from("incomes")
+      .select("date")
+      .eq("user_id", userId)
+      .is("deleted_at", null)
+      .order("date", { ascending: false }),
   ]);
 
   const categories = categoriesRes.data || [];
+  const isStatusTrackingEnabled = profileRes.data?.enable_status_tracking ?? false;
+  const completedOnly = (item: { status?: string | null }) =>
+    !isStatusTrackingEnabled || (item.status || "done") === "done";
+  const openingExpenses = (openingExpensesRes.data || [])
+    .filter(completedOnly)
+    .reduce((total, expense) => total + Number(expense.amount), 0);
+  const openingIncomes = (openingIncomesRes.data || [])
+    .filter(completedOnly)
+    .reduce((total, income) => total + Number(income.amount), 0);
 
   return {
     expenses: expensesRes.data || [],
@@ -114,5 +174,10 @@ export async function getDashboardData(
     incomeCategories: categories.filter((category) => category.type === "income"),
     profile: profileRes.data,
     budgets: budgetsRes.data || [],
+    openingBalance: openingIncomes - openingExpenses,
+    availableMonths: getAvailableTransactionMonths(
+      availableExpenseMonthsRes.data || [],
+      availableIncomeMonthsRes.data || []
+    ),
   };
 }

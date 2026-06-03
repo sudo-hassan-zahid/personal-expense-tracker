@@ -1,13 +1,15 @@
 "use client";
 
-import { useMemo, useOptimistic } from "react";
+import { useMemo, useOptimistic, useTransition } from "react";
 import dynamic from "next/dynamic";
+import { format } from "date-fns";
 import { formatCurrency } from "@/lib/currency";
 import { getTodayPKT } from "@/lib/date-utils";
 import { addExpense } from "@/actions/expense";
 import { addIncome } from "@/actions/income";
-import { ChevronLeft, ChevronRight, Download } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, Download, Loader2, RotateCcw } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { CategorySelect } from "./CategorySelect";
 import { ActionForm, SubmitButton } from "./ActionForm";
 import { TransactionList } from "./TransactionList";
@@ -17,6 +19,7 @@ import { Expense, Income, Category } from "@/types";
 import type { MonthlyBudget } from "@/types";
 import { FirstRunGuide } from "./FirstRunGuide";
 import { HelpLabel, HelpTip } from "./HelpTip";
+import type { DashboardFilters } from "@/lib/dashboard-filters";
 
 const DashboardChart = dynamic(
   () => import("./DashboardChart").then((module) => ({ default: module.DashboardChart })),
@@ -76,10 +79,14 @@ interface DashboardContentProps {
   filterStatus?: string;
   isWideView: boolean;
   searchParams: Record<string, string | string[] | undefined>;
+  dashboardFilters: DashboardFilters;
+  openingBalance: number;
+  availableMonths: string[];
 }
 
 type DashboardProfile = {
   enable_status_tracking?: boolean | null;
+  auto_carry_forward_balance?: boolean | null;
 };
 
 type OptimisticTransaction =
@@ -104,7 +111,12 @@ export function DashboardContent({
   filterStatus,
   isWideView,
   searchParams,
+  dashboardFilters,
+  openingBalance,
+  availableMonths,
 }: DashboardContentProps) {
+  const router = useRouter();
+  const [isMonthPending, startMonthTransition] = useTransition();
   const initialTransactions = useMemo(
     () => [
       ...initialExpenses.map((e) => ({ ...e, type: "expense" as const })),
@@ -160,14 +172,133 @@ export function DashboardContent({
     );
   }, [allTransactions, isStatusTrackingEnabled]);
 
-  const netBalance = totalIncome - totalExpenses;
+  const netBalance = openingBalance + totalIncome - totalExpenses;
   const initialSearch =
     (Array.isArray(searchParams.q) ? searchParams.q[0] : searchParams.q)?.trim() || "";
   const isFirstRun = initialExpenses.length === 0 && initialIncomes.length === 0;
+  const selectedMonth = dashboardFilters.month || dashboardFilters.startDate?.slice(0, 7) || getTodayPKT().slice(0, 7);
+  const selectedMonthDate = new Date(`${selectedMonth}-01T00:00:00`);
+  const selectedMonthLabel = format(selectedMonthDate, "MMMM yyyy");
+  const showMonthControls = dashboardFilters.period !== "all" && dashboardFilters.period !== "last-30";
+  const isAutoCarryForwardEnabled = profile?.auto_carry_forward_balance ?? false;
+  const hasSelectedMonthOption = availableMonths.includes(selectedMonth);
+
+  const buildMonthHref = (month: string) => {
+    const params = new URLSearchParams();
+    Object.entries(searchParams).forEach(([key, value]) => {
+      if (
+        !value ||
+        key === "period" ||
+        key === "start" ||
+        key === "end" ||
+        key === "page" ||
+        key === "carryForward"
+      ) {
+        return;
+      }
+      params.set(key, Array.isArray(value) ? value[0] : value);
+    });
+    params.set("month", month);
+    return `/dashboard?${params.toString()}`;
+  };
+
+  const updateMonth = (month: string) => {
+    startMonthTransition(() => {
+      router.push(buildMonthHref(month), { scroll: false });
+    });
+  };
+
+  const buildCarryForwardHref = (enabled: boolean) => {
+    const params = new URLSearchParams();
+    Object.entries(searchParams).forEach(([key, value]) => {
+      if (!value || key === "page") return;
+      params.set(key, Array.isArray(value) ? value[0] : value);
+    });
+    if (enabled) params.set("carryForward", "1");
+    else params.delete("carryForward");
+
+    return `/dashboard?${params.toString()}`;
+  };
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 py-6 md:py-[40px] flex flex-col gap-6 md:gap-8 flex-1">
       {isFirstRun && <FirstRunGuide />}
+
+      {showMonthControls && (
+        <div className="flex flex-col gap-3 rounded-xl border border-(--color-hairline-on-dark) bg-(--color-surface-card-dark) p-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-(--color-hairline-on-dark) text-(--color-primary)">
+              <CalendarDays size={18} />
+            </div>
+            <div className="min-w-0">
+              <div className="text-caption uppercase text-(--color-muted)">Selected month</div>
+              <div className="truncate text-title-sm text-(--color-on-dark)">
+                {selectedMonthLabel}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="relative min-w-[220px]">
+              <select
+                className="form-control form-control-compact h-10 w-full pr-9 text-body-sm"
+                value={selectedMonth}
+                disabled={isMonthPending || availableMonths.length === 0}
+                onChange={(event) => updateMonth(event.target.value)}
+              >
+                {availableMonths.length === 0 ? (
+                  <option value={selectedMonth}>No transaction months</option>
+                ) : (
+                  <>
+                    {!hasSelectedMonthOption && (
+                      <option value={selectedMonth} disabled>
+                        {selectedMonthLabel}
+                      </option>
+                    )}
+                    {availableMonths.map((month) => (
+                      <option key={month} value={month}>
+                        {format(new Date(`${month}-01T00:00:00`), "MMMM yyyy")}
+                      </option>
+                    ))}
+                  </>
+                )}
+              </select>
+              {isMonthPending && (
+                <Loader2
+                  size={14}
+                  className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-(--color-primary)"
+                />
+              )}
+            </div>
+
+            {isAutoCarryForwardEnabled ? (
+              <Link
+                href="/dashboard/profile"
+                className="flex min-h-10 items-center justify-center gap-2 rounded-lg border border-(--color-hairline-on-dark) px-3 text-caption font-medium uppercase text-(--color-primary) transition-colors hover:bg-(--color-canvas-dark) hover:text-(--color-on-dark)"
+              >
+                <RotateCcw size={14} />
+                Auto Carry Forward On
+              </Link>
+            ) : dashboardFilters.carryForward ? (
+              <Link
+                href={buildCarryForwardHref(false)}
+                className="flex min-h-10 items-center justify-center gap-2 rounded-lg border border-(--color-hairline-on-dark) px-3 text-caption font-medium uppercase text-(--color-primary) transition-colors hover:bg-(--color-canvas-dark) hover:text-(--color-on-dark)"
+              >
+                <RotateCcw size={14} />
+                Carried Forward Once
+              </Link>
+            ) : (
+              <Link
+                href={buildCarryForwardHref(true)}
+                className="flex min-h-10 items-center justify-center gap-2 rounded-lg border border-(--color-hairline-on-dark) px-3 text-caption font-medium uppercase text-(--color-muted) transition-colors hover:bg-(--color-canvas-dark) hover:text-(--color-on-dark)"
+              >
+                <RotateCcw size={14} />
+                Carry Forward Once
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Top Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -175,12 +306,17 @@ export function DashboardContent({
           <div className="flex items-center justify-center md:justify-start gap-1.5 text-body-sm md:text-body-md text-(--color-muted) mb-2">
             <span>Net Balance</span>
             <HelpTip label="Net balance help">
-              Income minus completed expenses for the current view.
+              Opening balance plus income minus completed expenses for the current view.
             </HelpTip>
           </div>
           <div className="text-display-sm md:text-number-display text-(--color-on-dark) text-center">
             {formatCurrency(netBalance, currency)}
           </div>
+          {dashboardFilters.carryForward && (
+            <div className="mt-2 text-center text-caption text-(--color-muted)">
+              Opening: {formatCurrency(openingBalance, currency)}
+            </div>
+          )}
         </div>
         <div className="bg-(--color-surface-card-dark) p-4 md:p-6 rounded-xl border border-(--color-hairline-on-dark) animate-slide-up stagger-2">
           <div className="flex items-center justify-center md:justify-start gap-1.5 text-body-sm md:text-body-md text-(--color-muted) mb-2">
@@ -218,6 +354,7 @@ export function DashboardContent({
             transactions={allTransactions}
             currency={currency}
             enableStatusTracking={isStatusTrackingEnabled}
+            openingBalance={openingBalance}
           />
 
           <BudgetProgress budgets={budgets} expenses={initialExpenses} currency={currency} />
