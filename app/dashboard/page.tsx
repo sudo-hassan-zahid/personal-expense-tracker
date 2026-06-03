@@ -2,6 +2,7 @@ import { getDashboardData } from "@/lib/dashboard-data";
 import { DashboardContent } from "@/components/DashboardContent";
 import { getRequestAuth, getRequestProfile } from "@/lib/request-data";
 import { parseDashboardFilters } from "@/lib/dashboard-filters";
+import { redirect } from "next/navigation";
 
 export default async function DashboardPage(props: {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -22,11 +23,39 @@ export default async function DashboardPage(props: {
 
   // Cached data fetching — all 5 queries run in parallel, result is cached
   // Pass cookies explicitly to avoid dynamic access error
-  const { expenses, incomes, expenseCategories, incomeCategories, profile, budgets, openingBalance } =
-    await getDashboardData(userId, allCookies, dashboardFilters, {
-      type: filterType,
-      status: filterStatus,
+  const {
+    expenses,
+    incomes,
+    expenseCategories,
+    incomeCategories,
+    profile,
+    budgets,
+    openingBalance,
+    availableMonths,
+  } = await getDashboardData(userId, allCookies, dashboardFilters, {
+    type: filterType,
+    status: filterStatus,
+  });
+
+  const requestedMonth = searchParams?.month;
+  const selectedMonth = dashboardFilters.month || dashboardFilters.startDate?.slice(0, 7);
+  if (
+    !requestedMonth &&
+    dashboardFilters.period === "this-month" &&
+    selectedMonth &&
+    availableMonths.length > 0 &&
+    !availableMonths.includes(selectedMonth)
+  ) {
+    const params = new URLSearchParams();
+    Object.entries(searchParams ?? {}).forEach(([key, value]) => {
+      if (!value || key === "period" || key === "start" || key === "end" || key === "page") {
+        return;
+      }
+      params.set(key, Array.isArray(value) ? value[0] : value);
     });
+    params.set("month", availableMonths[0]);
+    redirect(`/dashboard?${params.toString()}`);
+  }
 
   const currency = profile?.currency || "USD";
   const paginationEnabled = profile?.pagination_enabled ?? true;
@@ -52,6 +81,7 @@ export default async function DashboardPage(props: {
       searchParams={searchParams ?? {}}
       dashboardFilters={dashboardFilters}
       openingBalance={openingBalance}
+      availableMonths={availableMonths}
     />
   );
 }

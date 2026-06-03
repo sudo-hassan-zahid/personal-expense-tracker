@@ -1,14 +1,15 @@
 "use client";
 
-import { useMemo, useOptimistic } from "react";
+import { useMemo, useOptimistic, useTransition } from "react";
 import dynamic from "next/dynamic";
-import { addMonths, format, subMonths } from "date-fns";
+import { format } from "date-fns";
 import { formatCurrency } from "@/lib/currency";
 import { getTodayPKT } from "@/lib/date-utils";
 import { addExpense } from "@/actions/expense";
 import { addIncome } from "@/actions/income";
-import { CalendarDays, ChevronLeft, ChevronRight, Download, RotateCcw } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, Download, Loader2, RotateCcw } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { CategorySelect } from "./CategorySelect";
 import { ActionForm, SubmitButton } from "./ActionForm";
 import { TransactionList } from "./TransactionList";
@@ -80,6 +81,7 @@ interface DashboardContentProps {
   searchParams: Record<string, string | string[] | undefined>;
   dashboardFilters: DashboardFilters;
   openingBalance: number;
+  availableMonths: string[];
 }
 
 type DashboardProfile = {
@@ -111,7 +113,10 @@ export function DashboardContent({
   searchParams,
   dashboardFilters,
   openingBalance,
+  availableMonths,
 }: DashboardContentProps) {
+  const router = useRouter();
+  const [isMonthPending, startMonthTransition] = useTransition();
   const initialTransactions = useMemo(
     () => [
       ...initialExpenses.map((e) => ({ ...e, type: "expense" as const })),
@@ -174,9 +179,9 @@ export function DashboardContent({
   const selectedMonth = dashboardFilters.month || dashboardFilters.startDate?.slice(0, 7) || getTodayPKT().slice(0, 7);
   const selectedMonthDate = new Date(`${selectedMonth}-01T00:00:00`);
   const selectedMonthLabel = format(selectedMonthDate, "MMMM yyyy");
-  const todayMonth = getTodayPKT().slice(0, 7);
   const showMonthControls = dashboardFilters.period !== "all" && dashboardFilters.period !== "last-30";
   const isAutoCarryForwardEnabled = profile?.auto_carry_forward_balance ?? false;
+  const hasSelectedMonthOption = availableMonths.includes(selectedMonth);
 
   const buildMonthHref = (month: string) => {
     const params = new URLSearchParams();
@@ -195,6 +200,12 @@ export function DashboardContent({
     });
     params.set("month", month);
     return `/dashboard?${params.toString()}`;
+  };
+
+  const updateMonth = (month: string) => {
+    startMonthTransition(() => {
+      router.push(buildMonthHref(month), { scroll: false });
+    });
   };
 
   const buildCarryForwardHref = (enabled: boolean) => {
@@ -228,27 +239,36 @@ export function DashboardContent({
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="grid grid-cols-[40px_1fr_40px] overflow-hidden rounded-lg border border-(--color-hairline-on-dark)">
-              <Link
-                href={buildMonthHref(format(subMonths(selectedMonthDate, 1), "yyyy-MM"))}
-                className="flex h-10 items-center justify-center text-(--color-muted) transition-colors hover:bg-(--color-canvas-dark) hover:text-(--color-on-dark)"
-                title="Previous month"
+            <div className="relative min-w-[220px]">
+              <select
+                className="form-control form-control-compact h-10 w-full pr-9 text-body-sm"
+                value={selectedMonth}
+                disabled={isMonthPending || availableMonths.length === 0}
+                onChange={(event) => updateMonth(event.target.value)}
               >
-                <ChevronLeft size={16} />
-              </Link>
-              <Link
-                href={buildMonthHref(todayMonth)}
-                className="flex h-10 items-center justify-center border-x border-(--color-hairline-on-dark) px-4 text-caption font-medium uppercase text-(--color-muted) transition-colors hover:bg-(--color-canvas-dark) hover:text-(--color-on-dark)"
-              >
-                This Month
-              </Link>
-              <Link
-                href={buildMonthHref(format(addMonths(selectedMonthDate, 1), "yyyy-MM"))}
-                className="flex h-10 items-center justify-center text-(--color-muted) transition-colors hover:bg-(--color-canvas-dark) hover:text-(--color-on-dark)"
-                title="Next month"
-              >
-                <ChevronRight size={16} />
-              </Link>
+                {availableMonths.length === 0 ? (
+                  <option value={selectedMonth}>No transaction months</option>
+                ) : (
+                  <>
+                    {!hasSelectedMonthOption && (
+                      <option value={selectedMonth} disabled>
+                        {selectedMonthLabel}
+                      </option>
+                    )}
+                    {availableMonths.map((month) => (
+                      <option key={month} value={month}>
+                        {format(new Date(`${month}-01T00:00:00`), "MMMM yyyy")}
+                      </option>
+                    ))}
+                  </>
+                )}
+              </select>
+              {isMonthPending && (
+                <Loader2
+                  size={14}
+                  className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 animate-spin text-(--color-primary)"
+                />
+              )}
             </div>
 
             {isAutoCarryForwardEnabled ? (

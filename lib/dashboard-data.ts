@@ -6,6 +6,15 @@ import { cacheTag } from "next/cache";
 import type { DashboardFilters } from "@/lib/dashboard-filters";
 import { format } from "date-fns";
 
+function getAvailableTransactionMonths(
+  expenseDates: { date: string }[],
+  incomeDates: { date: string }[]
+) {
+  return Array.from(
+    new Set([...expenseDates, ...incomeDates].map((transaction) => transaction.date.slice(0, 7)))
+  ).sort((a, b) => b.localeCompare(a));
+}
+
 /**
  * Cached data fetcher for the dashboard.
  * Runs dashboard queries in parallel with a single Supabase client.
@@ -88,6 +97,8 @@ export async function getDashboardData(
     budgetsRes,
     openingExpensesRes,
     openingIncomesRes,
+    availableExpenseMonthsRes,
+    availableIncomeMonthsRes,
   ] = await Promise.all([
     shouldFetchExpenses
       ? expenseQuery.order("date", { ascending: false }).order("created_at", { ascending: false })
@@ -131,6 +142,18 @@ export async function getDashboardData(
           .is("deleted_at", null)
           .lt("date", filters?.startDate)
       : Promise.resolve({ data: [] }),
+    supabase
+      .from("expenses")
+      .select("date")
+      .eq("user_id", userId)
+      .is("deleted_at", null)
+      .order("date", { ascending: false }),
+    supabase
+      .from("incomes")
+      .select("date")
+      .eq("user_id", userId)
+      .is("deleted_at", null)
+      .order("date", { ascending: false }),
   ]);
 
   const categories = categoriesRes.data || [];
@@ -152,5 +175,9 @@ export async function getDashboardData(
     profile: profileRes.data,
     budgets: budgetsRes.data || [],
     openingBalance: openingIncomes - openingExpenses,
+    availableMonths: getAvailableTransactionMonths(
+      availableExpenseMonthsRes.data || [],
+      availableIncomeMonthsRes.data || []
+    ),
   };
 }
