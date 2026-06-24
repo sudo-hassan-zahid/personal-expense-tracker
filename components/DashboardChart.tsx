@@ -154,101 +154,94 @@ export const DashboardChart = memo(
         ? null
         : categories.find((category) => category.value === filterCategory)?.label || filterCategory;
 
-    const filteredTransactions = useMemo(() => {
+    const { chartData, summaryTotals } = useMemo(() => {
       try {
         const { start: startDate, end: endDate } = dateRange;
         if (!startDate || !endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-          return [];
+          return {
+            chartData: [],
+            summaryTotals: {
+              filteredIncome: 0,
+              filteredExpense: 0,
+              matchingTransactions: 0,
+              selectedCategoryLabel,
+              selectedCategoryTotal: 0,
+            },
+          };
         }
 
-        let filtered = transactions.filter((transaction) => {
-          const transactionDate = new Date(transaction.date);
-          return transactionDate >= startOfDay(startDate) && transactionDate <= endOfDay(endDate);
-        });
-
-        if (filterType !== "all") {
-          filtered = filtered.filter((transaction) => transaction.type === filterType);
-        }
-
-        if (filterCategory !== "all") {
-          filtered = filtered.filter((transaction) => {
-            const categoryName =
-              transaction.type === "income" ? transaction.source : transaction.category;
-            return categoryName?.toLowerCase() === filterCategory.toLowerCase();
-          });
-        }
-
-        return enableStatusTracking
-          ? filtered.filter((transaction) => transaction.status === "done")
-          : filtered;
-      } catch (error) {
-        console.error("Error filtering chart transactions:", error);
-        return [];
-      }
-    }, [transactions, dateRange, filterType, filterCategory, enableStatusTracking]);
-
-    const summaryTotals = useMemo<SummaryTotals>(() => {
-      return filteredTransactions.reduce(
-        (totals, transaction) => {
-          const amount = Number(transaction.amount);
-          totals.matchingTransactions += 1;
-
-          if (transaction.type === "income") {
-            totals.filteredIncome += amount;
-          } else {
-            totals.filteredExpense += amount;
-          }
-
-          if (selectedCategoryLabel) {
-            totals.selectedCategoryTotal += amount;
-          }
-
-          return totals;
-        },
-        {
+        const rangeStart = startOfDay(startDate).getTime();
+        const rangeEnd = endOfDay(endDate).getTime();
+        const granularity = getChartGranularity(startDate, endDate);
+        const chartDataMap = new Map<string, ChartDatum>();
+        const summary: SummaryTotals = {
           filteredIncome: 0,
           filteredExpense: 0,
           matchingTransactions: 0,
           selectedCategoryLabel,
           selectedCategoryTotal: 0,
-        }
-      );
-    }, [filteredTransactions, selectedCategoryLabel]);
-
-    const chartData = useMemo(() => {
-      try {
-        const { start: startDate, end: endDate } = dateRange;
-        if (!startDate || !endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-          return [];
-        }
-
-        const granularity = getChartGranularity(startDate, endDate);
-        const chartDataMap = new Map<string, ChartDatum>();
+        };
 
         buildBuckets(startDate, endDate, granularity).forEach((bucket) => {
           chartDataMap.set(bucket.date, bucket);
         });
 
-        filteredTransactions.forEach((transaction) => {
+        for (const transaction of transactions) {
+          if (enableStatusTracking && transaction.status !== "done") continue;
+          if (filterType !== "all" && transaction.type !== filterType) continue;
+
+          if (filterCategory !== "all") {
+            const categoryName =
+              transaction.type === "income" ? transaction.source : transaction.category;
+            if (categoryName?.toLowerCase() !== filterCategory.toLowerCase()) continue;
+          }
+
+          const transactionTime = new Date(transaction.date).getTime();
+          if (transactionTime < rangeStart || transactionTime > rangeEnd) continue;
+
+          const amount = Number(transaction.amount);
           const bucketKey = getBucketKey(transaction.date, granularity);
           const entry = chartDataMap.get(bucketKey);
-          if (!entry) return;
+          summary.matchingTransactions += 1;
 
           if (transaction.type === "income") {
-            entry.income += Number(transaction.amount);
+            summary.filteredIncome += amount;
+            if (entry) entry.income += amount;
           } else {
-            entry.expense += Number(transaction.amount);
+            summary.filteredExpense += amount;
+            if (entry) entry.expense += amount;
           }
-        });
 
-        return Array.from(chartDataMap.values()).sort(
-          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-        );
+          if (selectedCategoryLabel) {
+            summary.selectedCategoryTotal += amount;
+          }
+        }
+
+        return {
+          chartData: Array.from(chartDataMap.values()),
+          summaryTotals: summary,
+        };
       } catch (error) {
         console.error("Error processing chart data:", error);
-        return [];
+        return {
+          chartData: [],
+          summaryTotals: {
+            filteredIncome: 0,
+            filteredExpense: 0,
+            matchingTransactions: 0,
+            selectedCategoryLabel,
+            selectedCategoryTotal: 0,
+          },
+        };
       }
-    }, [dateRange, filteredTransactions]);
+    }, [
+      dateRange,
+      enableStatusTracking,
+      filterCategory,
+      filterType,
+      selectedCategoryLabel,
+      transactions,
+    ]);
 
     return (
       <div className="w-full bg-(--color-surface-card-dark) p-4 md:p-8 rounded-2xl border border-(--color-hairline-on-dark) flex flex-col gap-8 shadow-2xl relative overflow-hidden animate-slide-up">

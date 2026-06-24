@@ -1,3 +1,6 @@
+"use client";
+
+import { useMemo } from "react";
 import { BarChart3, Gauge, Landmark, Trophy } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
 import { HelpTip } from "./HelpTip";
@@ -76,10 +79,9 @@ export function AnalyticsSummary({
   enableStatusTracking: boolean;
   openingBalance?: number;
 }) {
-  const { cashFlow, topCategories, averageDailySpend, forecast, yearlyNet } = getAnalytics(
-    transactions,
-    enableStatusTracking,
-    openingBalance
+  const { cashFlow, topCategories, averageDailySpend, forecast, yearlyNet } = useMemo(
+    () => getAnalytics(transactions, enableStatusTracking, openingBalance),
+    [enableStatusTracking, openingBalance, transactions]
   );
 
   return (
