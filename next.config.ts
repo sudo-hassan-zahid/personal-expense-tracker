@@ -16,6 +16,8 @@ const nextConfig: NextConfig = {
   experimental: {
     // Use cache directive support
     useCache: true,
+    // Rewrite broad named imports to narrower package paths where supported.
+    optimizePackageImports: ["date-fns", "lucide-react"],
   },
 };
 
