@@ -187,6 +187,54 @@
     margin-right: 0.75rem;
     padding: 0.35rem 0.75rem;
   }
+
+  .rich-description-editor:empty::before {
+    color: var(--color-muted);
+    content: attr(data-placeholder);
+    pointer-events: none;
+  }
+
+  .rich-description-editor ul,
+  .rich-description-view ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+
+  .rich-description-editor ol,
+  .rich-description-view ol {
+    list-style: decimal;
+    padding-left: 1.25rem;
+  }
+
+  .rich-description-editor h2,
+  .rich-description-view h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.35;
+    margin: 0.6rem 0 0.25rem;
+  }
+
+  .rich-description-editor h3,
+  .rich-description-view h3 {
+    font-size: 1rem;
+    font-weight: 650;
+    line-height: 1.35;
+    margin: 0.5rem 0 0.2rem;
+  }
+
+  .rich-description-editor blockquote,
+  .rich-description-view blockquote {
+    border-left: 3px solid var(--color-primary);
+    color: var(--color-muted-strong);
+    margin: 0.5rem 0;
+    padding-left: 0.75rem;
+  }
+
+  .rich-description-editor a,
+  .rich-description-view a {
+    color: var(--color-info);
+    text-decoration: underline;
+  }
 }
 
 /* Base utility classes for typography */
