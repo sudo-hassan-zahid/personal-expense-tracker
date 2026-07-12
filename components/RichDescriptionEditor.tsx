@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { ComponentType } from "react";
 import {
   Bold,
   Heading1,
@@ -14,7 +15,14 @@ import {
 } from "lucide-react";
 import { HelpLabel } from "./HelpTip";
 
-const commands = [
+type EditorCommand = {
+  command: string;
+  label: string;
+  icon: ComponentType<{ size?: number }>;
+  value?: string;
+};
+
+const commands: EditorCommand[] = [
   { command: "bold", label: "Bold", icon: Bold },
   { command: "italic", label: "Italic", icon: Italic },
   { command: "underline", label: "Underline", icon: Underline },
@@ -24,7 +32,7 @@ const commands = [
   { command: "formatBlock", value: "blockquote", label: "Quote", icon: Quote },
   { command: "formatBlock", value: "h2", label: "Heading", icon: Heading1 },
   { command: "formatBlock", value: "h3", label: "Subheading", icon: Heading2 },
-] as const;
+];
 
 export function RichDescriptionEditor({
   defaultHtml = "",
