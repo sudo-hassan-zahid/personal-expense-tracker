@@ -22,7 +22,6 @@ type ProfileUpdate = {
 
 type AuthUpdate = {
   email?: string;
-  password?: string;
 };
 
 function hasSupabaseAuthCookie(allCookies: { name: string }[]) {
@@ -108,7 +107,7 @@ export async function updateCurrency(formData: FormData) {
 
 /**
  * Updates the user's full profile including theme, pagination, and status tracking.
- * @param formData - The form data containing name, email, password, currency, theme, and feature toggles.
+ * @param formData - The form data containing name, email, currency, theme, and feature toggles.
  */
 export async function updateProfile(formData: FormData) {
   try {
@@ -116,7 +115,6 @@ export async function updateProfile(formData: FormData) {
 
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
     const currency = formData.get("currency") as string;
     const theme = formData.get("theme") as string;
     const paginationEnabled = formData.get("pagination") === "on";
@@ -147,7 +145,6 @@ export async function updateProfile(formData: FormData) {
     // Update Auth Email/Password if provided
     const authUpdates: AuthUpdate = {};
     if (email && email !== user.email) authUpdates.email = email;
-    if (password) authUpdates.password = password;
 
     if (Object.keys(authUpdates).length > 0) {
       const { error: authError } = await supabase.auth.updateUser(authUpdates);
@@ -168,6 +165,32 @@ export async function updateProfile(formData: FormData) {
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to update profile",
+    };
+  }
+}
+
+/**
+ * Updates the user's password when they explicitly submit the password form.
+ * @param formData - The form data containing the new password.
+ */
+export async function updatePassword(formData: FormData) {
+  try {
+    const { supabase } = await getAuthenticatedClient();
+    const password = String(formData.get("password") || "");
+
+    if (password.length < 8) {
+      return { success: false, error: "Password must be at least 8 characters" };
+    }
+
+    const { error } = await supabase.auth.updateUser({ password });
+    if (error) throw error;
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating password:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to update password",
     };
   }
 }

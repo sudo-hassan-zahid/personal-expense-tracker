@@ -2,7 +2,7 @@
  * Page/Route: page.tsx
  */
 import { createClient } from "@/lib/supabase";
-import { getProfile, updateProfile } from "@/actions/profile";
+import { getProfile, updatePassword, updateProfile } from "@/actions/profile";
 import { ActionForm, SubmitButton } from "@/components/ActionForm";
 import { deleteAccountData } from "@/actions/account";
 import { HelpLabel, HelpTip } from "@/components/HelpTip";
@@ -53,21 +53,6 @@ export default async function ProfilePage() {
               defaultValue={user.email || ""}
               className="form-control w-full text-body-md"
               placeholder="Email"
-            />
-          </div>
-
-          <div>
-            <HelpLabel
-              help="Fill this only when you want to change your password."
-              className="mb-1"
-            >
-              New Password (leave blank to keep current)
-            </HelpLabel>
-            <input
-              type="password"
-              name="password"
-              className="form-control w-full text-body-md"
-              placeholder="••••••••"
             />
           </div>
 
@@ -214,6 +199,40 @@ export default async function ProfilePage() {
             loadingText="Saving Changes..."
           >
             Save Changes
+          </SubmitButton>
+        </ActionForm>
+      </div>
+
+      <div className="bg-(--color-surface-card-dark) rounded-xl border border-(--color-hairline-on-dark) p-6">
+        <ActionForm
+          action={updatePassword}
+          successMessage="Password updated successfully!"
+          className="flex flex-col gap-4"
+          clearOnSubmit
+        >
+          <div>
+            <HelpLabel
+              help="Use this only when you intentionally want to change your password."
+              className="mb-1"
+            >
+              New Password
+            </HelpLabel>
+            <input
+              type="password"
+              name="password"
+              autoComplete="new-password"
+              minLength={8}
+              required
+              className="form-control w-full text-body-md"
+              placeholder="Enter a new password"
+            />
+          </div>
+
+          <SubmitButton
+            className="w-full bg-(--color-surface-elevated-dark) text-(--color-on-dark) text-button rounded-md py-3 hover:bg-(--color-canvas-dark) transition-colors border border-(--color-hairline-on-dark)"
+            loadingText="Updating Password..."
+          >
+            Update Password
           </SubmitButton>
         </ActionForm>
       </div>
