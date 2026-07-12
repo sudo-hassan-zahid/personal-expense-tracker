@@ -27,6 +27,7 @@ import type { MonthlyBudget } from "@/types";
 import { FirstRunGuide } from "./FirstRunGuide";
 import { HelpLabel, HelpTip } from "./HelpTip";
 import { RichDescriptionEditor } from "./RichDescriptionEditor";
+import { MarketMotionStrip } from "./MarketMotionStrip";
 import type { DashboardFilters } from "@/lib/dashboard-filters";
 
 const DashboardChart = dynamic(
@@ -232,6 +233,7 @@ export function DashboardContent({
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 py-6 md:py-[40px] flex flex-col gap-6 md:gap-8 flex-1">
+      <MarketMotionStrip />
       {isFirstRun && <FirstRunGuide />}
 
       {showMonthControls && (

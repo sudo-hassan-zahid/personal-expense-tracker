@@ -11,7 +11,6 @@ export function CursorTrail() {
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    if (document.body.classList.contains("theme-light")) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -30,7 +29,7 @@ export function CursorTrail() {
       canvas.height = window.innerHeight;
     };
 
-    const colors = ["#fcd535", "#f0b90b", "#ffffff", "#3b82f6"];
+    const colors = ["#00f5ff", "#39ff14", "#fcd535", "#ff2bd6", "#8b5cf6", "#0ecb81"];
 
     // Throttle mousemove to 16ms intervals (60fps cap)
     let lastMove = 0;
@@ -54,7 +53,7 @@ export function CursorTrail() {
           vx: (Math.random() - 0.5) * 5,
           vy: (Math.random() - 0.5) * 5,
           age: 0,
-          color: colors[Math.floor(Math.random() * colors.length)],
+          color: colors[(points.length + sparkles.length) % colors.length],
         });
       }
     };
@@ -83,8 +82,9 @@ export function CursorTrail() {
         for (let i = 1; i < points.length; i++) {
           const p = points[i];
           const opacity = 1 - p.age / maxAge;
-          ctx.strokeStyle = `rgba(252, 213, 53, ${opacity * 0.8})`;
-          ctx.lineWidth = opacity * 8; // Slightly thinner for better performance
+          const hue = (time / 18 + i * 9) % 360;
+          ctx.strokeStyle = `hsla(${hue}, 100%, 62%, ${opacity * 0.72})`;
+          ctx.lineWidth = opacity * 7; // Slightly thinner for better performance
           ctx.lineCap = "round";
           ctx.lineTo(p.x, p.y);
           ctx.stroke();

@@ -517,6 +517,27 @@
     animation: fade-in 0.15s ease-out forwards;
   }
 
+  @keyframes market-motion {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  .market-motion-track {
+    animation: market-motion 28s linear infinite;
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .market-motion-track {
+      animation: none;
+      transform: translateX(0);
+    }
+  }
+
   .stagger-5 {
     animation-delay: 50ms;
   }
