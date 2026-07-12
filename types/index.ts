@@ -3,6 +3,8 @@ export interface BaseTransaction {
   amount: number | string;
   date: string;
   note: string;
+  description_html?: string | null;
+  description_text?: string | null;
   status?: string;
   created_at: string;
   updated_at?: string;

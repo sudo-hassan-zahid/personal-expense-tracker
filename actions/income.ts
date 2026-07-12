@@ -44,6 +44,8 @@ export async function addIncome(formData: FormData) {
       source: source.value,
       date: transaction.value.date,
       note: transaction.value.note,
+      description_html: transaction.value.descriptionHtml,
+      description_text: transaction.value.descriptionText,
       status: transaction.value.status,
       currency,
     });
@@ -102,6 +104,8 @@ export async function updateIncome(id: string, formData: FormData) {
         source: source.value,
         date: transaction.value.date,
         note: transaction.value.note,
+        description_html: transaction.value.descriptionHtml,
+        description_text: transaction.value.descriptionText,
         status: transaction.value.status,
         currency: String(formData.get("currency") || "USD"),
         updated_at: new Date().toISOString(),

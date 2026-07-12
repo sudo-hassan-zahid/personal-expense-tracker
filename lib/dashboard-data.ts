@@ -34,14 +34,16 @@ export async function getDashboardData(
   let expenseQuery = supabase
     .from("expenses")
     .select(
-      "id, amount, category, date, note, status, created_at, updated_at, deleted_at, attachment_url, currency"
+      "id, amount, category, date, note, description_html, description_text, status, created_at, updated_at, deleted_at, attachment_url, currency"
     )
     .eq("user_id", userId)
     .is("deleted_at", null);
 
   let incomeQuery = supabase
     .from("incomes")
-    .select("id, amount, source, date, note, status, created_at, updated_at, deleted_at, currency")
+    .select(
+      "id, amount, source, date, note, description_html, description_text, status, created_at, updated_at, deleted_at, currency"
+    )
     .eq("user_id", userId)
     .is("deleted_at", null);
 
@@ -67,8 +69,12 @@ export async function getDashboardData(
 
   if (filters?.search) {
     const escaped = filters.search.replaceAll("%", "\\%").replaceAll("_", "\\_");
-    expenseQuery = expenseQuery.or(`note.ilike.%${escaped}%,category.ilike.%${escaped}%`);
-    incomeQuery = incomeQuery.or(`note.ilike.%${escaped}%,source.ilike.%${escaped}%`);
+    expenseQuery = expenseQuery.or(
+      `note.ilike.%${escaped}%,description_text.ilike.%${escaped}%,category.ilike.%${escaped}%`
+    );
+    incomeQuery = incomeQuery.or(
+      `note.ilike.%${escaped}%,description_text.ilike.%${escaped}%,source.ilike.%${escaped}%`
+    );
   }
 
   if (viewFilters?.status && viewFilters.status !== "all") {
