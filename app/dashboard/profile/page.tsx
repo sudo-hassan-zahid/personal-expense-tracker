@@ -148,7 +148,7 @@ export default async function ProfilePage() {
                   </HelpTip>
                 </span>
                 <span className="text-caption text-(--color-muted)">
-                  Enable the glowing magic trail follow your cursor.
+                  Enable a color-shifting neon trail that follows your cursor.
                 </span>
               </div>
               <label className="relative inline-flex items-center cursor-pointer group">

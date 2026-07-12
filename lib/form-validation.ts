@@ -1,11 +1,14 @@
 export type ValidationResult<T> = { ok: true; value: T } | { ok: false; error: string };
 
 const MAX_NOTE_LENGTH = 240;
+const MAX_DESCRIPTION_LENGTH = 12000;
 
 export type TransactionInput = {
   amount: number;
   date: string;
   note: string;
+  descriptionHtml: string;
+  descriptionText: string;
   status: "done" | "pending";
 };
 
@@ -17,6 +20,8 @@ export function validateTransactionInput(formData: FormData): ValidationResult<T
   const amount = Number(getString(formData, "amount"));
   const date = getString(formData, "date");
   const note = getString(formData, "note");
+  const descriptionHtml = sanitizeRichDescription(getString(formData, "description_html"));
+  const descriptionText = getString(formData, "description_text");
   const statusValue = getString(formData, "status") || "done";
 
   if (!Number.isFinite(amount) || amount <= 0) {
@@ -31,6 +36,13 @@ export function validateTransactionInput(formData: FormData): ValidationResult<T
     return { ok: false, error: `Notes must be ${MAX_NOTE_LENGTH} characters or fewer.` };
   }
 
+  if (descriptionHtml.length > MAX_DESCRIPTION_LENGTH) {
+    return {
+      ok: false,
+      error: `Description must be ${MAX_DESCRIPTION_LENGTH} characters or fewer.`,
+    };
+  }
+
   if (statusValue !== "done" && statusValue !== "pending") {
     return { ok: false, error: "Status must be pending or done." };
   }
@@ -41,9 +53,20 @@ export function validateTransactionInput(formData: FormData): ValidationResult<T
       amount,
       date,
       note,
+      descriptionHtml,
+      descriptionText,
       status: statusValue,
     },
   };
+}
+
+function sanitizeRichDescription(value: string) {
+  return value
+    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
+    .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, "")
+    .replace(/\son\w+="[^"]*"/gi, "")
+    .replace(/\son\w+='[^']*'/gi, "")
+    .replace(/\s(href|src)=["']javascript:[^"']*["']/gi, "");
 }
 
 export function validateRequiredText(

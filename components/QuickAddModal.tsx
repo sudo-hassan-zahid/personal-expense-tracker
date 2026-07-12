@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, X } from "lucide-react";
+import { Plus } from "lucide-react";
 import { addExpense } from "@/actions/expense";
 import { addIncome } from "@/actions/income";
 import { ActionForm, SubmitButton } from "@/components/ActionForm";
 import { CategorySelect } from "@/components/CategorySelect";
 import { DatePicker } from "@/components/ui/DatePicker";
+import { FullscreenModal } from "@/components/ui/FullscreenModal";
+import { RichDescriptionEditor } from "@/components/RichDescriptionEditor";
 import { getTodayPKT } from "@/lib/date-utils";
 import type { Category } from "@/types";
 
@@ -44,17 +46,8 @@ export function QuickAddModal({
         <Plus size={16} /> Quick Add
       </button>
       {open && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-md">
-          <div className="w-full max-w-md rounded-xl border border-(--color-hairline-on-dark) bg-(--color-surface-card-dark) p-5 shadow-2xl">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-title-md">Quick Add</h2>
-              <button
-                onClick={() => setOpen(false)}
-                className="p-2 text-(--color-muted) hover:text-(--color-on-dark)"
-              >
-                <X size={18} />
-              </button>
-            </div>
+        <FullscreenModal title="Quick Add" onClose={() => setOpen(false)} widthClassName="max-w-2xl">
+          <div className="flex flex-col gap-4">
             <div className="mb-4 grid grid-cols-2 gap-2">
               <button
                 onClick={() => setType("expense")}
@@ -71,6 +64,7 @@ export function QuickAddModal({
             </div>
             <ActionForm
               action={type === "expense" ? addExpense : addIncome}
+              clearOnSubmit
               successMessage={`${type === "expense" ? "Expense" : "Income"} added`}
               className="grid gap-3"
               onSuccess={() => setOpen(false)}
@@ -103,6 +97,7 @@ export function QuickAddModal({
               )}
               <DatePicker name="date" defaultValue={getTodayPKT()} label="Date" />
               <input name="note" placeholder="Note" className="form-control" />
+              <RichDescriptionEditor />
               {type === "expense" && (
                 <input name="attachment" type="file" className="form-control" />
               )}
@@ -111,7 +106,7 @@ export function QuickAddModal({
               </SubmitButton>
             </ActionForm>
           </div>
-        </div>
+        </FullscreenModal>
       )}
     </>
   );

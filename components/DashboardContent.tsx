@@ -26,6 +26,8 @@ import { Expense, Income, Category } from "@/types";
 import type { MonthlyBudget } from "@/types";
 import { FirstRunGuide } from "./FirstRunGuide";
 import { HelpLabel, HelpTip } from "./HelpTip";
+import { RichDescriptionEditor } from "./RichDescriptionEditor";
+import { MarketMotionStrip } from "./MarketMotionStrip";
 import type { DashboardFilters } from "@/lib/dashboard-filters";
 
 const DashboardChart = dynamic(
@@ -231,6 +233,7 @@ export function DashboardContent({
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 md:px-6 py-6 md:py-[40px] flex flex-col gap-6 md:gap-8 flex-1">
+      <MarketMotionStrip />
       {isFirstRun && <FirstRunGuide />}
 
       {showMonthControls && (
@@ -470,11 +473,14 @@ export function DashboardContent({
             </div>
             <ActionForm
               action={addExpense}
+              clearOnSubmit
               onSuccess={(formData) => {
                 const amount = parseFloat(formData?.get("amount") as string);
                 const category = formData?.get("category") as string;
                 const date = formData?.get("date") as string;
                 const note = formData?.get("note") as string;
+                const descriptionHtml = formData?.get("description_html") as string;
+                const descriptionText = formData?.get("description_text") as string;
                 const status = (formData?.get("status") as string) || "done";
 
                 addOptimisticTransaction({
@@ -485,6 +491,8 @@ export function DashboardContent({
                     category,
                     date,
                     note,
+                    description_html: descriptionHtml,
+                    description_text: descriptionText,
                     status,
                     type: "expense",
                     created_at: new Date().toISOString(),
@@ -537,6 +545,7 @@ export function DashboardContent({
                   placeholder="Optional note"
                 />
               </div>
+              <RichDescriptionEditor />
               {isStatusTrackingEnabled && (
                 <div>
                   <HelpLabel
@@ -577,11 +586,14 @@ export function DashboardContent({
             </div>
             <ActionForm
               action={addIncome}
+              clearOnSubmit
               onSuccess={(formData) => {
                 const amount = parseFloat(formData?.get("amount") as string);
                 const source = formData?.get("source") as string;
                 const date = formData?.get("date") as string;
                 const note = formData?.get("note") as string;
+                const descriptionHtml = formData?.get("description_html") as string;
+                const descriptionText = formData?.get("description_text") as string;
                 const status = (formData?.get("status") as string) || "done";
 
                 addOptimisticTransaction({
@@ -592,6 +604,8 @@ export function DashboardContent({
                     source,
                     date,
                     note,
+                    description_html: descriptionHtml,
+                    description_text: descriptionText,
                     status,
                     type: "income",
                     created_at: new Date().toISOString(),
@@ -644,6 +658,7 @@ export function DashboardContent({
                   placeholder="Optional note"
                 />
               </div>
+              <RichDescriptionEditor />
               {isStatusTrackingEnabled && (
                 <div>
                   <HelpLabel

@@ -4,6 +4,7 @@
 "use client";
 
 import { AlertCircle } from "lucide-react";
+import { FullscreenModal } from "./ui/FullscreenModal";
 
 interface DeleteConfirmationModalProps {
   isOpen: boolean;
@@ -29,36 +30,37 @@ export function DeleteConfirmationModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="bg-(--color-surface-card-dark) border border-(--color-hairline-on-dark) rounded-2xl p-6 w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-200">
-        <div className="flex flex-col items-center text-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 mb-2">
-            <AlertCircle size={24} />
-          </div>
-          <div>
-            <h3 className="text-title-md text-(--color-on-dark) mb-2">{title}</h3>
-            <p className="text-body-sm text-(--color-muted)">{description}</p>
-          </div>
-          <div className="flex flex-col sm:flex-row w-full gap-3 mt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={isDeleting}
-              className="flex-1 px-4 py-2 rounded-xl border border-(--color-hairline-on-dark) text-(--color-on-dark) hover:bg-(--color-surface-elevated-dark) transition-colors disabled:opacity-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
-              onClick={onConfirm}
-              disabled={isDeleting}
-              className="flex-1 px-4 py-2 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20 disabled:opacity-50 flex items-center justify-center"
-            >
-              {isDeleting ? loadingLabel : confirmLabel}
-            </button>
-          </div>
+    <FullscreenModal
+      title={title}
+      onClose={onClose}
+      widthClassName="max-w-md"
+      footer={
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isDeleting}
+            className="flex-1 rounded-xl border border-(--color-hairline-on-dark) px-4 py-2 text-(--color-on-dark) transition-colors hover:bg-(--color-surface-elevated-dark) disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            disabled={isDeleting}
+            className="flex flex-1 items-center justify-center rounded-xl bg-red-500 px-4 py-2 text-white shadow-lg shadow-red-500/20 transition-colors hover:bg-red-600 disabled:opacity-50"
+          >
+            {isDeleting ? loadingLabel : confirmLabel}
+          </button>
         </div>
+      }
+    >
+      <div className="flex flex-col items-center gap-4 py-3 text-center">
+        <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-red-500/10 text-red-500">
+          <AlertCircle size={24} />
+        </div>
+        <p className="text-body-sm text-(--color-muted)">{description}</p>
       </div>
-    </div>
+    </FullscreenModal>
   );
 }

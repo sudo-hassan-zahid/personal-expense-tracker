@@ -64,12 +64,12 @@ export default async function RootLayout({
           visibleToasts={5}
           toastOptions={{
             style: {
-              background: "rgba(30, 35, 41, 0.8)",
+              background: "color-mix(in srgb, var(--color-surface-card-dark) 88%, transparent)",
               backdropFilter: "blur(16px)",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
+              border: "1px solid var(--color-hairline-on-dark)",
               borderRadius: "16px",
               color: "var(--color-on-dark)",
-              boxShadow: "0 20px 40px rgba(0, 0, 0, 0.4)",
+              boxShadow: "0 20px 40px rgba(0, 0, 0, 0.16)",
             },
             className: "premium-toast",
           }}

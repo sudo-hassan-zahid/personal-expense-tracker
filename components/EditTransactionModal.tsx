@@ -4,7 +4,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Save } from "lucide-react";
+import { Save } from "lucide-react";
 import { ActionForm, SubmitButton } from "./ActionForm";
 import { updateExpense, deleteExpense, addExpense } from "@/actions/expense";
 import { updateIncome, deleteIncome, addIncome } from "@/actions/income";
@@ -12,6 +12,8 @@ import { Transaction, Category, Expense, Income } from "@/types";
 import { CategorySelect } from "./CategorySelect";
 import { DatePicker } from "./ui/DatePicker";
 import { HelpLabel, HelpTip } from "./HelpTip";
+import { FullscreenModal } from "./ui/FullscreenModal";
+import { RichDescriptionEditor } from "./RichDescriptionEditor";
 
 /**
  * Modal component for editing an existing transaction (expense or income).
@@ -34,32 +36,12 @@ export function EditTransactionModal({
   const [type, setType] = useState<"expense" | "income">(transaction.type);
 
   return (
-    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300"
-        onClick={onClose}
-      />
-
-      {/* Modal */}
-      <div className="relative w-full max-w-lg bg-(--color-surface-card-dark)/80 backdrop-blur-2xl border border-(--color-hairline-on-dark) rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
-        <div className="flex items-center justify-between p-6 border-b border-(--color-hairline-on-dark)">
-          <div className="flex items-center gap-2">
-            <h2 className="text-title-md text-(--color-on-dark)">Edit Transaction</h2>
-            <HelpTip label="Edit transaction help">
-              Update the details for this record. Switching type moves it between income and
-              expenses.
-            </HelpTip>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 text-(--color-muted) hover:text-(--color-on-dark) transition-colors"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        <div className="p-6">
+    <FullscreenModal title="Edit Transaction" onClose={onClose} widthClassName="max-w-3xl">
+      <div className="mb-4 flex items-center gap-2">
+        <HelpTip label="Edit transaction help">
+          Update the details for this record. Switching type moves it between income and expenses.
+        </HelpTip>
+      </div>
           <ActionForm
             action={async (formData) => {
               // If type changed, we need to delete from old table and insert into new
@@ -182,6 +164,8 @@ export function EditTransactionModal({
               />
             </div>
 
+            <RichDescriptionEditor defaultHtml={transaction.description_html} />
+
             {showStatusTracking && (
               <div>
                 <HelpLabel
@@ -218,8 +202,6 @@ export function EditTransactionModal({
               Save Changes
             </SubmitButton>
           </ActionForm>
-        </div>
-      </div>
-    </div>
+    </FullscreenModal>
   );
 }
