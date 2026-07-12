@@ -53,12 +53,14 @@ export function ActionForm({
   className,
   onSuccess,
   confirmation,
+  clearOnSubmit,
 }: {
   action: (formData: FormData) => Promise<ActionResult>;
   successMessage: string;
   children: ReactNode;
   className?: string;
   onSuccess?: (formData: FormData) => void;
+  clearOnSubmit?: boolean;
   confirmation?: {
     title?: string;
     description?: string;
@@ -84,6 +86,10 @@ export function ActionForm({
           setIsConfirmOpen(true);
         }}
         action={async (formData) => {
+          if (clearOnSubmit) {
+            formRef.current?.reset();
+          }
+
           const slowToastTimer = window.setTimeout(() => {
             slowToastRef.current = toast.loading("Still working...", {
               description: "Waiting on the database. Your click was received.",

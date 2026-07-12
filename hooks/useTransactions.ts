@@ -45,6 +45,7 @@ export function useTransactions(
         const createdAtMs = new Date(transaction.created_at).getTime();
         const dateText = format(new Date(transaction.date), "MMM d, yyyy").toLowerCase();
         const noteText = (transaction.note || "").toLowerCase();
+        const descriptionText = transaction.description_text || "";
 
         return {
           transaction,
@@ -59,6 +60,7 @@ export function useTransactions(
             amount.toString(),
             dateText,
             transaction.note || "",
+            descriptionText,
             transaction.type,
           ]
             .join(" ")

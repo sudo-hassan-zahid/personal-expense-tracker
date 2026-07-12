@@ -13,10 +13,10 @@ import {
   Filter,
   X as CloseIcon,
   Pencil,
-  AlertCircle,
   Loader2,
   Paperclip,
   ChevronDown,
+  Eye,
 } from "lucide-react";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/currency";
@@ -32,6 +32,7 @@ import { toast } from "sonner";
 import { useTransactions } from "@/hooks/useTransactions";
 import { EditTransactionModal } from "./EditTransactionModal";
 import { DeleteConfirmationModal } from "./DeleteConfirmationModal";
+import { TransactionDescriptionModal } from "./TransactionDescriptionModal";
 import { Transaction, Category } from "@/types";
 import { HelpLabel, HelpTip } from "./HelpTip";
 
@@ -45,6 +46,7 @@ const TransactionRow = memo(
     isWideView,
     newlyAddedId,
     onEdit,
+    onViewDescription,
     onDelete,
     selected,
     onToggleSelected,
@@ -56,13 +58,14 @@ const TransactionRow = memo(
     isWideView: boolean;
     newlyAddedId: string | null;
     onEdit: (t: Transaction) => void;
+    onViewDescription: (t: Transaction) => void;
     onDelete: (t: Transaction) => void;
     selected: boolean;
     onToggleSelected: (t: Transaction) => void;
   }) => {
     return (
       <div
-        className={`flex flex-col md:grid ${enableStatusTracking ? "md:grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "md:grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-2 md:gap-4 items-start md:items-center py-4 md:py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-200 px-3 md:px-2 -mx-3 md:mx-0 rounded-xl md:rounded-lg ${index < 10 ? "animate-slide-up" : "opacity-100"} ${index < 5 ? `stagger-${index + 1}` : ""} ${newlyAddedId === t.id ? "bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse" : ""}`}
+        className={`flex flex-col md:grid ${enableStatusTracking ? "md:grid-cols-[48px_1fr_140px_100px_120px_100px_112px]" : "md:grid-cols-[48px_1fr_140px_100px_120px_112px]"} gap-2 md:gap-4 items-start md:items-center py-4 md:py-3 border-b border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all duration-200 px-3 md:px-2 -mx-3 md:mx-0 rounded-xl md:rounded-lg ${index < 10 ? "animate-slide-up" : "opacity-100"} ${index < 5 ? `stagger-${index + 1}` : ""} ${newlyAddedId === t.id ? "bg-blue-500/10 ring-1 ring-blue-500/30 animate-pulse" : ""}`}
       >
         <div className="hidden md:block text-number-sm text-(--color-muted) pl-2">
           <input
@@ -156,6 +159,13 @@ const TransactionRow = memo(
                 <Paperclip size={16} />
               </Link>
             )}
+            <button
+              onClick={() => onViewDescription(t)}
+              className="p-2 text-(--color-muted) hover:text-(--color-info) hover:bg-(--color-info)/10 rounded-md transition-all"
+              title="View description"
+            >
+              <Eye size={16} />
+            </button>
             <button
               onClick={() => onEdit(t)}
               className="p-2 text-(--color-muted) hover:text-(--color-primary) hover:bg-(--color-primary)/10 rounded-md transition-all"
@@ -361,6 +371,7 @@ export function TransactionList({
   const [newlyAddedId, setNewlyAddedId] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+  const [viewingTransaction, setViewingTransaction] = useState<Transaction | null>(null);
   const [transactionToDelete, setTransactionToDelete] = useState<Transaction | null>(null);
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -783,7 +794,7 @@ export function TransactionList({
         <div className="flex flex-col gap-2 md:min-w-[720px]">
           {/* Sorting header */}
           <div
-            className={`hidden md:grid ${enableStatusTracking ? "grid-cols-[48px_1fr_140px_100px_120px_100px_80px]" : "grid-cols-[48px_1fr_140px_100px_120px_80px]"} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}
+            className={`hidden md:grid ${enableStatusTracking ? "grid-cols-[48px_1fr_140px_100px_120px_100px_112px]" : "grid-cols-[48px_1fr_140px_100px_120px_112px]"} gap-4 text-caption text-(--color-muted) pb-3 border-b border-(--color-hairline-on-dark) px-2`}
           >
             <div className="pl-2">#</div>
             <div
@@ -874,6 +885,7 @@ export function TransactionList({
                 isWideView={isWideView}
                 newlyAddedId={newlyAddedId}
                 onEdit={setEditingTransaction}
+                onViewDescription={setViewingTransaction}
                 onDelete={setTransactionToDelete}
                 selected={selectedTransactionKeys.has(`${t.type}:${t.id}`)}
                 onToggleSelected={toggleSelected}
@@ -903,6 +915,14 @@ export function TransactionList({
         />
       )}
 
+      {viewingTransaction && (
+        <TransactionDescriptionModal
+          transaction={viewingTransaction}
+          currency={currency}
+          onClose={() => setViewingTransaction(null)}
+        />
+      )}
+
       <DeleteConfirmationModal
         isOpen={isBulkDeleteOpen}
         onClose={() => {
@@ -914,63 +934,38 @@ export function TransactionList({
         isDeleting={bulkAction === "delete"}
       />
 
-      {transactionToDelete && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="bg-(--color-surface-card-dark) border border-(--color-hairline-on-dark) rounded-2xl p-6 w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-200">
-            <div className="flex flex-col items-center text-center gap-4">
-              <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 mb-2">
-                <AlertCircle size={24} />
-              </div>
-              <div>
-                <h3 className="text-title-md text-(--color-on-dark) mb-2">Confirm Deletion</h3>
-                <p className="text-body-sm text-(--color-muted)">
-                  Are you sure you want to delete this {transactionToDelete.type}? This action
-                  cannot be undone.
-                </p>
-              </div>
-              <div className="flex w-full gap-3 mt-4">
-                <button
-                  type="button"
-                  onClick={() => setTransactionToDelete(null)}
-                  disabled={isDeleting}
-                  className="flex-1 px-4 py-2 rounded-xl border border-(--color-hairline-on-dark) text-(--color-on-dark) hover:bg-(--color-surface-elevated-dark) transition-colors disabled:opacity-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={async () => {
-                    const idToRemove = transactionToDelete.id;
-                    setIsDeleting(true);
+      <DeleteConfirmationModal
+        isOpen={transactionToDelete !== null}
+        onClose={() => {
+          if (!isDeleting) setTransactionToDelete(null);
+        }}
+        onConfirm={async () => {
+          if (!transactionToDelete) return;
 
-                    // Optimistic UI removal
-                    if (onOptimisticDelete) {
-                      startTransition(() => {
-                        onOptimisticDelete(idToRemove);
-                      });
-                    }
+          const idToRemove = transactionToDelete.id;
+          setIsDeleting(true);
 
-                    try {
-                      if (transactionToDelete.type === "income") await deleteIncome(idToRemove);
-                      else await deleteExpense(idToRemove);
-                      toast.success("Transaction deleted successfully");
-                      setTransactionToDelete(null);
-                    } catch (error) {
-                      toast.error(error instanceof Error ? error.message : "Failed to delete");
-                    } finally {
-                      setIsDeleting(false);
-                    }
-                  }}
-                  disabled={isDeleting}
-                  className="flex-1 px-4 py-2 rounded-xl bg-red-500 text-white hover:bg-red-600 transition-colors shadow-lg shadow-red-500/20 disabled:opacity-50 flex items-center justify-center"
-                >
-                  {isDeleting ? <Loader2 className="animate-spin" size={18} /> : "Delete"}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+          if (onOptimisticDelete) {
+            startTransition(() => {
+              onOptimisticDelete(idToRemove);
+            });
+          }
+
+          try {
+            if (transactionToDelete.type === "income") await deleteIncome(idToRemove);
+            else await deleteExpense(idToRemove);
+            toast.success("Transaction deleted successfully");
+            setTransactionToDelete(null);
+          } catch (error) {
+            toast.error(error instanceof Error ? error.message : "Failed to delete");
+          } finally {
+            setIsDeleting(false);
+          }
+        }}
+        title="Confirm Deletion"
+        description={`Are you sure you want to delete this ${transactionToDelete?.type || "transaction"}? This action cannot be undone.`}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

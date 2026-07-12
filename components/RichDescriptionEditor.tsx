@@ -43,6 +43,23 @@ export function RichDescriptionEditor({
     setText(editorRef.current.innerText.trim());
   }, [defaultHtml]);
 
+  useEffect(() => {
+    const editor = editorRef.current;
+    const form = editor?.closest("form");
+    if (!editor || !form) return;
+
+    const onReset = () => {
+      requestAnimationFrame(() => {
+        editor.innerHTML = "";
+        setHtml("");
+        setText("");
+      });
+    };
+
+    form.addEventListener("reset", onReset);
+    return () => form.removeEventListener("reset", onReset);
+  }, []);
+
   const syncValue = () => {
     const editor = editorRef.current;
     if (!editor) return;
