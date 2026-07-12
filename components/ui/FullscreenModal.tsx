@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
 export function FullscreenModal({
@@ -9,12 +10,14 @@ export function FullscreenModal({
   onClose,
   footer,
   widthClassName = "max-w-3xl",
+  contentClassName = "",
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
   footer?: ReactNode;
   widthClassName?: string;
+  contentClassName?: string;
 }) {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -30,8 +33,10 @@ export function FullscreenModal({
     };
   }, [onClose]);
 
-  return (
-    <div className="fixed inset-0 z-[10000] flex min-h-screen items-center justify-center p-3 sm:p-6">
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[10000] flex min-h-dvh items-center justify-center p-3 sm:p-6">
       <button
         type="button"
         aria-label="Close modal backdrop"
@@ -42,7 +47,7 @@ export function FullscreenModal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`relative flex h-[min(92vh,820px)] w-full ${widthClassName} flex-col overflow-hidden rounded-xl border border-(--color-hairline-on-dark) bg-(--color-surface-card-dark) shadow-2xl`}
+        className={`relative flex max-h-[min(92dvh,820px)] w-full ${widthClassName} flex-col overflow-hidden rounded-xl border border-(--color-hairline-on-dark) bg-(--color-surface-card-dark) shadow-2xl`}
       >
         <header className="flex shrink-0 items-center justify-between gap-3 border-b border-(--color-hairline-on-dark) px-4 py-3 sm:px-5">
           <h2 className="min-w-0 truncate text-title-md text-(--color-on-dark)">{title}</h2>
@@ -55,13 +60,16 @@ export function FullscreenModal({
             <X size={18} />
           </button>
         </header>
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-5">{children}</div>
+        <div className={`min-h-0 overflow-y-auto px-4 py-4 sm:px-5 ${contentClassName}`}>
+          {children}
+        </div>
         {footer && (
           <footer className="shrink-0 border-t border-(--color-hairline-on-dark) px-4 py-3 sm:px-5">
             {footer}
           </footer>
         )}
       </section>
-    </div>
+    </div>,
+    document.body
   );
 }
