@@ -24,12 +24,18 @@ export default function Home() {
           </p>
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Link href="/signup" className="group inline-flex h-13 items-center justify-center gap-2 rounded-lg bg-(--color-primary) px-7 text-button text-(--color-on-primary) transition hover:bg-(--color-primary-active)">
-              Start building <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" />
+              Create my free account <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" />
             </Link>
-            <Link href="/login" className="inline-flex h-13 items-center justify-center rounded-lg border border-(--color-hairline-on-dark) bg-(--color-surface-card-dark)/70 px-7 text-button text-(--color-on-dark) transition hover:border-(--color-primary)/50">
-              Explore the demo
+            <Link href="/login#demo-account" className="inline-flex h-13 items-center justify-center rounded-lg border border-(--color-hairline-on-dark) bg-(--color-surface-card-dark)/70 px-7 text-button text-(--color-on-dark) transition hover:border-(--color-primary)/50">
+              Try the live demo
             </Link>
           </div>
+          <p className="mt-4 text-body-sm text-(--color-muted)">
+            Not sure Tharvion is right for you?{" "}
+            <Link href="/login#demo-account" className="font-semibold text-(--color-primary) hover:underline">
+              Explore a ready-made account—no signup needed.
+            </Link>
+          </p>
           <div className="mt-8 flex flex-wrap gap-x-7 gap-y-3 text-body-sm text-(--color-muted)">
             <span className="flex items-center gap-2"><ShieldCheck size={16} className="text-(--color-trading-up)" /> Private by design</span>
             <span className="flex items-center gap-2"><ChartNoAxesCombined size={16} className="text-(--color-primary)" /> Clarity over clutter</span>
