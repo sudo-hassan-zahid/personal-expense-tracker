@@ -5,7 +5,7 @@ import { getUserCategories } from "@/actions/category";
 import { CategoryManager } from "@/components/CategoryManager";
 
 export const metadata = {
-  title: "Categories | Expense Tracker",
+  title: "Categories",
   description: "Manage your expense and income categories",
 };
 

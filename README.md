@@ -1,6 +1,6 @@
-# Personal Expense Tracker
+# Tharvion
 
-A fast, scalable personal finance tracker designed with a Binance-inspired UI. Built with Next.js (App Router), Tailwind CSS v4, and Supabase.
+A private personal finance workspace for spending, planning, and building wealth with clarity. Tharvion combines *Tharwa* (Arabic for wealth and prosperity) with a modern, forward-looking suffix. Built with Next.js, Tailwind CSS, and Supabase.
 
 Live Demo: [https://expense-tracker-by-hassan.vercel.app](https://expense-tracker-by-hassan.vercel.app)
 
