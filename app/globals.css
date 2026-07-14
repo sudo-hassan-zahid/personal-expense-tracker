@@ -538,6 +538,35 @@
     }
   }
 
+  @keyframes wealth-orbit-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes wealth-launch-rise {
+    0% { opacity: 0; transform: translateY(28px) scale(0.84); }
+    65% { opacity: 1; transform: translateY(-8px) scale(1.04); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  @keyframes wealth-copy-in {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .wealth-launch { animation: fade-in 0.35s ease-out both; }
+  .wealth-launch-out { opacity: 0; transition: opacity 0.35s ease; }
+  .wealth-orbit { position: relative; animation: wealth-orbit-spin 7s linear infinite; }
+  .wealth-orbit::before, .wealth-orbit::after { content: ""; position: absolute; inset: 13px; border: 1px solid rgba(252, 213, 53, .12); border-radius: 999px; }
+  .wealth-orbit::after { inset: 28px; }
+  .wealth-orbit-dot { position: absolute; top: -5px; left: calc(50% - 5px); width: 10px; height: 10px; border-radius: 999px; background: var(--color-primary); box-shadow: 0 0 24px var(--color-primary); }
+  .wealth-mark-launch { animation: wealth-launch-rise .9s cubic-bezier(.16, 1, .3, 1) both; transform: rotate(-360deg); }
+  .wealth-mark-launch > svg { animation: wealth-orbit-spin 7s linear infinite reverse; }
+  .wealth-launch-copy { animation: wealth-copy-in .7s .35s ease-out both; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wealth-launch, .wealth-orbit, .wealth-mark-launch, .wealth-mark-launch > svg, .wealth-launch-copy { animation: none; }
+  }
+
   .stagger-5 {
     animation-delay: 50ms;
   }

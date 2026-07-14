@@ -3,6 +3,7 @@ import { DashboardContent } from "@/components/DashboardContent";
 import { getRequestAuth, getRequestProfile } from "@/lib/request-data";
 import { parseDashboardFilters } from "@/lib/dashboard-filters";
 import { redirect } from "next/navigation";
+import { WealthLaunch } from "@/components/WealthLaunch";
 
 export default async function DashboardPage(props: {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -64,7 +65,9 @@ export default async function DashboardPage(props: {
   const isWideView = searchParams?.view === "wide";
 
   return (
-    <DashboardContent
+    <>
+      <WealthLaunch />
+      <DashboardContent
       expenses={expenses}
       incomes={incomes}
       expenseCategories={expenseCategories}
@@ -82,6 +85,7 @@ export default async function DashboardPage(props: {
       dashboardFilters={dashboardFilters}
       openingBalance={openingBalance}
       availableMonths={availableMonths}
-    />
+      />
+    </>
   );
 }
