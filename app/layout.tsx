@@ -22,8 +22,8 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Personal Expense Tracker",
-  description: "Track your expenses and income.",
+  title: { default: "Tharvion — Build Wealth With Clarity", template: "%s | Tharvion" },
+  description: "A private personal finance workspace for spending, planning, and building wealth with clarity.",
 };
 
 const enableAmbientEffects = process.env.NEXT_PUBLIC_ENABLE_AMBIENT_EFFECTS === "true";

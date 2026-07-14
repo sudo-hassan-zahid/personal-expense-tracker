@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 120" role="img" aria-labelledby="title desc">
+  <title id="title">Tharvion primary logo</title><desc id="desc">Angular wealth-path mark with Tharvion wordmark</desc>
+  <g fill="#FCD535"><path opacity=".14" d="M60 5 108 33v54l-48 28L12 87V33L60 5Z"/><path d="m27 40 33-20 33 20-13 8-20-13-20 13-13-8Z"/><path d="m51 47 9-6 9 6v37l-9 13-9-13V47Z"/><path opacity=".72" d="m25 55 15 8v21l20 13-13 7-22-13V55Zm70 0-15 8v21L60 97l13 7 22-13V55Z"/></g>
+  <text x="132" y="78" fill="#F5F5F5" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="700" letter-spacing="6">THAR<tspan fill="#FCD535">VION</tspan></text>
+</svg>

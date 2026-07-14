@@ -2,7 +2,7 @@ import { getPlanningPageData } from "@/actions/planning";
 import { PlanningPanel } from "@/components/PlanningPanel";
 
 export const metadata = {
-  title: "Planning | Expense Tracker",
+  title: "Planning",
   description: "Budgets, savings goals, recurring transactions, and imports",
 };
 

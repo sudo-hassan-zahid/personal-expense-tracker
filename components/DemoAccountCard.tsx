@@ -12,7 +12,7 @@ export function DemoAccountCard() {
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedPassword, setCopiedPassword] = useState(false);
   return (
-    <div className="mt-8 rounded-xl border border-(--color-hairline-on-dark) bg-(--color-canvas-dark)/35 p-4">
+    <div id="demo-account" className="mt-8 scroll-mt-24 rounded-xl border border-(--color-primary)/30 bg-(--color-primary)/5 p-4 shadow-[0_0_40px_rgba(252,213,53,.04)]">
       <div className="relative pb-1">
         <div className="absolute inset-x-0 top-3 flex items-center">
           <div className="w-full border-t border-(--color-hairline-on-dark)" />
@@ -20,14 +20,14 @@ export function DemoAccountCard() {
         <div className="relative flex justify-center text-sm">
           <span className="bg-(--color-surface-card-dark) px-3 text-(--color-muted) font-medium flex items-center gap-2">
             <UserRound size={16} />
-            <span className="bg-blue-500/10 text-blue-400 text-[10px] px-2 py-0.5 rounded-full border border-blue-500/20 uppercase tracking-tighter font-bold">
+            <span className="rounded-full border border-(--color-primary)/25 bg-(--color-primary)/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-(--color-primary)">
               Demo
             </span>
-            Try Demo Account
+            Not sure yet? Take a look around.
           </span>
         </div>
         <p className="mt-3 text-center text-body-sm text-(--color-muted) max-w-[290px] mx-auto">
-          Explore the dashboard and features with our pre-configured demo account.
+          See Tharvion with realistic sample data. Use the credentials below or enter instantly—no account required.
         </p>
       </div>
       <div className="mt-4 grid grid-cols-1 gap-3">
@@ -105,9 +105,9 @@ export function DemoAccountCard() {
           {isPending ? (
             <div className="w-4 h-4 border-2 border-(--color-primary) border-t-transparent rounded-full animate-spin" />
           ) : (
-            <Zap size={16} className="text-blue-400" />
+            <Zap size={16} className="text-(--color-primary)" />
           )}
-          {isPending ? "Connecting..." : "Quick Access"}
+          {isPending ? "Opening demo..." : "Enter the demo account"}
         </button>
       </div>
     </div>

@@ -16,16 +16,19 @@ export default async function LoginPage(props: {
   return (
     <div className="flex-1 flex flex-col bg-(--color-canvas-dark) text-(--color-on-dark) justify-center py-6 md:py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden min-h-screen">
       {/* Background glow effects */}
-      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-500/20 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-purple-500/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-(--color-primary)/12 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-(--color-primary-active)/8 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 animate-slide-up">
-        <h2 className="text-[28px] md:text-[32px] tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 font-bold mb-1 text-center">
+        <h2 className="text-[28px] md:text-[32px] tracking-tight text-(--color-on-dark) font-bold mb-1 text-center">
           Welcome Back
         </h2>
 
         <p className="text-center text-body-md text-(--color-muted)">
-          Enter your credentials to access your Tracker
+          Enter your credentials to access Tharvion
+        </p>
+        <p className="mt-2 text-center text-caption uppercase tracking-[.18em] text-(--color-primary)">
+          Know your money. Own your future.
         </p>
       </div>
 
@@ -96,7 +99,7 @@ export default async function LoginPage(props: {
               </label>
               <Link
                 href="/forgot-password"
-                className="font-medium text-blue-400 hover:text-blue-300 transition-colors"
+                className="font-medium text-(--color-primary) hover:text-(--color-primary-active) transition-colors"
               >
                 Forgot password?
               </Link>
@@ -121,7 +124,7 @@ export default async function LoginPage(props: {
               Don&apos;t have an account?{" "}
               <Link
                 href="/signup"
-                className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+                className="text-(--color-primary) hover:text-(--color-primary-active) font-medium transition-colors"
               >
                 Sign up
               </Link>

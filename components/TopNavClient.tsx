@@ -12,6 +12,7 @@ import type { User } from "@supabase/supabase-js";
 import type { Category } from "@/types";
 import { QuickAddModal } from "./QuickAddModal";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { TharvionLogo } from "@/components/TharvionLogo";
 
 function SignOutButton({ className }: { className: string }) {
   const { pending } = useFormStatus();
@@ -51,17 +52,10 @@ export function TopNavClient({
         <div className="flex items-center gap-8">
           <Link
             href="/"
-            className="group flex items-center gap-2 text-primary font-bold text-xl tracking-tight hover:text-primary-active transition-colors"
+            className="group flex items-center transition-colors"
             onClick={() => setIsOpen(false)}
           >
-            <svg
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="w-6 h-6 transition-transform duration-500 group-hover:rotate-180"
-            >
-              <path d="M12 2L2 12l10 10 10-10L12 2zm0 4.8l5.2 5.2-5.2 5.2-5.2-5.2L12 6.8z" />
-            </svg>
-            <span className="text-(--color-primary)">TRACKER</span>
+            <TharvionLogo />
           </Link>
 
           {user && (

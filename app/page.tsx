@@ -1,78 +1,68 @@
-/**
- * Page/Route: page.tsx
- */
 import Link from "next/link";
+import { ArrowRight, ChartNoAxesCombined, ShieldCheck, Sparkles } from "lucide-react";
+import { TharvionMark } from "@/components/TharvionLogo";
 
-export default async function Home() {
+const signals = [
+  { value: "01", title: "See the whole month", copy: "Income, spending, budgets, and momentum in one calm view." },
+  { value: "02", title: "Make money intentional", copy: "Turn everyday transactions into plans you can actually follow." },
+  { value: "03", title: "Grow without the noise", copy: "Useful insights, clear trends, and no trading-floor complexity." },
+];
+
+export default function Home() {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center w-full max-w-[1280px] mx-auto px-6 py-12 lg:py-0">
-      <div className="w-full flex flex-col gap-12 lg:gap-16">
-        {/* Hero Section */}
-        <section className="flex flex-col items-center text-center gap-6 stagger-1 animate-slide-up">
-          <h1 className="text-display-sm md:text-display-lg lg:text-hero-display text-(--color-on-dark)">
-            Keep Track Of Your <span className="text-(--color-primary)">Money</span>
+    <div className="flex-1 overflow-hidden">
+      <section className="relative mx-auto grid min-h-[calc(100vh-64px)] max-w-[1280px] items-center gap-14 px-6 py-20 lg:grid-cols-[1.1fr_.9fr] lg:px-10">
+        <div className="relative z-10 animate-slide-up">
+          <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-(--color-primary)/25 bg-(--color-primary)/8 px-4 py-2 text-caption uppercase tracking-[0.18em] text-(--color-primary)">
+            <Sparkles size={14} /> Wealth, made legible
+          </div>
+          <h1 className="max-w-[760px] text-[48px] font-bold leading-[.98] tracking-[-.045em] text-(--color-on-dark) sm:text-[64px] lg:text-[82px]">
+            Your money has a <span className="text-(--color-primary)">next move.</span>
           </h1>
-          <p className="text-body-md md:text-title-md lg:text-title-lg text-(--color-body) max-w-[700px] opacity-90 px-4">
-            A simple place to log income, record expenses, and understand where your month is going
-            without turning life into a banking dashboard.
+          <p className="mt-7 max-w-[610px] text-[17px] leading-7 text-(--color-muted-strong) sm:text-[19px]">
+            Tharvion turns daily spending into a clear path forward—so you can spend with intent, plan with confidence, and build lasting wealth.
           </p>
-          <div className="flex flex-col sm:flex-row items-center gap-4 mt-2 w-full sm:w-auto px-6 sm:px-0">
-            <Link
-              href="/signup"
-              className="w-full sm:w-auto bg-(--color-primary) text-(--color-on-primary) text-button px-[32px] py-[14px] rounded-full hover:scale-105 active:scale-95 transition-all shadow-lg shadow-(--color-primary)/20 text-center"
-            >
-              Get Started Now
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <Link href="/signup" className="group inline-flex h-13 items-center justify-center gap-2 rounded-lg bg-(--color-primary) px-7 text-button text-(--color-on-primary) transition hover:bg-(--color-primary-active)">
+              Create my free account <ArrowRight size={17} className="transition-transform group-hover:translate-x-1" />
             </Link>
-            <Link
-              href="/login"
-              className="w-full sm:w-auto bg-(--color-surface-card-dark) text-(--color-on-dark) text-button px-[32px] py-[14px] rounded-full border border-(--color-hairline-on-dark) hover:bg-(--color-surface-elevated-dark) transition-all text-center"
-            >
-              Log In
+            <Link href="/login#demo-account" className="inline-flex h-13 items-center justify-center rounded-lg border border-(--color-hairline-on-dark) bg-(--color-surface-card-dark)/70 px-7 text-button text-(--color-on-dark) transition hover:border-(--color-primary)/50">
+              Try the live demo
             </Link>
           </div>
-        </section>
+          <p className="mt-4 text-body-sm text-(--color-muted)">
+            Not sure Tharvion is right for you?{" "}
+            <Link href="/login#demo-account" className="font-semibold text-(--color-primary) hover:underline">
+              Explore a ready-made account—no signup needed.
+            </Link>
+          </p>
+          <div className="mt-8 flex flex-wrap gap-x-7 gap-y-3 text-body-sm text-(--color-muted)">
+            <span className="flex items-center gap-2"><ShieldCheck size={16} className="text-(--color-trading-up)" /> Private by design</span>
+            <span className="flex items-center gap-2"><ChartNoAxesCombined size={16} className="text-(--color-primary)" /> Clarity over clutter</span>
+          </div>
+        </div>
 
-        {/* Info Grid */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8 stagger-2 animate-slide-up">
-          <div className="glass-dark rounded-2xl p-6 md:p-8 flex flex-col items-center text-center gap-2 md:gap-3 border border-(--color-hairline-on-dark)">
-            <div className="text-display-sm md:text-number-display text-(--color-primary)">
-              Fast
-            </div>
-            <div className="text-caption md:text-title-sm text-(--color-muted)">
-              Quick daily tracking
-            </div>
+        <div className="relative mx-auto aspect-square w-full max-w-[470px] animate-slide-up stagger-2">
+          <div className="absolute inset-[8%] rotate-12 rounded-[32%] border border-(--color-primary)/15 bg-(--color-primary)/3" />
+          <div className="absolute inset-[18%] -rotate-6 rounded-[28%] border border-(--color-primary)/30 bg-(--color-surface-card-dark)/70 shadow-[0_0_100px_rgba(252,213,53,.10)] backdrop-blur-xl" />
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <TharvionMark className="h-36 w-36 text-(--color-primary) sm:h-44 sm:w-44" />
+            <p className="mt-3 text-caption uppercase tracking-[.35em] text-(--color-muted)">Clarity creates wealth</p>
           </div>
-          <div className="glass-dark rounded-2xl p-6 md:p-8 flex flex-col items-center text-center gap-2 md:gap-3 border border-(--color-hairline-on-dark)">
-            <div className="text-display-sm md:text-number-display text-(--color-primary)">
-              Clear
-            </div>
-            <div className="text-caption md:text-title-sm text-(--color-muted)">
-              Monthly totals and trends
-            </div>
-          </div>
-          <div className="glass-dark rounded-2xl p-6 md:p-8 flex flex-col items-center text-center gap-2 md:gap-3 border border-(--color-hairline-on-dark)">
-            <div className="text-display-sm md:text-number-display text-(--color-primary)">
-              Simple
-            </div>
-            <div className="text-caption md:text-title-sm text-(--color-muted)">
-              No banking-app complexity
-            </div>
-          </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Footer Note */}
-        <footer className="text-center stagger-3 animate-slide-up">
-          <p className="text-body-md text-(--color-muted)">
-            Built for personal use. Start small and keep it practical.
-          </p>
-          <p className="mt-2 text-body-sm text-(--color-muted) opacity-70">
-            Want to see it in action first?{" "}
-            <Link href="/login" className="text-(--color-primary) hover:underline">
-              Try the Demo Account
-            </Link>
-          </p>
-        </footer>
-      </div>
+      <section className="border-y border-(--color-hairline-on-dark) bg-(--color-surface-card-dark)/45">
+        <div className="mx-auto grid max-w-[1280px] gap-px md:grid-cols-3">
+          {signals.map((item) => (
+            <article key={item.value} className="group px-8 py-10 transition hover:bg-(--color-primary)/4 lg:px-10">
+              <span className="font-mono text-caption text-(--color-primary)">{item.value}</span>
+              <h2 className="mt-5 text-title-lg text-(--color-on-dark)">{item.title}</h2>
+              <p className="mt-2 max-w-sm text-body-md leading-6 text-(--color-muted)">{item.copy}</p>
+            </article>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
