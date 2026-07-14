@@ -20,7 +20,7 @@ export default async function ResetPasswordPage(props: {
           Choose New Password
         </h2>
         <p className="text-center text-body-md text-(--color-muted)">
-          Create a new password for your Tracker account.
+          Create a new password for your Tharvion account.
         </p>
       </div>
 
