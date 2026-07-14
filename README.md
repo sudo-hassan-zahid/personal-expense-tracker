@@ -4,7 +4,7 @@
 
 <p align="center"><strong>Know your money. Own your future.</strong></p>
 
-Tharvion is a modern personal finance workspace for intentional spending, monthly planning, clear analytics, and lasting wealth—powered by Next.js and Supabase.
+Tharvion is a modern personal finance platform with income and expense tracking, monthly budgets, cash-flow analytics, planning tools, CSV exports, and secure Supabase-powered accounts.
 
 The name combines *Tharwa*—Arabic for wealth and prosperity—with a modern, forward-looking suffix.
 
