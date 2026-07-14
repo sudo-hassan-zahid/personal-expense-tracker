@@ -1,6 +1,12 @@
-# Tharvion
+<p align="center">
+  <img src="public/brand/tharvion-primary.svg" alt="Tharvion" width="430" />
+</p>
 
-A private personal finance workspace for spending, planning, and building wealth with clarity. Tharvion combines *Tharwa* (Arabic for wealth and prosperity) with a modern, forward-looking suffix. Built with Next.js, Tailwind CSS, and Supabase.
+<p align="center"><strong>Know your money. Own your future.</strong></p>
+
+Tharvion is a modern personal finance workspace for intentional spending, monthly planning, clear analytics, and lasting wealth—powered by Next.js and Supabase.
+
+The name combines *Tharwa*—Arabic for wealth and prosperity—with a modern, forward-looking suffix.
 
 Live Demo: [https://expense-tracker-by-hassan.vercel.app](https://expense-tracker-by-hassan.vercel.app)
 
