@@ -6,7 +6,7 @@
 
 Tharvion is a modern personal finance platform with income and expense tracking, monthly budgets, cash-flow analytics, planning tools, CSV exports, and secure Supabase-powered accounts.
 
-The name combines *Tharwa*—Arabic for wealth and prosperity—with a modern, forward-looking suffix.
+The name combines _Tharwa_—Arabic for wealth and prosperity—with a modern, forward-looking suffix.
 
 Live Demo: [https://expense-tracker-by-hassan.vercel.app](https://expense-tracker-by-hassan.vercel.app)
 
